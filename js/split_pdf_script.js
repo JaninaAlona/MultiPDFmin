@@ -27,12 +27,10 @@ const splitter = Vue.createApp({
                     triggerSaveSplit = false;
                 } else {
                     triggerSaveSplit = true;
-                    console.log(file.name);
                     pdfToSplit = file.name;
                     if (pdfToSplit.length > 54) {
                         pdfToSplit = pdfToSplit.substring(0, 50).concat(pdfToSplit.substring(pdfToSplit.length-4, pdfToSplit.length));
                     }
-                    console.log(pdfToSplit);
                     document.getElementById("fileselected").innerText = pdfToSplit;
                     document.getElementById('split_after').disabled = false;
                 }

@@ -27,6 +27,8 @@ let userTextList = [];
 let userImageList = [];
 let geometryPointsList = [];
 let drawLayerStack = [];
+let imagesBase64Strings = [];
+let fontBytes = [];
 let outputPDF;
 let fileLoaded = false;
 let sidemenuVisible = true;

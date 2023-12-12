@@ -23,7 +23,6 @@ let userImage = {
     }
 }
 
-let imagesBase64Strings = [];
 let imageControllerPointCounter = 0;
 let imageOpacity = 1.0;
 let rotateImgSelectorTriggered = false;
@@ -128,8 +127,8 @@ document.getElementById('addimg').addEventListener("click", function(e) {
     resetAllModes();
     userModesImages[0] = true;
     for(let i = 0; i < writeLayerStack.length; i++) {
-        writeLayerStack[i].onclick = function(e) {
-            addImage(e, writeLayerStack[i]);
+        writeLayerStack[i].onclick = async function(e) {
+            await addImage(e, writeLayerStack[i]);
         }
     }
 }, false);

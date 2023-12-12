@@ -68,7 +68,6 @@ const colorPickerFont = new Alwan('#colorpicker', {
 let x = 0;
 let y = 0;
 let textControllerPointCounter = 0;
-let fontBytes = [];
 let userFontColor;
 let userFontOpacity;
 let userTextField;
@@ -93,8 +92,8 @@ document.getElementById('addtext').addEventListener("click", async function() {
     resetAllModes();
     userModes[0] = true;
     for(let i = 0; i < writeLayerStack.length; i++) {
-        writeLayerStack[i].onclick = function(e) {
-            addText(e, writeLayerStack[i]);
+        writeLayerStack[i].onclick = async function(e) {
+            await addText(e, writeLayerStack[i]);
         }
     }
 }, false);
@@ -274,18 +273,18 @@ function moveText(textBox) {
 }
 
 
-document.getElementById('applytext').addEventListener("click", function() {
+document.getElementById('applytext').addEventListener("click", async function() {
     resetAllModes();
     if (boxApplyMode) {
         userModes[3] = true;
         for (let i = 0; i < userTextList.length; i++) {
-            userTextList[i].controlBox.onclick = function(e) {
+            userTextList[i].controlBox.onclick = async function(e) {
                 let disable = checkForLockStatus(userTextList[i].controlBox);
                 if (disable) {
                     userModes[3] = false;
                 }
                 if (userModes[3]) {
-                    applyText(e, userTextList[i]);
+                    await applyText(userTextList[i]);
                     markSingleLayerOnEdit(userTextList[i]);
                 }
             }
@@ -297,13 +296,13 @@ document.getElementById('applytext').addEventListener("click", function() {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                applyText(null, userTextList[index]);
+                await applyText(userTextList[index]);
             }
         }
     }
 }, false);
 
-async function applyText(e, controlP) {
+async function applyText(controlP) {
     const pdfLayer = await PDFDocument.create();
     pdfLayer.registerFontkit(fontkit);
     const currentText = controlP.elementToControl;
@@ -330,7 +329,7 @@ document.getElementById('applyfont').addEventListener('click', function() {
                     userModes[4] = false;
                 }
                 if (userModes[4]) {
-                    applyFont(e, userTextList[i]);
+                    applyFont(userTextList[i]);
                     markSingleLayerOnEdit(userTextList[i]);
                 }
             }
@@ -342,13 +341,13 @@ document.getElementById('applyfont').addEventListener('click', function() {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                applyFont(null, userTextList[index]);
+                applyFont(userTextList[index]);
             }
         }
     }
 }, false);
 
-async function applyFont(e, controlP) {
+async function applyFont(controlP) {
     const pdfLayer = await PDFDocument.create();
     const currentText = controlP.elementToControl;
     currentText.fontKey = fontSelector.value;
@@ -401,7 +400,7 @@ document.getElementById("applycustomfont").addEventListener("click", function() 
                     userModes[5] = false;
                 }
                 if (userModes[5]) {
-                    applyCustomFont(e, userTextList[i]);
+                    applyCustomFont(userTextList[i]);
                     markSingleLayerOnEdit(userTextList[i]);
                 }
             }
@@ -413,13 +412,13 @@ document.getElementById("applycustomfont").addEventListener("click", function() 
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                applyCustomFont(null, userTextList[index]);
+                applyCustomFont(userTextList[index]);
             }
         }
     }
 }, false);
 
-async function applyCustomFont(e, controlP) {
+async function applyCustomFont(controlP) {
     const listedFonts = document.getElementsByClassName("filelisting_font");
     let checkedIndex;
     if (listedFonts.length > 0) {
@@ -465,7 +464,7 @@ document.getElementById('applysize').addEventListener('click', function() {
                     userModes[6] = false;
                 }
                 if (userModes[6]) {
-                    applyFontSize(e, userTextList[i]);
+                    applyFontSize(userTextList[i]);
                     markSingleLayerOnEdit(userTextList[i]);
                 }
             }
@@ -477,13 +476,13 @@ document.getElementById('applysize').addEventListener('click', function() {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                applyFontSize(null, userTextList[index]);
+                applyFontSize(userTextList[index]);
             }
         }
     }
 }, false);
 
-async function applyFontSize(e, controlP) {
+async function applyFontSize(controlP) {
     let triggerFontSize = false;
     let fontSizeValueToSet;
     if (fontSizeSelectorTriggered) {
@@ -553,7 +552,7 @@ document.getElementById('applyfontcolor').addEventListener('click', function() {
                     userModes[7] = false;
                 }
                 if (userModes[7]) {
-                    applyFontColor(e, userTextList[i]);
+                    applyFontColor(userTextList[i]);
                     markSingleLayerOnEdit(userTextList[i]);
                 }
             }
@@ -565,13 +564,13 @@ document.getElementById('applyfontcolor').addEventListener('click', function() {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                applyFontColor(null, userTextList[index]);
+                applyFontColor(userTextList[index]);
             }
         }
     }
 }, false);
 
-async function applyFontColor(e, controlP) {
+async function applyFontColor(controlP) {
     const pdfLayer = await PDFDocument.create();
     pdfLayer.registerFontkit(fontkit);
     const currentText = controlP.elementToControl;
@@ -598,18 +597,18 @@ textRotationInput.addEventListener('change', function() {
     rotateTextInputFieldTriggered = true;
 }, false);
 
-document.getElementById('applytextrotation').addEventListener('click', function() {
+document.getElementById('applytextrotation').addEventListener('click', async function() {
     resetAllModes();
     if (boxApplyMode) {
         userModes[8] = true;
         for (let i = 0; i < userTextList.length; i++) {
-            userTextList[i].controlBox.onclick = function(e) {
+            userTextList[i].controlBox.onclick = async function(e) {
                 let disable = checkForLockStatus(userTextList[i].controlBox);
                 if (disable) {
                     userModes[8] = false;
                 }
                 if (userModes[8]) {
-                    applyTextRotation(e, userTextList[i]);
+                    await applyTextRotation(userTextList[i]);
                     markSingleLayerOnEdit(userTextList[i]);
                 }
             }
@@ -621,13 +620,13 @@ document.getElementById('applytextrotation').addEventListener('click', function(
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                applyTextRotation(null, userTextList[index]);
+                await applyTextRotation(userTextList[index]);
             }
         }
     }
 }, false);
 
-async function applyTextRotation(e, controlP) {
+async function applyTextRotation(controlP) {
     let triggerTextRotation = false;
     let rotationValueToSet;
     if (rotateTextSelectorTriggered) {
@@ -700,7 +699,7 @@ document.getElementById('applylineheight').addEventListener('click', function() 
                     userModes[9] = false;
                 }
                 if (userModes[9]) {
-                    applyLineHeight(e, userTextList[i]);
+                    applyLineHeight(userTextList[i]);
                     markSingleLayerOnEdit(userTextList[i]);
                 }
             }
@@ -712,13 +711,13 @@ document.getElementById('applylineheight').addEventListener('click', function() 
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                applyLineHeight(null, userTextList[index]);
+                applyLineHeight(userTextList[index]);
             }
         }
     }
 }, false);
 
-async function applyLineHeight(e, controlP) {
+async function applyLineHeight(controlP) {
     let triggerLineHeight = false;
     let lineheightValueToSet;
     if (lineheightSelectorTriggered) {

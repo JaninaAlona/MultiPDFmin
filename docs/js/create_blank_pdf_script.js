@@ -133,9 +133,9 @@ function initRestrictInputEvents(inputId, valToRestrict, min, max) {
 }
 
 function initialiseBlankEvents() {
-    initRestrictInputEvents('blank_pages', blankNumOfPagesCount, 1, 2000);
-    initRestrictInputEvents('blank_width', blankPageWidth, 10, 2000);
-    initRestrictInputEvents('blank_height', blankPageHeight, 10, 2000);
+    initRestrictInputEvents('blank_pages', blankNumOfPagesCount, 1, 3000);
+    initRestrictInputEvents('blank_width', blankPageWidth, 10, 5000);
+    initRestrictInputEvents('blank_height', blankPageHeight, 10, 5000);
     const dinaSelector = document.querySelector('#dinasize');
     dinaSelector.addEventListener('click', function() {
         const dinaSizes = setDINAFormats(dinaSelector.selectedIndex);

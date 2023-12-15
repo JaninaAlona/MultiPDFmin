@@ -487,12 +487,11 @@ document.getElementById("dragpdf").addEventListener("click", function() {
     for (let i = 0; i < writeLayers.length; i++) {
         writeLayers[i].onmousedown = null;
     }
-    let pdfViewerCons = document.getElementsByClassName("pdf_viewer_con");
+    const pdfViewerCons = document.getElementsByClassName("dragwrapper");
     for (let i = 0; i < pdfViewerCons.length; i++) {
         dragElement(pdfViewerCons[i]);
     }
 }, false);
-
 
 function dragElement(elmnt) {
     let pos1 = 0;

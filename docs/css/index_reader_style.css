@@ -13,6 +13,7 @@ html {
     background: #333;
     width: 100%;
     height: 58px;
+    z-index: 100;
 }
 
 #start_menu {
@@ -49,7 +50,8 @@ html {
     height: 116px;
     top: 58px;
     position: absolute;
-    z-index: 30;
+    /* z-index: 30; */
+    z-index: 100;
 }
 
 .dir_col {
@@ -77,11 +79,29 @@ html {
 }
 
 .scrollwrapper {
+    top: 0;
+    width: 100%;
     overflow-y: auto;
     scrollbar-gutter: stable both-edges;
     direction: rtl;
     height: 99%;
 }
+
+.drag_con {
+    display: flex;
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.dragwrapper {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+} 
 
 .pdf_viewer {
     position: relative;

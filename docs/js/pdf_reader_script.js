@@ -495,7 +495,10 @@ document.getElementById("dragpdf").addEventListener("click", function() {
 
 
 function dragElement(elmnt) {
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    let pos1 = 0;
+    let pos2 = 0;
+    let pos3 = 0;
+    let pos4 = 0;
     let currentPage = document.getElementById("current_page").value;
     currentPage = parseInt(currentPage);
     const writeLayers = document.getElementsByClassName("write_layer");

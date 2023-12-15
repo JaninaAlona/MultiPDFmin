@@ -30,6 +30,10 @@
     position: relative;
 }
 
+.pos_pdfviewercon_editor {
+    margin-top: 175px;
+}
+
 div.text {
     width: 40px;
     height: 40px;

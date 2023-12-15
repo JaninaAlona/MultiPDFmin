@@ -551,7 +551,7 @@ function dragElement(elmnt) {
         }
     }
 
-    function closeDragElement() {
+    function closeDragElement(e) {
         if (draggingMode && !clicked && !short) {
             mouseIsDown = false;
             // for (let i = 0; i < writeLayers.length; i++) {

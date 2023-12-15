@@ -109,7 +109,7 @@ function resetRendering() {
 
 async function kickOff(pdf) {
     resetToDefaults();
-    const pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes, { ignoreEncryption: true });
+    const pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
     const pdfBytes = await pdfDoc.save();
     pdfState.originalPDFBytes = pdfBytes;
     pdfState.existingPDFBytes = pdfState.originalPDFBytes;
@@ -585,7 +585,7 @@ if (document.getElementById('spin_right') !== undefined && document.getElementBy
             currentPage = Number(currentPage);
             if (Number.isInteger(currentPage) && currentPage >= 1 && currentPage <= pdfState.pdf._pdfInfo.numPages) {
                 currentPage = parseInt(currentPage);
-                const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes, { ignoreEncryption: true });
+                const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
                 let currentRotation = pdfDoc.getPages()[currentPage-1].getRotation().angle;
                 let newRotation = currentRotation + 90;
                 if (newRotation === 360) {
@@ -608,7 +608,7 @@ if (document.getElementById('spin_left') !== undefined && document.getElementByI
             currentPage = Number(currentPage);
             if (Number.isInteger(currentPage) && currentPage >= 1 && currentPage <= pdfState.pdf._pdfInfo.numPages) {
                 currentPage = parseInt(currentPage);
-                const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes, { ignoreEncryption: true });
+                const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
                 let currentRotation = pdfDoc.getPages()[currentPage-1].getRotation().angle;
                 let newRotation = currentRotation - 90;
                 if (newRotation === -360) {
@@ -754,7 +754,7 @@ const saveButtonsEditor = document.getElementsByClassName('save_pdf_editor');
 for (let i = 0; i < saveButtonsEditor.length; i++) {
     saveButtonsEditor[i].addEventListener("click", async function(e) {
         resetAllModes();  
-        outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes, { ignoreEncryption: true });
+        outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
         for (let i = 0; i < writeLayerStack.length; i++) {
             const writeLayer = writeLayerStack[i];
             const editImgs = writeLayer.getElementsByClassName("editimg");

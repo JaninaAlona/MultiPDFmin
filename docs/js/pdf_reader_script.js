@@ -527,8 +527,8 @@ function dragElement(elmnt) {
             pos2 = pos4 - e.clientY;
             pos3 = e.clientX;
             pos4 = e.clientY;
-            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = Math.abs(elmnt.offsetLeft - pos1) + "px";
+            elmnt.style.top = Math.abs(elmnt.offsetTop - pos2) + "px";
         }
     }
 

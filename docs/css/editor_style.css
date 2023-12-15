@@ -24,7 +24,7 @@
 }
 
 .button_layout_layers {
-    margin: 2.5px;
+    margin: 3px;
     cursor: pointer;
     height: 38px;
     position: relative;
@@ -210,7 +210,7 @@ div.drawing {
     top: 174px;
     bottom: 0;
     left: 10px;
-    width: 175px;
+    width: 180px;
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 25;
@@ -220,7 +220,7 @@ div.drawing {
 #layer_stack_btns {
     position: fixed;
     z-index: 10;
-    width: 175px;
+    width: 180px;
     background-color: rgba(218, 189, 182, 0.8);
 }
 
@@ -229,7 +229,7 @@ div.drawing {
     flex-direction: column;
     position: relative;
     top: 50px;
-    width: 175px;
+    width: 180px;
     height: 100%;
     z-index: 5;
 }

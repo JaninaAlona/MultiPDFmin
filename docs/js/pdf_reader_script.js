@@ -521,7 +521,7 @@ function dragElement(elmnt) {
     }
 
     function dragMouseDown(e) {
-        if (draggingMode) {
+        if (draggingMode && !clicked) {
             mouseIsDown = true;
             for (let i = 0; i < writeLayerStack.length; i++) {
                 writeLayerStack[i].style.cursor = "move";
@@ -536,8 +536,8 @@ function dragElement(elmnt) {
     function elementDrag(e) {
         if (draggingMode && mouseIsDown && !clicked) {
             short = false;
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
+            pos1 = Math.abs(pos3 - e.clientX);
+            pos2 = Math.abs(pos4 - e.clientY);
             pos3 = e.clientX;
             pos4 = e.clientY;
             elmnt.style.left = elmnt.offsetLeft - pos1 + "px";

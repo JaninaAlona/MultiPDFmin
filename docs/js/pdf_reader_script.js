@@ -505,7 +505,17 @@ function dragElement(elmnt) {
             currentWriteLayer = writeLayers[i];
         }
     }
+    clicked = false;
+    short = false;
+    currentWriteLayer.onclick = detectClick;
     currentWriteLayer.onmousedown = dragMouseDown;
+
+    function detectClick() {
+        if (draggingMode) {
+            clicked = true;
+            short = true;
+        }
+    }
 
     function dragMouseDown(e) {
         if (draggingMode) {
@@ -521,25 +531,26 @@ function dragElement(elmnt) {
     }
 
     function elementDrag(e) {
-        if (draggingMode && mouseIsDown) {
-            mouseIsDown = true;
+        if (draggingMode && mouseIsDown && !clicked) {
+            short = false;
             pos1 = pos3 - e.clientX;
             pos2 = pos4 - e.clientY;
             pos3 = e.clientX;
             pos4 = e.clientY;
-            elmnt.style.left = Math.abs(elmnt.offsetLeft - pos1) + "px";
-            elmnt.style.top = Math.abs(elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+            elmnt.style.top = elmnt.offsetTop - pos2 + "px";
         }
     }
 
     function closeDragElement() {
-        if (draggingMode) {
+        if (draggingMode && !clicked && !short) {
             mouseIsDown = false;
             for (let i = 0; i < writeLayerStack.length; i++) {
                 writeLayerStack[i].style.cursor = "default";
             }
             currentWriteLayer.onmouseup = null;
             currentWriteLayer.onmousemove = null;
+            currentWriteLayer.onclick = null;
         }
     }
 }

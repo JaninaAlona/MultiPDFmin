@@ -505,8 +505,8 @@ function moveDrawing(controlP) {
 
     function movingDrawing(e) {
         if (userModesDrawer[3] && mouseIsDown && !clicked) { 
-            controlP.controlBox.style.left = e.clientX + x + "px";
-            controlP.controlBox.style.top = e.clientY + y + "px"; 
+            controlP.controlBox.style.left = (e.clientX + x) + "px";
+            controlP.controlBox.style.top = (e.clientY + y) + "px"; 
             controlP.x = (e.clientX + x) / pdfState.zoom;
             controlP.y = (e.clientY + y) / pdfState.zoom;
         }

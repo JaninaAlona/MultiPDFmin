@@ -395,8 +395,8 @@ function moveShape(shapeBox) {
                 shapeBox.originY = 0;
                 shapeBox.rotateControlPoint();
             }       
-            shapeBox.controlBox.style.left = e.clientX + x + "px";
-            shapeBox.controlBox.style.top = e.clientY + y + "px"; 
+            shapeBox.controlBox.style.left = (e.clientX + x) + "px";
+            shapeBox.controlBox.style.top = (e.clientY + y) + "px"; 
             shapeBox.x = e.clientX + x;
             shapeBox.y = e.clientY + y;
         }

@@ -502,9 +502,9 @@ function relocateLayers(box) {
     let otherX;
     let otherY;
     let rect;
-    let context;
     let boxType;
     let boxIndex;
+    let context;
     let rotateOnce = true;
     clicked = false;
     short = false;
@@ -563,8 +563,8 @@ function relocateLayers(box) {
         if (relocateLayersMode && mouseIsDown && !clicked) {  
             short = false;
             if (boxType === "text" || boxType === "drawing"|| boxType === "image") {
-                controlP.controlBox.style.left = e.clientX + x + "px";
-                controlP.controlBox.style.top = e.clientY + y + "px"; 
+                controlP.controlBox.style.left = (e.clientX + x) + "px";
+                controlP.controlBox.style.top = (e.clientY + y) + "px"; 
                 controlP.x = (e.clientX + x)/pdfState.zoom;
                 controlP.y = (e.clientY + y)/pdfState.zoom;
             } else if (boxType === "shape") {
@@ -574,8 +574,8 @@ function relocateLayers(box) {
                     controlP.originY = 0;
                     controlP.rotateControlPoint();
                 }
-                controlP.controlBox.style.left = e.clientX + x + "px";
-                controlP.controlBox.style.top = e.clientY + y + "px"; 
+                controlP.controlBox.style.left = (e.clientX + x) + "px";
+                controlP.controlBox.style.top = (e.clientY + y) + "px"; 
                 controlP.x = e.clientX + x;
                 controlP.y = e.clientY + y;
             } 

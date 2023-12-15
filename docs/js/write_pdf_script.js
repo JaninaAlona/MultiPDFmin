@@ -240,8 +240,8 @@ function moveText(textBox) {
     function movingText(e) {
         if (userModes[2] && mouseIsDown && !clicked) {
             short = false;
-            e.currentTarget.style.left = e.clientX + x + "px";
-            e.currentTarget.style.top = e.clientY + y + "px"; 
+            e.currentTarget.style.left = (e.clientX + x) + "px";
+            e.currentTarget.style.top = (e.clientY + y) + "px"; 
             textBox.x = (e.clientX + x)/pdfState.zoom;
             textBox.y = (e.clientY + y)/pdfState.zoom;
         }

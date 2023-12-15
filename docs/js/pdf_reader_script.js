@@ -512,8 +512,8 @@ function dragElement(elmnt) {
     short = false;
     // currentWriteLayer.onclick = detectClick;
     // currentWriteLayer.onmousedown = dragMouseDown;
-    e.currentTarget.onclick = detectClick;
-    e.currentTarget.onmousedown = dragMouseDown;
+    elmnt.onclick = detectClick;
+    elmnt.onmousedown = dragMouseDown;
 
     function detectClick() {
         if (draggingMode) {

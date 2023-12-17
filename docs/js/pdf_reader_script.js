@@ -40,6 +40,7 @@ let writePdfBtn;
 let drawPdfBtn;
 let geometryBtn;
 let imagesBtn;
+let encrypted;
 
 
 let inputFileButtons = document.getElementsByClassName('inputfile');
@@ -55,21 +56,27 @@ for (let i = 0; i < inputFileButtons.length; i++) {
             const loadingTask = pdfjsLib.getDocument(typedarray);
             loadingTask.promise.then(async (pdf) => {
                 await kickOff(pdf);
-                document.getElementById('maxPDFPages').innerHTML = pdf._pdfInfo.numPages + " pages";
-                restrictInputValues('current_page', 1, pdf._pdfInfo.numPages, false, false);
-                pdfState.lastPage = pdf._pdfInfo.numPages;
-                updateCursorX();
-                updateCursorY();
+                if (!encrypted) {
+                    document.getElementById("viewer_bg").style.display = "flex";
+                    document.getElementById('maxPDFPages').innerHTML = pdf._pdfInfo.numPages + " pages";
+                    pdfState.lastPage = pdf._pdfInfo.numPages;
+                    restrictInputValues('current_page', 1, pdf._pdfInfo.numPages, false, false);
+                    restrictInputValues('zoom_factor', 1, 800, true, false);
+                    setCustomFilename();
+                    updateCursorX();
+                    updateCursorY();
+                }
             });
-            document.getElementById("viewer_bg").style.display = "flex";
-            restrictInputValues('zoom_factor', 1, 800, true, false);
-            setCustomFilename();
         }
         if (file) {
             fileReader.readAsArrayBuffer(file);
-            fileLoaded = true;
+            if (!encrypted) {
+                fileLoaded = true;
+            }
         }
-        pdfFileName = file.name;
+        if (!encrypted) {
+            pdfFileName = file.name;
+        } 
     }, false);
 }
 
@@ -105,17 +112,27 @@ function resetRendering() {
     fontBytes = [];
     imagesBase64Strings = [];
     pageCounter = 1;
+    encrypted = false;
+    fileLoaded = false;
 }
 
-async function kickOff(pdf) {
-    resetToDefaults();
-    const pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
-    const pdfBytes = await pdfDoc.save();
-    pdfState.originalPDFBytes = pdfBytes;
-    pdfState.existingPDFBytes = pdfState.originalPDFBytes;
-    pdfState.pdf = pdf;
-    adjustPDFToUserViewport(pdfDoc);
-    await pdfState.pdf.getPage(1).then(renderAllPages);
+async function kickOff(pdf) { 
+    let pdfDoc;
+    try {
+        pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
+    } catch(encryptedErr) {
+        encrypted = true;
+        console.log("PDF document is encrypted. Encryption is not supported!.");
+    }
+    if (!encrypted) {
+        const pdfBytes = await pdfDoc.save();
+        pdfState.originalPDFBytes = pdfBytes;
+        pdfState.existingPDFBytes = pdfState.originalPDFBytes;
+        pdfState.pdf = pdf;
+        resetToDefaults();
+        adjustPDFToUserViewport(pdfDoc);
+        await pdfState.pdf.getPage(1).then(renderAllPages);
+    }
 }
 
 

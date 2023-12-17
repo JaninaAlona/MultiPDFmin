@@ -42,6 +42,7 @@ let geometryBtn;
 let imagesBtn;
 let encrypted;
 let editorMode = false;
+let renderCompleted = false;
 
 
 let inputFileButtons = document.getElementsByClassName('inputfile');
@@ -75,8 +76,6 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         restrictInputValues('zoom_factor', 1, 800, true, false);
                         setCustomFilename();
                         initEditor();
-                        updateCursorX();
-                        updateCursorY();
                     }
                 } else {
                     const encryptedErrorWidgets = document.getElementsByClassName("encrypted_error");
@@ -132,6 +131,7 @@ function resetRendering() {
     encrypted = false;
     fileLoaded = false;
     editorMode = false;
+    renderCompleted = false;
 }
 
 async function kickOff(pdf) { 
@@ -147,7 +147,12 @@ async function kickOff(pdf) {
         pdfState.existingPDFBytes = pdfState.originalPDFBytes;
         pdfState.pdf = pdf;
         adjustPDFToUserViewport(pdfDoc);
-        await pdfState.pdf.getPage(1).then(renderAllPages);
+        await pdfState.pdf.getPage(1).then(async (page) => {
+            if (this.page) {
+                this.page.destroy();
+            }
+            await renderAllPages(page);
+        });
     }
 }
 
@@ -279,9 +284,21 @@ async function renderAllPages(page) {
         canvasContext: context,
         viewport: viewport
     });
+    if (this.page) {
+        this.page.destroy();
+    }
     pageCounter++;
+    if (pdfState.pdf != null && pageCounter > pdfState.pdf._pdfInfo.numPages) {
+        renderCompleted = true;
+    }
     if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
-        await pdfState.pdf.getPage(pageCounter).then(renderAllPages);
+        renderCompleted = false;
+        await pdfState.pdf.getPage(1).then(async (page) => {
+            if (this.page) {
+                this.page.destroy();
+            }
+            await renderAllPages(page);
+        });
     }
 }
 
@@ -322,16 +339,23 @@ function adjustPDFToUserViewport(pdfDoc) {
 
 async function zoomIn(e) {
     resetAllModes();
-    e.preventDefault;
-    if (pdfState.zoom <= 8.0) {
-        let percent = toPercent(pdfState.zoom);
-        percent += 20;
-        if (percent <= 800) {
-            document.getElementById('zoom_factor').value = percent + "%";
-            pdfState.zoom = toFactor(percent);
-            placeEditorElements();
-            pageCounter = 1;
-            await pdfState.pdf.getPage(1).then(renderAllPages);
+    if (renderCompleted) {
+        e.preventDefault;
+        if (pdfState.zoom <= 8.0) {
+            let percent = toPercent(pdfState.zoom);
+            percent += 20;
+            if (percent <= 800) {
+                document.getElementById('zoom_factor').value = percent + "%";
+                pdfState.zoom = toFactor(percent);
+                placeEditorElements();
+                pageCounter = 1;
+                await pdfState.pdf.getPage(1).then(async (page) => {
+                    if (this.page) {
+                        this.page.destroy();
+                    }
+                    await renderAllPages(page);
+                });
+            }
         }
     }
 }
@@ -339,16 +363,23 @@ async function zoomIn(e) {
 
 async function zoomOut(e) {
     resetAllModes();
-    e.preventDefault;
-    if (pdfState.zoom >= 0.1) {
-        let percent = toPercent(pdfState.zoom);
-        percent -= 20;
-        if (percent >= 10) {
-            document.getElementById('zoom_factor').value = percent + "%";
-            pdfState.zoom = toFactor(percent);
-            placeEditorElements();
-            pageCounter = 1;
-            await pdfState.pdf.getPage(1).then(renderAllPages);
+    if (renderCompleted) {
+        e.preventDefault;
+        if (pdfState.zoom >= 0.1) {
+            let percent = toPercent(pdfState.zoom);
+            percent -= 20;
+            if (percent >= 10) {
+                document.getElementById('zoom_factor').value = percent + "%";
+                pdfState.zoom = toFactor(percent);
+                placeEditorElements();
+                pageCounter = 1;
+                await pdfState.pdf.getPage(1).then(async (page) => {
+                    if (this.page) {
+                        this.page.destroy();
+                    }
+                    await renderAllPages(page);
+                });
+            }
         }
     }
 }
@@ -356,31 +387,38 @@ async function zoomOut(e) {
 
 async function enterZoomFactor(e) {
     resetAllModes();
-    e.preventDefault;
-    let triggerZoom = false;
-    if (e.key == 'Enter') {
-        let desiredZoom = document.getElementById('zoom_factor').value;
-        while (desiredZoom.search(" ") > -1) {
-            desiredZoom = desiredZoom.replace(" ", "");
-        }
-        let zoomVal = 0;
-        if (desiredZoom.charAt(desiredZoom.length - 1) === '%') {
-            zoomVal = desiredZoom.substring(0, desiredZoom.length - 1);     
-        } else {
-            zoomVal = desiredZoom;
-        }
-        if (!isNaN(zoomVal)) {
-            zoomVal = parseInt(zoomVal);      
-            triggerZoom = true;   
-        } else {
-            triggerZoom = false;
-        }
-        if (triggerZoom && zoomVal >= 1 && zoomVal <= 800) {
-            pdfState.zoom = toFactor(zoomVal);
-            document.getElementById("zoom_factor").value = zoomVal + "%";
-            placeEditorElements();
-            pageCounter = 1;
-            await pdfState.pdf.getPage(1).then(renderAllPages);
+    if (renderCompleted) {
+        e.preventDefault;
+        let triggerZoom = false;
+        if (e.key == 'Enter') {
+            let desiredZoom = document.getElementById('zoom_factor').value;
+            while (desiredZoom.search(" ") > -1) {
+                desiredZoom = desiredZoom.replace(" ", "");
+            }
+            let zoomVal = 0;
+            if (desiredZoom.charAt(desiredZoom.length - 1) === '%') {
+                zoomVal = desiredZoom.substring(0, desiredZoom.length - 1);     
+            } else {
+                zoomVal = desiredZoom;
+            }
+            if (!isNaN(zoomVal)) {
+                zoomVal = parseInt(zoomVal);      
+                triggerZoom = true;   
+            } else {
+                triggerZoom = false;
+            }
+            if (triggerZoom && zoomVal >= 1 && zoomVal <= 800) {
+                pdfState.zoom = toFactor(zoomVal);
+                document.getElementById("zoom_factor").value = zoomVal + "%";
+                placeEditorElements();
+                pageCounter = 1;
+                await pdfState.pdf.getPage(1).then(async (page) => {
+                    if (this.page) {
+                        this.page.destroy();
+                    }
+                    await renderAllPages(page);
+                });
+            }
         }
     }
 }
@@ -1021,6 +1059,8 @@ function initEditor() {
                 restrictInputValues('scale_width_img', 1, 3000, true, false);
                 restrictInputValues('scale_height_img', 1, 3000, true, false);
                 restrictInputValues('imgrotation_input', -360, 360, true, false); 
+                updateCursorX();
+                updateCursorY();
             }
         }
     }

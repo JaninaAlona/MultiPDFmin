@@ -41,6 +41,7 @@ let drawPdfBtn;
 let geometryBtn;
 let imagesBtn;
 let encrypted;
+let editorMode = false;
 
 
 let inputFileButtons = document.getElementsByClassName('inputfile');
@@ -57,26 +58,35 @@ for (let i = 0; i < inputFileButtons.length; i++) {
             loadingTask.promise.then(async (pdf) => {
                 await kickOff(pdf);
                 if (!encrypted) {
+                    fileLoaded = true;
+                    onetimeSetup = true;
+                    pdfFileName = file.name;
+                    document.getElementById("current_page").value = 1;
+                    let pdfViewers = document.getElementsByClassName("pdf_viewer")
+                    for (let i = 0; i < pdfViewers.length; i++) {
+                        pdfViewers[i].style.display = "flex";
+                    }
+                    document.getElementById("reader_controls").style.display = "flex";
                     document.getElementById("viewer_bg").style.display = "flex";
                     document.getElementById('maxPDFPages').innerHTML = pdf._pdfInfo.numPages + " pages";
                     pdfState.lastPage = pdf._pdfInfo.numPages;
                     restrictInputValues('current_page', 1, pdf._pdfInfo.numPages, false, false);
                     restrictInputValues('zoom_factor', 1, 800, true, false);
                     setCustomFilename();
+                    initEditor();
                     updateCursorX();
                     updateCursorY();
+                } else {
+                    const encryptedErrorWidgets = document.getElementsByClassName("encrypted_error");
+                    for (let i = 0; i < encryptedErrorWidgets.length; i++) {
+                        encryptedErrorWidgets[i].style.display = "flex";
+                    }
                 }
             });
         }
         if (file) {
             fileReader.readAsArrayBuffer(file);
-            if (!encrypted) {
-                fileLoaded = true;
-            }
         }
-        if (!encrypted) {
-            pdfFileName = file.name;
-        } 
     }, false);
 }
 
@@ -114,6 +124,7 @@ function resetRendering() {
     pageCounter = 1;
     encrypted = false;
     fileLoaded = false;
+    editorMode = false;
 }
 
 async function kickOff(pdf) { 
@@ -122,14 +133,12 @@ async function kickOff(pdf) {
         pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
     } catch(encryptedErr) {
         encrypted = true;
-        console.log("PDF document is encrypted. Encryption is not supported!.");
     }
     if (!encrypted) {
         const pdfBytes = await pdfDoc.save();
         pdfState.originalPDFBytes = pdfBytes;
         pdfState.existingPDFBytes = pdfState.originalPDFBytes;
         pdfState.pdf = pdf;
-        resetToDefaults();
         adjustPDFToUserViewport(pdfDoc);
         await pdfState.pdf.getPage(1).then(renderAllPages);
     }
@@ -464,16 +473,6 @@ function scaleEditImgShapeCanvas(editImg) {
     ctx.translate(-width/pdfState.zoom, -height/pdfState.zoom); 
 }
 
-function resetToDefaults() {
-    onetimeSetup = true;
-    document.getElementById("current_page").value = 1;
-    let pdfViewers = document.getElementsByClassName("pdf_viewer")
-    for (let i = 0; i < pdfViewers.length; i++) {
-        pdfViewers[i].style.display = "flex";
-    }
-    document.getElementById("reader_controls").style.display = "flex";
-}
-
 function toPercent(factor) {
     let percentString = Number(factor).toLocaleString("en-GB", { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
     let outputPercent = percentString.substring(0, percentString.length-2);
@@ -803,7 +802,9 @@ async function canvasToImage(editImg) {
 
 if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && document.getElementsByClassName("display_edit_ctls")[0] !== null) {
     displayEditControls = document.getElementsByClassName("display_edit_ctls")[0];
-    displayEditControls.addEventListener("change", initEditor, false);
+    displayEditControls.addEventListener("change", function() {
+        editorMode = true
+    }, false);
 }
 
 if (document.getElementById("writepdfbtn") !== undefined && document.getElementById("writepdfbtn") !== null) {
@@ -812,7 +813,8 @@ if (document.getElementById("writepdfbtn") !== undefined && document.getElementB
         e.preventDefault();
         resetAllModes();
         highlightTextButton();
-        if (fileLoaded) {
+        if (fileLoaded && !encrypted) {
+            editorMode = true;
             document.getElementById('writer_controls').style.display = "flex";
             document.getElementById('editor_controls').style.display = "flex";
             document.getElementById('drawer_controls').style.display = "none";
@@ -831,7 +833,8 @@ if (document.getElementById("drawpdfbtn") !== undefined && document.getElementBy
         e.preventDefault();
         resetAllModes();
         highlightDrawButton();
-        if (fileLoaded) {
+        if (fileLoaded && !encrypted) {
+            editorMode = true;
             document.getElementById('drawer_controls').style.display = "flex";
             document.getElementById('pencil_controls').style.display = "flex";
             document.getElementById('writer_controls').style.display = "none";
@@ -850,7 +853,8 @@ if (document.getElementById("geometrybtn") !== undefined && document.getElementB
         e.preventDefault();
         resetAllModes();
         highlightShapeButton();
-        if (fileLoaded) {
+        if (fileLoaded && !encrypted) {
+            editorMode = true;
             document.getElementById('writer_controls').style.display = "none";
             document.getElementById('editor_controls').style.display = "none";
             document.getElementById('drawer_controls').style.display = "none";
@@ -869,7 +873,8 @@ if (document.getElementById("imagesbtn") !== undefined && document.getElementByI
         e.preventDefault();
         resetAllModes();
         highlightImageButton();
-        if (fileLoaded) {
+        if (fileLoaded && !encrypted) {
+            editorMode = true;
             document.getElementById('writer_controls').style.display = "none";
             document.getElementById('editor_controls').style.display = "none";
             document.getElementById('drawer_controls').style.display = "none";
@@ -932,82 +937,84 @@ function highlightImageButton() {
 
 
 function initEditor() {
-    if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_text") {
-        document.getElementById('sidemenu').style.display = "flex";
-        document.getElementById('layer_stack').style.display = "flex";
-        document.getElementById('writer_controls').style.display = "flex";
-        document.getElementById('editor_controls').style.display = "flex";
-        document.getElementById('drawer_controls').style.display = "none";
-        document.getElementById('pencil_controls').style.display = "none";
-        document.getElementById('geometry_controls').style.display = "none";
-        document.getElementById('shape_controls').style.display = "none";
-        document.getElementById('images_controls').style.display = "none";
-        document.getElementById('img_controls').style.display = "none";  
-        
-    }
-    if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_draw") {
-        document.getElementById('sidemenu').style.display = "flex";
-        document.getElementById('layer_stack').style.display = "flex";
-        document.getElementById('drawer_controls').style.display = "flex";
-        document.getElementById('pencil_controls').style.display = "flex";
-        document.getElementById('writer_controls').style.display = "none";
-        document.getElementById('editor_controls').style.display = "none";
-        document.getElementById('geometry_controls').style.display = "none";
-        document.getElementById('shape_controls').style.display = "none";
-        document.getElementById('images_controls').style.display = "none";
-        document.getElementById('img_controls').style.display = "none";
-    }
-    if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_shape") {
-        document.getElementById('sidemenu').style.display = "flex";
-        document.getElementById('layer_stack').style.display = "flex";
-        document.getElementById('writer_controls').style.display = "none";
-        document.getElementById('editor_controls').style.display = "none";
-        document.getElementById('drawer_controls').style.display = "none";
-        document.getElementById('pencil_controls').style.display = "none";
-        document.getElementById('geometry_controls').style.display = "flex";
-        document.getElementById('shape_controls').style.display = "flex";
-        document.getElementById('images_controls').style.display = "none";
-        document.getElementById('img_controls').style.display = "none";
-    }
-    if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_image") {
-        document.getElementById('sidemenu').style.display = "flex";
-        document.getElementById('layer_stack').style.display = "flex";
-        document.getElementById('writer_controls').style.display = "none";
-        document.getElementById('editor_controls').style.display = "none";
-        document.getElementById('drawer_controls').style.display = "none";
-        document.getElementById('pencil_controls').style.display = "none";
-        document.getElementById('geometry_controls').style.display = "none";
-        document.getElementById('shape_controls').style.display = "none";
-        document.getElementById('images_controls').style.display = "flex";
-        document.getElementById('img_controls').style.display = "flex";
-    }
-    if (fileLoaded) {
-        if (onetimeSetup) {
-            onetimeSetup = false;
-            sidemenuVisible = true;
-            layersVisible = true;
-            boxApplyMode = true;
-            layerApplyMode = false;
-            document.getElementById('show_btns').style.display = "none";
-            initLayerVariables();
-            initTextEditorControls();
-            restrictInputValues('lineheight_input', 1, 200, false, false);
-            restrictInputValues('textsize_input', 3, 400, false, false);
-            restrictInputValues('textrotation_input', -360, 360, true, false);
-            initDrawerEditorControls();
-            restrictInputValues('scale_width_draw', 0.1, 20.0, false, true);
-            restrictInputValues('scale_height_draw', 0.1, 20.0, false, true);
-            restrictInputValues('drawrotation_input', -360, 360, true, false);
-            initGeometryEditorControls();
-            restrictInputValues('scale_width', 1, 3000, true, false);
-            restrictInputValues('scale_height', 1, 3000, true, false);
-            restrictInputValues('xp2', 1, 3000, true, false);
-            restrictInputValues('yp2', 1, 3000, true, false);
-            restrictInputValues('shaperotation_input', -360, 360, true, false);
-            initImagesEditorControls();
-            restrictInputValues('scale_width_img', 1, 3000, true, false);
-            restrictInputValues('scale_height_img', 1, 3000, true, false);
-            restrictInputValues('imgrotation_input', -360, 360, true, false); 
+    if (!encrypted && editorMode) {
+        if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_text") {
+            document.getElementById('sidemenu').style.display = "flex";
+            document.getElementById('layer_stack').style.display = "flex";
+            document.getElementById('writer_controls').style.display = "flex";
+            document.getElementById('editor_controls').style.display = "flex";
+            document.getElementById('drawer_controls').style.display = "none";
+            document.getElementById('pencil_controls').style.display = "none";
+            document.getElementById('geometry_controls').style.display = "none";
+            document.getElementById('shape_controls').style.display = "none";
+            document.getElementById('images_controls').style.display = "none";
+            document.getElementById('img_controls').style.display = "none";  
+            
+        }
+        if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_draw") {
+            document.getElementById('sidemenu').style.display = "flex";
+            document.getElementById('layer_stack').style.display = "flex";
+            document.getElementById('drawer_controls').style.display = "flex";
+            document.getElementById('pencil_controls').style.display = "flex";
+            document.getElementById('writer_controls').style.display = "none";
+            document.getElementById('editor_controls').style.display = "none";
+            document.getElementById('geometry_controls').style.display = "none";
+            document.getElementById('shape_controls').style.display = "none";
+            document.getElementById('images_controls').style.display = "none";
+            document.getElementById('img_controls').style.display = "none";
+        }
+        if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_shape") {
+            document.getElementById('sidemenu').style.display = "flex";
+            document.getElementById('layer_stack').style.display = "flex";
+            document.getElementById('writer_controls').style.display = "none";
+            document.getElementById('editor_controls').style.display = "none";
+            document.getElementById('drawer_controls').style.display = "none";
+            document.getElementById('pencil_controls').style.display = "none";
+            document.getElementById('geometry_controls').style.display = "flex";
+            document.getElementById('shape_controls').style.display = "flex";
+            document.getElementById('images_controls').style.display = "none";
+            document.getElementById('img_controls').style.display = "none";
+        }
+        if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_image") {
+            document.getElementById('sidemenu').style.display = "flex";
+            document.getElementById('layer_stack').style.display = "flex";
+            document.getElementById('writer_controls').style.display = "none";
+            document.getElementById('editor_controls').style.display = "none";
+            document.getElementById('drawer_controls').style.display = "none";
+            document.getElementById('pencil_controls').style.display = "none";
+            document.getElementById('geometry_controls').style.display = "none";
+            document.getElementById('shape_controls').style.display = "none";
+            document.getElementById('images_controls').style.display = "flex";
+            document.getElementById('img_controls').style.display = "flex";
+        }
+        if (fileLoaded) {
+            if (onetimeSetup) {
+                onetimeSetup = false;
+                sidemenuVisible = true;
+                layersVisible = true;
+                boxApplyMode = true;
+                layerApplyMode = false;
+                document.getElementById('show_btns').style.display = "none";
+                initLayerVariables();
+                initTextEditorControls();
+                restrictInputValues('lineheight_input', 1, 200, false, false);
+                restrictInputValues('textsize_input', 3, 400, false, false);
+                restrictInputValues('textrotation_input', -360, 360, true, false);
+                initDrawerEditorControls();
+                restrictInputValues('scale_width_draw', 0.1, 20.0, false, true);
+                restrictInputValues('scale_height_draw', 0.1, 20.0, false, true);
+                restrictInputValues('drawrotation_input', -360, 360, true, false);
+                initGeometryEditorControls();
+                restrictInputValues('scale_width', 1, 3000, true, false);
+                restrictInputValues('scale_height', 1, 3000, true, false);
+                restrictInputValues('xp2', 1, 3000, true, false);
+                restrictInputValues('yp2', 1, 3000, true, false);
+                restrictInputValues('shaperotation_input', -360, 360, true, false);
+                initImagesEditorControls();
+                restrictInputValues('scale_width_img', 1, 3000, true, false);
+                restrictInputValues('scale_height_img', 1, 3000, true, false);
+                restrictInputValues('imgrotation_input', -360, 360, true, false); 
+            }
         }
     }
 }

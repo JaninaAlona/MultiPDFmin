@@ -5,7 +5,9 @@ let pdfState = {
     zoom: 1,
     originalPDFBytes: null,
     existingPDFBytes: null,
-    savedPDFBytes: null
+    savedPDFBytes: null,
+    originalWidths: [],
+    originalHeights: []
 }
 
 let pageCounter = 1;
@@ -17,8 +19,6 @@ let isDrawing = false;
 let isErasing = false;
 let draggingMode = false;
 let mouseIsDown = false;
-let originalWidth;
-let originalHeight;
 let userModes = [];
 let userModesDrawer = [];
 let userModesGeometry = [];
@@ -132,6 +132,15 @@ function resetRendering() {
     fileLoaded = false;
     editorMode = false;
     renderCompleted = false;
+    pdfState.pdf = null,
+    pdfState.currentPage = 1;
+    pdfState.lastPage = 1;
+    pdfState.zoom = 1;
+    pdfState.originalPDFBytes = null;
+    pdfState.existingPDFBytes = null;
+    pdfState.savedPDFBytes = null;
+    pdfState.originalWidths = [];
+    pdfState.originalHeights = [];
 }
 
 async function kickOff(pdf) { 
@@ -255,8 +264,8 @@ async function renderAllPages(page) {
             div.width = viewport.width;
             div.height = viewport.height;
             div.style.marginBottom = "20px";
-            originalWidth = viewportOriginal.width;
-            originalHeight = viewportOriginal.height;
+            pdfState.originalWidths.push(viewportOriginal.width);
+            pdfState.originalHeights.push(viewportOriginal.height);
             div.setAttribute('data-write', pageCounter);
             div.setAttribute("data-rotation", 0);
             div.classList.add("write_layer");
@@ -484,15 +493,54 @@ function placeEditorElements() {
 }
 
 async function zoomText(controlP) {
-    controlP.editImg.width = originalWidth * pdfState.zoom;
-    controlP.editImg.height = originalHeight * pdfState.zoom;
+    controlP.editImg.width = pdfState.originalWidths[controlP.page-1] * pdfState.zoom;
+    controlP.editImg.height = pdfState.originalHeights[controlP.page-1] * pdfState.zoom;
     const currentText = controlP.elementToControl;
     await updateUserLayer(controlP, currentText.pdfBytes); 
 }
 
+function zoomDrawing(controlP, zoomWidth, zoomHeight) {
+    let context = controlP.editImg.getContext("2d");
+    context.save();
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
+    context.save();
+    scaleCanvas(controlP, zoomWidth, zoomHeight);
+    for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
+        context.beginPath();  
+        context.lineCap = "round";
+        context.lineJoin = "round";       
+        context.lineWidth = controlP.elementToControl.paths[i][0].line;
+        context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
+        context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
+        context.moveTo(controlP.elementToControl.paths[i][0].x, controlP.elementToControl.paths[i][0].y); 
+        
+        for (let j = 1; j < controlP.elementToControl.paths[i].length; j++)
+            context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
+        
+        context.stroke();
+    }
+    context.restore();
+}
+
+function scaleCanvas(controlP, zoomWidth, zoomHeight) {
+    controlP.editImg.width = pdfState.originalWidths[controlP.page-1] * pdfState.zoom;
+    controlP.editImg.height = pdfState.originalHeights[controlP.page-1] * pdfState.zoom;
+    let context = controlP.editImg.getContext("2d");
+    let width = context.canvas.width;
+    let height = context.canvas.height;
+    context.translate(width, height);
+    context.scale(zoomWidth, zoomHeight);
+    context.translate(-width/zoomWidth, -height/zoomHeight); 
+    if (userModesDrawer[0]) {
+        context.globalCompositeOperation = 'source-over';
+    } else if (userModesDrawer[1]) {
+        context.globalCompositeOperation = 'destination-out';
+    } 
+};
+
 async function zoomImages(controlP) {
-    controlP.editImg.width = originalWidth * pdfState.zoom;
-    controlP.editImg.height = originalHeight * pdfState.zoom;
+    controlP.editImg.width = pdfState.originalWidths[controlP.page-1] * pdfState.zoom;
+    controlP.editImg.height = pdfState.originalHeights[controlP.page-1] * pdfState.zoom;
     const currentImage = controlP.elementToControl;
     await updateUserLayer(controlP, currentImage.pdfBytes);  
 }
@@ -508,8 +556,8 @@ function zoomGeometry(controlP) {
 }
 
 function scaleEditImgShapeCanvas(editImg) {
-    editImg.width = originalWidth * pdfState.zoom;
-    editImg.height = originalHeight * pdfState.zoom;
+    editImg.width = pdfState.originalWidths[parseInt(editImg.getAttribute("data-page"))-1] * pdfState.zoom;
+    editImg.height = pdfState.originalHeights[parseInt(editImg.getAttribute("data-page"))-1] * pdfState.zoom;
     let ctx = editImg.getContext("2d");
     let width = ctx.canvas.width;
     let height = ctx.canvas.height;
@@ -697,8 +745,10 @@ async function setPageRotation(pdfDoc, currentPage, newRotation) {
     writeLayers[currentPage-1].width = newWidth;
     writeLayers[currentPage-1].height = newHeight;
     writeLayers[currentPage-1].setAttribute("data-rotation", newRotation);
-    originalWidth = newWidth;
-    originalHeight = newHeight;
+    let pdfStateOrigWidth = pdfState.originalWidths[currentPage-1];
+    let pdfStateOrigHeight = pdfState.originalHeights[currentPage-1];
+    pdfState.originalWidths[currentPage-1] = pdfStateOrigHeight;
+    pdfState.originalHeights[currentPage-1] = pdfStateOrigWidth;
     renderContextes[currentPage-1].width = newWidth;
     renderContextes[currentPage-1].height = newHeight;
 }
@@ -839,8 +889,8 @@ async function canvasToImage(editImg) {
     outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
         x: 0,
         y: 0,
-        width: originalWidth,
-        height: originalHeight
+        width: pdfState.originalWidths[thisPage-1],
+        height: pdfState.originalHeights[thisPage-1]
     });
 }
 

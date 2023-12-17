@@ -60,27 +60,34 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                 if (!encrypted) {
                     fileLoaded = true;
                     onetimeSetup = true;
-                    pdfFileName = file.name;
-                    document.getElementById("current_page").value = 1;
-                    let pdfViewers = document.getElementsByClassName("pdf_viewer")
-                    for (let i = 0; i < pdfViewers.length; i++) {
-                        pdfViewers[i].style.display = "flex";
+                    if (file.name.endsWith(".pdf")) {
+                        pdfFileName = file.name;
+                        document.getElementById("current_page").value = 1;
+                        let pdfViewers = document.getElementsByClassName("pdf_viewer")
+                        for (let i = 0; i < pdfViewers.length; i++) {
+                            pdfViewers[i].style.display = "flex";
+                        }
+                        document.getElementById("reader_controls").style.display = "flex";
+                        document.getElementById("viewer_bg").style.display = "flex";
+                        document.getElementById('maxPDFPages').innerHTML = pdf._pdfInfo.numPages + " pages";
+                        pdfState.lastPage = pdf._pdfInfo.numPages;
+                        restrictInputValues('current_page', 1, pdf._pdfInfo.numPages, false, false);
+                        restrictInputValues('zoom_factor', 1, 800, true, false);
+                        setCustomFilename();
+                        initEditor();
+                        updateCursorX();
+                        updateCursorY();
                     }
-                    document.getElementById("reader_controls").style.display = "flex";
-                    document.getElementById("viewer_bg").style.display = "flex";
-                    document.getElementById('maxPDFPages').innerHTML = pdf._pdfInfo.numPages + " pages";
-                    pdfState.lastPage = pdf._pdfInfo.numPages;
-                    restrictInputValues('current_page', 1, pdf._pdfInfo.numPages, false, false);
-                    restrictInputValues('zoom_factor', 1, 800, true, false);
-                    setCustomFilename();
-                    initEditor();
-                    updateCursorX();
-                    updateCursorY();
                 } else {
                     const encryptedErrorWidgets = document.getElementsByClassName("encrypted_error");
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
                         encryptedErrorWidgets[i].style.display = "flex";
                     }
+                }
+            }).catch(unsupportedFileErr => {
+                const noPDFErrorWidgets = document.getElementsByClassName("no_pdf_error");
+                for (let i = 0; i < noPDFErrorWidgets.length; i++) {
+                    noPDFErrorWidgets[i].style.display = "flex";
                 }
             });
         }

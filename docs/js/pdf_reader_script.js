@@ -290,9 +290,9 @@ async function renderAllPages(page) {
         canvasContext: context,
         viewport: viewport
     });
-    if (this.page) {
-        this.page.destroy();
-    }
+    // if (this.page) {
+    //     this.page.destroy();
+    // }
     pageCounter++;
     if (pdfState.pdf != null && pageCounter > pdfState.pdf._pdfInfo.numPages) {
         renderCompleted = true;

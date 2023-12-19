@@ -130,7 +130,7 @@ function resetRendering() {
     encrypted = false;
     fileLoaded = false;
     renderCompleted = false;
-    pdfState.pdf = null,
+    pdfState.pdf = null;
     pdfState.currentPage = 1;
     pdfState.lastPage = 1;
     pdfState.zoom = 1;
@@ -154,10 +154,12 @@ async function kickOff(pdf) {
         pdfState.existingPDFBytes = pdfState.originalPDFBytes;
         pdfState.pdf = pdf;
         adjustPDFToUserViewport(pdfDoc);
+        // await pdfState.pdf.getPage(1).then(renderAllPages);
+
         await pdfState.pdf.getPage(1).then(async (page) => {
-            // if (this.page) {
-            //     this.page.destroy();
-            // }
+            if (this.page) {
+                this.page.destroy();
+            }
             await renderAllPages(page);
         });
     }
@@ -290,19 +292,21 @@ async function renderAllPages(page) {
         canvasContext: context,
         viewport: viewport
     });
-    // if (this.page) {
-    //     this.page.destroy();
-    // }
+    if (this.page) {
+        this.page.destroy();
+    }
     pageCounter++;
     if (pdfState.pdf != null && pageCounter > pdfState.pdf._pdfInfo.numPages) {
         renderCompleted = true;
     }
     if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
         renderCompleted = false;
-        await pdfState.pdf.getPage(1).then(async (page) => {
-        //     if (this.page) {
-        //         this.page.destroy();
-        //     }
+        // await pdfState.pdf.getPage(pageCounter).then(renderAllPages);
+
+        await pdfState.pdf.getPage(pageCounter).then(async (page) => {
+            if (this.page) {
+                this.page.destroy();
+            }
             await renderAllPages(page);
         });
     }
@@ -369,10 +373,12 @@ async function zoomIn(e) {
                 pdfState.zoom = toFactor(percent);
                 placeEditorElements();
                 pageCounter = 1;
+                // await pdfState.pdf.getPage(1).then(renderAllPages);
+
                 await pdfState.pdf.getPage(1).then(async (page) => {
-                //     if (this.page) {
-                //         this.page.destroy();
-                //     }
+                    if (this.page) {
+                        this.page.destroy();
+                    }
                     await renderAllPages(page);
                 });
             }
@@ -392,10 +398,12 @@ async function zoomOut(e) {
                 pdfState.zoom = toFactor(percent);
                 placeEditorElements();
                 pageCounter = 1;
+                // await pdfState.pdf.getPage(1).then(renderAllPages);
+
                 await pdfState.pdf.getPage(1).then(async (page) => {
-                //     if (this.page) {
-                //         this.page.destroy();
-                //     }
+                    if (this.page) {
+                        this.page.destroy();
+                    }
                     await renderAllPages(page);
                 });
             }
@@ -430,10 +438,12 @@ async function enterZoomFactor(e) {
                 document.getElementById("zoom_factor").value = zoomVal + "%";
                 placeEditorElements();
                 pageCounter = 1;
+                // await pdfState.pdf.getPage(1).then(renderAllPages);
+
                 await pdfState.pdf.getPage(1).then(async (page) => {
-                //     if (this.page) {
-                //         this.page.destroy();
-                //     }
+                    if (this.page) {
+                        this.page.destroy();
+                    }
                     await renderAllPages(page);
                 });
             }

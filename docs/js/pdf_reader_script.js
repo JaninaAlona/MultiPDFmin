@@ -154,8 +154,6 @@ async function kickOff(pdf) {
         pdfState.existingPDFBytes = pdfState.originalPDFBytes;
         pdfState.pdf = pdf;
         adjustPDFToUserViewport(pdfDoc);
-        // await pdfState.pdf.getPage(1).then(renderAllPages);
-
         await pdfState.pdf.getPage(1).then(async (page) => {
             if (this.page) {
                 this.page.destroy();
@@ -301,8 +299,6 @@ async function renderAllPages(page) {
     }
     if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
         renderCompleted = false;
-        // await pdfState.pdf.getPage(pageCounter).then(renderAllPages);
-
         await pdfState.pdf.getPage(pageCounter).then(async (page) => {
             if (this.page) {
                 this.page.destroy();
@@ -373,8 +369,6 @@ async function zoomIn(e) {
                 pdfState.zoom = toFactor(percent);
                 placeEditorElements();
                 pageCounter = 1;
-                // await pdfState.pdf.getPage(1).then(renderAllPages);
-
                 await pdfState.pdf.getPage(1).then(async (page) => {
                     if (this.page) {
                         this.page.destroy();
@@ -398,8 +392,6 @@ async function zoomOut(e) {
                 pdfState.zoom = toFactor(percent);
                 placeEditorElements();
                 pageCounter = 1;
-                // await pdfState.pdf.getPage(1).then(renderAllPages);
-
                 await pdfState.pdf.getPage(1).then(async (page) => {
                     if (this.page) {
                         this.page.destroy();
@@ -438,8 +430,6 @@ async function enterZoomFactor(e) {
                 document.getElementById("zoom_factor").value = zoomVal + "%";
                 placeEditorElements();
                 pageCounter = 1;
-                // await pdfState.pdf.getPage(1).then(renderAllPages);
-
                 await pdfState.pdf.getPage(1).then(async (page) => {
                     if (this.page) {
                         this.page.destroy();

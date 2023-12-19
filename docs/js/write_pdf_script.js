@@ -12,11 +12,10 @@ let userText = {
     lineHeight: 24,
     color: rgb(0, 0, 0),
     page: 1,
-    renderPage: 0,
     opacity: 1.0,
     rotation: degrees(0),
     setTextElem() {
-        this.pdfDoc.getPages()[this.renderPage].drawText(this.text, {
+        this.pdfDoc.getPages()[0].drawText(this.text, {
             x: this.x,
             y: this.y,
             size: this.size,
@@ -119,7 +118,6 @@ async function addText(event, writeLayer) {
         currentUserText.lineHeight = 24;
         currentUserText.color = rgb(0, 0, 0);
         currentUserText.page = writePage;
-        currentUserText.renderPage = 0;
         currentUserText.opacity = 1.0;
         currentUserText.rotation = degrees(0);
         currentUserText.setTextElem();

@@ -9,11 +9,10 @@ let userImage = {
     width: 1,
     height: 1,
     page: 1,
-    renderPage: 0,
     opacity: 1.0,
     rotation: degrees(0),
     setImageElem() {
-        this.pdfDoc.getPages()[this.renderPage].drawImage(this.image, {
+        this.pdfDoc.getPages()[0].drawImage(this.image, {
            x: this.x,
            y: this.y,
            width: this.width,
@@ -166,20 +165,16 @@ async function addImage(e, writeLayer) {
             currentUserImage.y = writeLayer.height - mousePos.y / pdfState.zoom;
             currentUserImage.width = imgBytes.width;
             currentUserImage.height = imgBytes.height;
-
             const imgDimOutputW = document.getElementsByClassName("img_dim_width");
             imgDimOutputW[checkedIndex].innerHTML = imgBytes.width;
             const imgDimOutputH = document.getElementsByClassName("img_dim_height");
             imgDimOutputH[checkedIndex].innerHTML = imgBytes.height;
-
             currentUserImage.page = writePage;
-            currentUserImage.renderPage = 0;
             currentUserImage.opacity = 1.0;
             currentUserImage.rotation = degrees(0);
             currentUserImage.setImageElem();
             const pdfLayerBytes = await pdfLayer.save();
             currentUserImage.pdfBytes = pdfLayerBytes;
-            
             controlP.x = mousePos.x;
             controlP.y = mousePos.y;
             controlP.elementToControl = currentUserImage;

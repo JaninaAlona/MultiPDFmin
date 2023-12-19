@@ -267,7 +267,6 @@ async function renderAllPages(page) {
             pdfState.originalWidths.push(viewportOriginal.width);
             pdfState.originalHeights.push(viewportOriginal.height);
             div.setAttribute('data-write', pageCounter);
-            div.setAttribute("data-rotation", 0);
             div.classList.add("write_layer");
             canvas = document.createElement("canvas");
             canvas.style.display = "flex";
@@ -360,7 +359,6 @@ const debouncedZoomIn = debounce(zoomIn, 300);
 const debouncedZoomOut = debounce(zoomOut, 300);
 const debouncedEnterZoomFactor = debounce(enterZoomFactor, 300);
   
-
 async function zoomIn(e) {
     resetAllModes();
     if (renderCompleted) {
@@ -384,7 +382,6 @@ async function zoomIn(e) {
     }
 }
 
-
 async function zoomOut(e) {
     resetAllModes();
     if (renderCompleted) {
@@ -407,7 +404,6 @@ async function zoomOut(e) {
         }
     }
 }
-
 
 async function enterZoomFactor(e) {
     resetAllModes();
@@ -759,7 +755,6 @@ async function setPageRotation(pdfDoc, currentPage, newRotation) {
     let newHeight = writeLayers[currentPage-1].width;
     writeLayers[currentPage-1].width = newWidth;
     writeLayers[currentPage-1].height = newHeight;
-    writeLayers[currentPage-1].setAttribute("data-rotation", newRotation);
     let pdfStateOrigWidth = pdfState.originalWidths[currentPage-1];
     let pdfStateOrigHeight = pdfState.originalHeights[currentPage-1];
     pdfState.originalWidths[currentPage-1] = pdfStateOrigHeight;

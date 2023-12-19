@@ -155,9 +155,9 @@ async function kickOff(pdf) {
         pdfState.pdf = pdf;
         adjustPDFToUserViewport(pdfDoc);
         await pdfState.pdf.getPage(1).then(async (page) => {
-            if (this.page) {
-                this.page.destroy();
-            }
+            // if (this.page) {
+            //     this.page.destroy();
+            // }
             await renderAllPages(page);
         });
     }
@@ -300,9 +300,9 @@ async function renderAllPages(page) {
     if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
         renderCompleted = false;
         await pdfState.pdf.getPage(1).then(async (page) => {
-            if (this.page) {
-                this.page.destroy();
-            }
+        //     if (this.page) {
+        //         this.page.destroy();
+        //     }
             await renderAllPages(page);
         });
     }
@@ -370,9 +370,9 @@ async function zoomIn(e) {
                 placeEditorElements();
                 pageCounter = 1;
                 await pdfState.pdf.getPage(1).then(async (page) => {
-                    if (this.page) {
-                        this.page.destroy();
-                    }
+                //     if (this.page) {
+                //         this.page.destroy();
+                //     }
                     await renderAllPages(page);
                 });
             }
@@ -393,9 +393,9 @@ async function zoomOut(e) {
                 placeEditorElements();
                 pageCounter = 1;
                 await pdfState.pdf.getPage(1).then(async (page) => {
-                    if (this.page) {
-                        this.page.destroy();
-                    }
+                //     if (this.page) {
+                //         this.page.destroy();
+                //     }
                     await renderAllPages(page);
                 });
             }
@@ -431,9 +431,9 @@ async function enterZoomFactor(e) {
                 placeEditorElements();
                 pageCounter = 1;
                 await pdfState.pdf.getPage(1).then(async (page) => {
-                    if (this.page) {
-                        this.page.destroy();
-                    }
+                //     if (this.page) {
+                //         this.page.destroy();
+                //     }
                     await renderAllPages(page);
                 });
             }

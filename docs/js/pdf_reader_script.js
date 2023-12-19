@@ -36,12 +36,12 @@ let sidemenuVisible = true;
 let layersVisible = true;
 let onetimeSetup = true;
 let displayEditControls;
+let displayReadCtls;
 let writePdfBtn;
 let drawPdfBtn;
 let geometryBtn;
 let imagesBtn;
 let encrypted;
-let editorMode = false;
 let renderCompleted = false;
 
 
@@ -59,9 +59,8 @@ for (let i = 0; i < inputFileButtons.length; i++) {
             loadingTask.promise.then(async (pdf) => {
                 await kickOff(pdf);
                 if (!encrypted) {
-                    fileLoaded = true;
-                    onetimeSetup = true;
                     if (file.name.endsWith(".pdf")) {
+                        onetimeSetup = true;
                         pdfFileName = file.name;
                         document.getElementById("current_page").value = 1;
                         let pdfViewers = document.getElementsByClassName("pdf_viewer")
@@ -75,7 +74,6 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         restrictInputValues('current_page', 1, pdf._pdfInfo.numPages, false, false);
                         restrictInputValues('zoom_factor', 1, 800, true, false);
                         setCustomFilename();
-                        initEditor();
                     }
                 } else {
                     const encryptedErrorWidgets = document.getElementsByClassName("encrypted_error");
@@ -91,6 +89,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
             });
         }
         if (file) {
+            fileLoaded = true;
             fileReader.readAsArrayBuffer(file);
         }
     }, false);
@@ -130,7 +129,6 @@ function resetRendering() {
     pageCounter = 1;
     encrypted = false;
     fileLoaded = false;
-    editorMode = false;
     renderCompleted = false;
     pdfState.pdf = null,
     pdfState.currentPage = 1;
@@ -908,7 +906,7 @@ async function canvasToImage(editImg) {
 if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && document.getElementsByClassName("display_edit_ctls")[0] !== null) {
     displayEditControls = document.getElementsByClassName("display_edit_ctls")[0];
     displayEditControls.addEventListener("change", function() {
-        editorMode = true
+        initEditor();
     }, false);
 }
 
@@ -919,7 +917,6 @@ if (document.getElementById("writepdfbtn") !== undefined && document.getElementB
         resetAllModes();
         highlightTextButton();
         if (fileLoaded && !encrypted) {
-            editorMode = true;
             document.getElementById('writer_controls').style.display = "flex";
             document.getElementById('editor_controls').style.display = "flex";
             document.getElementById('drawer_controls').style.display = "none";
@@ -939,7 +936,6 @@ if (document.getElementById("drawpdfbtn") !== undefined && document.getElementBy
         resetAllModes();
         highlightDrawButton();
         if (fileLoaded && !encrypted) {
-            editorMode = true;
             document.getElementById('drawer_controls').style.display = "flex";
             document.getElementById('pencil_controls').style.display = "flex";
             document.getElementById('writer_controls').style.display = "none";
@@ -959,7 +955,6 @@ if (document.getElementById("geometrybtn") !== undefined && document.getElementB
         resetAllModes();
         highlightShapeButton();
         if (fileLoaded && !encrypted) {
-            editorMode = true;
             document.getElementById('writer_controls').style.display = "none";
             document.getElementById('editor_controls').style.display = "none";
             document.getElementById('drawer_controls').style.display = "none";
@@ -979,7 +974,6 @@ if (document.getElementById("imagesbtn") !== undefined && document.getElementByI
         resetAllModes();
         highlightImageButton();
         if (fileLoaded && !encrypted) {
-            editorMode = true;
             document.getElementById('writer_controls').style.display = "none";
             document.getElementById('editor_controls').style.display = "none";
             document.getElementById('drawer_controls').style.display = "none";
@@ -1042,7 +1036,7 @@ function highlightImageButton() {
 
 
 function initEditor() {
-    if (!encrypted && editorMode) {
+    if (!encrypted) {
         if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_text") {
             document.getElementById('sidemenu').style.display = "flex";
             document.getElementById('layer_stack').style.display = "flex";
@@ -1054,7 +1048,6 @@ function initEditor() {
             document.getElementById('shape_controls').style.display = "none";
             document.getElementById('images_controls').style.display = "none";
             document.getElementById('img_controls').style.display = "none";  
-            
         }
         if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_draw") {
             document.getElementById('sidemenu').style.display = "flex";

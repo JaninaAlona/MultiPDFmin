@@ -71,15 +71,25 @@ function createFileListEntry(isImage, filename, index, filelistingClass, contain
     const label = document.createElement('label');
     label.for = index + "filelist";
     label.className = 'filelabel';
-    if (filename.length > 35) {
-        if (filename.endsWith(".jpg") || filename.endsWith(".png")) {
-            label.innerHTML = filename.substring(0, 30).concat(filename.substring(filename.length-4, filename.length));
-        } 
-        if (filename.endsWith(".jpeg")) {
-            label.innerHTML = filename.substring(0, 30).concat(filename.substring(filename.length-5, filename.length));
+    if (filename.endsWith(".jpg") || filename.endsWith(".png")) {
+        let tempFilename = filename;
+        let displayFilename = "";
+        while (tempFilename.length >= 20) {
+            displayFilename = displayFilename + tempFilename.substring(0, 20) + "<br />"
+            tempFilename = tempFilename.substring(20, tempFilename.length);
         }
-    } else {
-        label.innerHTML = filename;
+        displayFilename = displayFilename + tempFilename.substring(0, tempFilename.length);
+        label.innerHTML = displayFilename;
+    } 
+    if (filename.endsWith(".jpeg")) {
+        let tempFilename = filename;
+        let displayFilename = "";
+        while (tempFilename.length >= 20) {
+            displayFilename = displayFilename + tempFilename.substring(0, 20) + "<br />"
+            tempFilename = tempFilename.substring(20, tempFilename.length);
+        }
+        displayFilename = displayFilename + tempFilename.substring(0, tempFilename.length);
+        label.innerHTML = displayFilename;
     }
     div.appendChild(fileListing);
     div.appendChild(label);

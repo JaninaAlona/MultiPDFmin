@@ -440,7 +440,6 @@ async function dublicateElement(thisPage, index, type) {
         const currentShape = Object.create(shape);
         const shapeControllerP = Object.create(shapeControllerPoint);
         const pdfCanvases = document.getElementsByClassName("render_context");
-
         currentShape.type = shapeToDublicate.type;
         currentShape.xp2 = shapeToDublicate.xp2;
         currentShape.yp2 = shapeToDublicate.yp2;
@@ -453,14 +452,11 @@ async function dublicateElement(thisPage, index, type) {
         currentShape.useStroke = shapeToDublicate.useStroke;
         currentShape.rotation = shapeToDublicate.rotation;
         currentShape.page = shapeToDublicate.page;
-    
-        shapeControllerP.elementToControl = currentShape;
         shapeControllerP.layer = elementToDublicate.layer;
         shapeControllerP.page = elementToDublicate.page;
         shapeControllerP.index = shapeControllerPointCounter;
         shapeControllerP.rotation = elementToDublicate.rotation;
         geometryPointsList.push(shapeControllerP);
-        
         const canvasContainer = document.createElement("canvas");
         canvasContainer.style.display = "flex";
         canvasContainer.style.position = "absolute";
@@ -473,16 +469,18 @@ async function dublicateElement(thisPage, index, type) {
         canvasContainer.classList.add("editimg");
         canvasContainer.classList.add("shape");
         shapeControllerP.editImg = canvasContainer;
-        
         const ctx = canvasContainer.getContext("2d");
         currentShape.context = ctx;
         currentShape.x = shapeToDublicate.x;
         currentShape.y = shapeToDublicate.y;
+        let origX = elementToDublicate.x;
+        let origY = elementToDublicate.y;
         shapeControllerP.x = elementToDublicate.x * pdfState.zoom;
         shapeControllerP.y = elementToDublicate.y * pdfState.zoom;
+        shapeControllerP.elementToControl = currentShape;
         shapeControllerP.setControlPoint();
-        shapeControllerP.x = elementToDublicate.x;
-        shapeControllerP.y = elementToDublicate.y;
+        shapeControllerP.x = origX;
+        shapeControllerP.y = origY;
         elementToDublicate.controlBox.parentNode.insertBefore(shapeControllerP.controlBox, elementToDublicate.controlBox.nextSibling);
         elementToDublicate.editImg.parentNode.insertBefore(shapeControllerP.editImg, elementToDublicate.editImg.nextSibling);
         zoomGeometry(shapeControllerP);

@@ -521,11 +521,15 @@ async function applyFontSize(controlP) {
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);
         const currentText = controlP.elementToControl;
+        let oldSize = currentText.size;
+        let changeSizeFactor = (fontSizeValueToSet/oldSize);
+        let oldLineHeight = currentText.lineHeight;
         currentText.font = await pdfLayer.embedFont(currentText.fontKey);
         let pdfCanvases = document.getElementsByClassName("render_context");
         const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentText.pdfDoc = pdfLayer;
         currentText.size = fontSizeValueToSet;
+        currentText.lineHeight = oldLineHeight * changeSizeFactor;
         currentText.setTextElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentText.pdfBytes = pdfLayerBytes;

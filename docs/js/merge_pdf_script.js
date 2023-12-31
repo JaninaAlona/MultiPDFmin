@@ -5,13 +5,12 @@ let selectedPDFBytes = [];
 let outputPdf = null;
 let pdfBytes;
 let file;
+let mergeFilename = "merged_pdf";
 
 
 const merger = Vue.createApp({
     data() {
         return {
-            mergeFilename: '',
-            filename: '',
             isEncrypted: false
         }
     },
@@ -59,8 +58,7 @@ const merger = Vue.createApp({
                             document.getElementById('save_merge').disabled = false;
                             document.getElementById('remove').disabled = false;
                             document.getElementById("save_merge").classList.add("enable_filename");
-                            this.mergeFilename = "merged_pdf";
-                            document.getElementById("merge_filename").value = this.mergeFilename;
+                            document.getElementById("merge_filename").value = mergeFilename;
                         }
                     }
                 } else {
@@ -100,12 +98,12 @@ const merger = Vue.createApp({
                 inputFilename = inputFilename.substring(0, 50);
                 document.getElementById("merge_filename").value = inputFilename;
             }
-            this.mergeFilename = inputFilename;
+            mergeFilename = inputFilename;
         },
 
         async saveMergedPDF() {
             await mergePDFs();
-            download(pdfBytes, this.mergeFilename + ".pdf", "application/pdf");
+            download(pdfBytes, mergeFilename + ".pdf", "application/pdf");
         }
     }
 });

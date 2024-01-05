@@ -906,7 +906,57 @@ async function canvasToImage(editImg) {
 if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && document.getElementsByClassName("display_edit_ctls")[0] !== null) {
     displayEditControls = document.getElementsByClassName("display_edit_ctls")[0];
     displayEditControls.addEventListener("change", function() {
-        initEditor();
+        if (!encrypted && fileLoaded) {
+            if (displayEditControls.getAttribute("data-mode") === "edit_text") {
+                document.getElementById('sidemenu').style.display = "flex";
+                document.getElementById('layer_stack').style.display = "flex";
+                document.getElementById('writer_controls').style.display = "flex";
+                document.getElementById('editor_controls').style.display = "flex";
+                document.getElementById('drawer_controls').style.display = "none";
+                document.getElementById('pencil_controls').style.display = "none";
+                document.getElementById('geometry_controls').style.display = "none";
+                document.getElementById('shape_controls').style.display = "none";
+                document.getElementById('images_controls').style.display = "none";
+                document.getElementById('img_controls').style.display = "none";  
+            }
+            if (displayEditControls.getAttribute("data-mode") === "edit_draw") {
+                document.getElementById('sidemenu').style.display = "flex";
+                document.getElementById('layer_stack').style.display = "flex";
+                document.getElementById('drawer_controls').style.display = "flex";
+                document.getElementById('pencil_controls').style.display = "flex";
+                document.getElementById('writer_controls').style.display = "none";
+                document.getElementById('editor_controls').style.display = "none";
+                document.getElementById('geometry_controls').style.display = "none";
+                document.getElementById('shape_controls').style.display = "none";
+                document.getElementById('images_controls').style.display = "none";
+                document.getElementById('img_controls').style.display = "none";
+            }
+            if (displayEditControls.getAttribute("data-mode") === "edit_shape") {
+                document.getElementById('sidemenu').style.display = "flex";
+                document.getElementById('layer_stack').style.display = "flex";
+                document.getElementById('writer_controls').style.display = "none";
+                document.getElementById('editor_controls').style.display = "none";
+                document.getElementById('drawer_controls').style.display = "none";
+                document.getElementById('pencil_controls').style.display = "none";
+                document.getElementById('geometry_controls').style.display = "flex";
+                document.getElementById('shape_controls').style.display = "flex";
+                document.getElementById('images_controls').style.display = "none";
+                document.getElementById('img_controls').style.display = "none";
+            }
+            if (displayEditControls.getAttribute("data-mode") === "edit_image") {
+                document.getElementById('sidemenu').style.display = "flex";
+                document.getElementById('layer_stack').style.display = "flex";
+                document.getElementById('writer_controls').style.display = "none";
+                document.getElementById('editor_controls').style.display = "none";
+                document.getElementById('drawer_controls').style.display = "none";
+                document.getElementById('pencil_controls').style.display = "none";
+                document.getElementById('geometry_controls').style.display = "none";
+                document.getElementById('shape_controls').style.display = "none";
+                document.getElementById('images_controls').style.display = "flex";
+                document.getElementById('img_controls').style.display = "flex";
+            }
+            setTimeout(initEditor, 1000);
+        }
     }, false);
 }
 
@@ -1036,86 +1086,34 @@ function highlightImageButton() {
 
 
 function initEditor() {
-    if (!encrypted) {
-        if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_text") {
-            document.getElementById('sidemenu').style.display = "flex";
-            document.getElementById('layer_stack').style.display = "flex";
-            document.getElementById('writer_controls').style.display = "flex";
-            document.getElementById('editor_controls').style.display = "flex";
-            document.getElementById('drawer_controls').style.display = "none";
-            document.getElementById('pencil_controls').style.display = "none";
-            document.getElementById('geometry_controls').style.display = "none";
-            document.getElementById('shape_controls').style.display = "none";
-            document.getElementById('images_controls').style.display = "none";
-            document.getElementById('img_controls').style.display = "none";  
-        }
-        if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_draw") {
-            document.getElementById('sidemenu').style.display = "flex";
-            document.getElementById('layer_stack').style.display = "flex";
-            document.getElementById('drawer_controls').style.display = "flex";
-            document.getElementById('pencil_controls').style.display = "flex";
-            document.getElementById('writer_controls').style.display = "none";
-            document.getElementById('editor_controls').style.display = "none";
-            document.getElementById('geometry_controls').style.display = "none";
-            document.getElementById('shape_controls').style.display = "none";
-            document.getElementById('images_controls').style.display = "none";
-            document.getElementById('img_controls').style.display = "none";
-        }
-        if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_shape") {
-            document.getElementById('sidemenu').style.display = "flex";
-            document.getElementById('layer_stack').style.display = "flex";
-            document.getElementById('writer_controls').style.display = "none";
-            document.getElementById('editor_controls').style.display = "none";
-            document.getElementById('drawer_controls').style.display = "none";
-            document.getElementById('pencil_controls').style.display = "none";
-            document.getElementById('geometry_controls').style.display = "flex";
-            document.getElementById('shape_controls').style.display = "flex";
-            document.getElementById('images_controls').style.display = "none";
-            document.getElementById('img_controls').style.display = "none";
-        }
-        if (fileLoaded && displayEditControls.getAttribute("data-mode") === "edit_image") {
-            document.getElementById('sidemenu').style.display = "flex";
-            document.getElementById('layer_stack').style.display = "flex";
-            document.getElementById('writer_controls').style.display = "none";
-            document.getElementById('editor_controls').style.display = "none";
-            document.getElementById('drawer_controls').style.display = "none";
-            document.getElementById('pencil_controls').style.display = "none";
-            document.getElementById('geometry_controls').style.display = "none";
-            document.getElementById('shape_controls').style.display = "none";
-            document.getElementById('images_controls').style.display = "flex";
-            document.getElementById('img_controls').style.display = "flex";
-        }
-        if (fileLoaded) {
-            if (onetimeSetup) {
-                onetimeSetup = false;
-                sidemenuVisible = true;
-                layersVisible = true;
-                boxApplyMode = true;
-                layerApplyMode = false;
-                document.getElementById('show_btns').style.display = "none";
-                initLayerVariables();
-                initTextEditorControls();
-                restrictInputValues('lineheight_input', 1, 200, false, false);
-                restrictInputValues('textsize_input', 3, 400, false, false);
-                restrictInputValues('textrotation_input', -360, 360, true, false);
-                initDrawerEditorControls();
-                restrictInputValues('scale_width_draw', 0.1, 20.0, false, true);
-                restrictInputValues('scale_height_draw', 0.1, 20.0, false, true);
-                restrictInputValues('drawrotation_input', -360, 360, true, false);
-                initGeometryEditorControls();
-                restrictInputValues('scale_width', 1, 3000, true, false);
-                restrictInputValues('scale_height', 1, 3000, true, false);
-                restrictInputValues('xp2', 1, 3000, true, false);
-                restrictInputValues('yp2', 1, 3000, true, false);
-                restrictInputValues('shaperotation_input', -360, 360, true, false);
-                initImagesEditorControls();
-                restrictInputValues('scale_width_img', 1, 3000, true, false);
-                restrictInputValues('scale_height_img', 1, 3000, true, false);
-                restrictInputValues('imgrotation_input', -360, 360, true, false); 
-                updateCursorX();
-                updateCursorY();
-            }
-        }
+    if (onetimeSetup) {
+        onetimeSetup = false;
+        sidemenuVisible = true;
+        layersVisible = true;
+        boxApplyMode = true;
+        layerApplyMode = false;
+        document.getElementById('show_btns').style.display = "none";
+        initLayerVariables();
+        initTextEditorControls();
+        restrictInputValues('lineheight_input', 1, 200, false, false);
+        restrictInputValues('textsize_input', 3, 400, false, false);
+        restrictInputValues('textrotation_input', -360, 360, true, false);
+        initDrawerEditorControls();
+        restrictInputValues('scale_width_draw', 0.1, 20.0, false, true);
+        restrictInputValues('scale_height_draw', 0.1, 20.0, false, true);
+        restrictInputValues('drawrotation_input', -360, 360, true, false);
+        initGeometryEditorControls();
+        restrictInputValues('scale_width', 1, 3000, true, false);
+        restrictInputValues('scale_height', 1, 3000, true, false);
+        restrictInputValues('xp2', 1, 3000, true, false);
+        restrictInputValues('yp2', 1, 3000, true, false);
+        restrictInputValues('shaperotation_input', -360, 360, true, false);
+        initImagesEditorControls();
+        restrictInputValues('scale_width_img', 1, 3000, true, false);
+        restrictInputValues('scale_height_img', 1, 3000, true, false);
+        restrictInputValues('imgrotation_input', -360, 360, true, false); 
+        updateCursorX();
+        updateCursorY();
     }
 }
 
@@ -1346,7 +1344,7 @@ function updateCursorX() {
             let rect = writeLayers[i].getBoundingClientRect();
             let cursorXs = document.getElementsByClassName("cursor_x");
             for (let i = 0; i < cursorXs.length; i++) {
-                cursorXs[i].innerText = `Cursor X: ${parseInt(e.clientX - rect.left)}`;
+                cursorXs[i].innerText = `${parseInt(e.clientX - rect.left)}`;
             }
         }, false);
     }
@@ -1359,7 +1357,7 @@ function updateCursorY() {
             let rect = writeLayers[i].getBoundingClientRect();
             let cursorYs = document.getElementsByClassName("cursor_y");
             for (let i = 0; i < cursorYs.length; i++) {
-                cursorYs[i].innerText = `Cursor Y: ${parseInt(e.clientY - rect.top)}`;
+                cursorYs[i].innerText = `${parseInt(e.clientY - rect.top)}`;
             }
         }, false);
     }

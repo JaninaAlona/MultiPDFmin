@@ -1100,6 +1100,7 @@ function initEditor() {
         restrictInputValues('textrotation_input', -360, 360, true, false);
         initDrawerEditorControls();
         restrictInputValues('scale_width_draw', 0.1, 20.0, false, true);
+        restrictInputValues('pencilsize', 0.1, 50.0, false, true);
         restrictInputValues('scale_height_draw', 0.1, 20.0, false, true);
         restrictInputValues('drawrotation_input', -360, 360, true, false);
         initGeometryEditorControls();
@@ -1217,9 +1218,7 @@ function initSidemenuControlsDrawer() {
     sidemenuVisible = true;
     scaleInputFieldWidthDraw.value = 1;
     scaleInputFieldHeightDraw.value = 1;
-    sliderPencilsize.value = 4;
-    sliderPencilsize.wPosition = 4;
-    outputPencilsize.value = "4";
+    pencilsizeInput.value = "4";
     drawRotationSelector.selectedIndex = 0;
     drawRotationInput.value = 0;
 }

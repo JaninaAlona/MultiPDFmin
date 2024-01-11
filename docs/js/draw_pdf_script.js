@@ -23,6 +23,7 @@ let pencilColor = "rgba(0,0,0,1.0)";
 let eraserColor = "rgba(0,0,0,1.0)";
 let colorPickerValue;
 let addLayer = true;
+let pencilSize = 4;
 let drawControllerPointCounter = 0;
 let rotateDrawSelectorTriggered = false;
 let rotateDrawInputFieldTriggered = false;
@@ -127,7 +128,7 @@ function draw(writeLayer) {
                 context.beginPath(); 
                 context.lineCap = "round";
                 context.lineJoin = "round"; 
-                context.lineWidth = sliderPencilsize.valueAsNumber;
+                context.lineWidth = pencilSize;
                 context.strokeStyle = pencilColor; 
                 context.globalCompositeOperation = 'source-over';
                 context.moveTo((event.clientX - rect.left)/pdfState.zoom, (event.clientY - rect.top)/pdfState.zoom);
@@ -135,7 +136,7 @@ function draw(writeLayer) {
                 if (typeof controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex] == 'undefined')
                     controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex] = [];
                 
-                controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:sliderPencilsize.valueAsNumber, color:pencilColor, compositeOp:'source-over'});
+                controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:pencilSize, color:pencilColor, compositeOp:'source-over'});
                 writeLayer.onmouseup = stopDrawing;
                 writeLayer.onmousemove = drawing;
             }
@@ -149,7 +150,7 @@ function draw(writeLayer) {
             let rect = controlP.editImg.getBoundingClientRect(); 
             context.lineTo((event.clientX - rect.left)/pdfState.zoom, (event.clientY - rect.top)/pdfState.zoom);
             context.stroke();
-            controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:sliderPencilsize.valueAsNumber, color:pencilColor, compositeOp:'source-over'});     
+            controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:pencilSize, color:pencilColor, compositeOp:'source-over'});     
         }
     }
 
@@ -315,7 +316,7 @@ function erase(writeLayer) {
                 context.beginPath(); 
                 context.lineCap = "round";
                 context.lineJoin = "round"; 
-                context.lineWidth = sliderPencilsize.valueAsNumber;
+                context.lineWidth = pencilSize;
                 context.strokeStyle = eraserColor; 
                 context.globalCompositeOperation = 'destination-out';    
                 context.moveTo((event.clientX - rect.left)/pdfState.zoom, (event.clientY - rect.top)/pdfState.zoom);
@@ -323,7 +324,7 @@ function erase(writeLayer) {
                 if (typeof controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex] == 'undefined')
                     controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex] = [];
                 
-                controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:sliderPencilsize.valueAsNumber, color:eraserColor, compositeOp:'destination-out'});
+                controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:pencilSize, color:eraserColor, compositeOp:'destination-out'});
                 writeLayer.onmouseup = stopErasing;
                 writeLayer.onmousemove = erasing;
             }
@@ -337,7 +338,7 @@ function erase(writeLayer) {
             let rect = controlP.editImg.getBoundingClientRect(); 
             context.lineTo((event.clientX - rect.left)/pdfState.zoom, (event.clientY - rect.top)/pdfState.zoom);
             context.stroke();
-            controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:sliderPencilsize.valueAsNumber, color:eraserColor, compositeOp:'destination-out'});       
+            controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:pencilSize, color:eraserColor, compositeOp:'destination-out'});       
         }
     }
 
@@ -510,28 +511,20 @@ function moveDrawing(controlP) {
 }
 
 
-let sliderPencilsize = document.querySelector("#pencilsize");
-let outputPencilsize = document.querySelector("#pencilsize_output");
-
-function smoothSlider(slider, max) {
-    let sliderVal = slider.value;
-    let intervalLenght = 100/max;
-    let interval = sliderVal / intervalLenght;
-    let intervalRest = sliderVal % intervalLenght;
-    if (intervalRest != 0 && Math.floor(interval) < max) {
-        outputPencilsize.value = Math.floor(interval) + 1;
-    } else {
-        outputPencilsize.value = interval;
-    }
-}
-
-sliderPencilsize.addEventListener("input", function() {
-    smoothSlider(sliderPencilsize, 50);
-}, false);
+let pencilsizeInput = document.querySelector("#pencilsize");
 
 document.getElementById('applypencilsize').addEventListener("click", function() {
     resetAllModes();
-    pencilSize = sliderPencilsize.valueAsNumber;
+    let currentPencilSize = pencilsizeInput.value;
+    while (currentPencilSize.search(" ") > -1) {
+        currentPencilSize = currentPencilSize.replace(" ", "");
+    }
+    if (!isNaN(currentPencilSize)) {
+        currentPencilSize = parseFloat(currentPencilSize);
+        if (currentPencilSize > 0 && currentPencilSize <= 50) {
+            pencilSize = currentPencilSize;
+        }
+    } 
 }, false);
 
 

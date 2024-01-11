@@ -109,8 +109,24 @@ div.drawing {
     width: 135px;
 }
 
-.remove_margin {
+.sidemenu_margins_col {
+    margin: 5px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    width: 135px;
+}
+
+.inner_margin {
+    margin-right: 10px;
+}
+
+.margin_bottom {
     margin-bottom: 10px;
+}
+
+.remove_margin {
+    margin-bottom: 30px;
 }
 
 #applytext_con {
@@ -129,8 +145,8 @@ div.drawing {
 }
 
 .edittextbtn_style {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
     height: 38px;
     border: 3px solid #333;
     border-radius: 5px;
@@ -214,6 +230,11 @@ div.drawing {
     overflow: hidden;
     margin: 0;
     transition: width 0.3s ease-out;
+}
+
+#scale_width_draw, #scale_height_draw {
+    width: 50px;
+    height: 30px;
 }
 
 #layer_stack {

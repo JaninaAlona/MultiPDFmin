@@ -151,11 +151,18 @@
     <div id="sidemenu" class="sidemenupos">
         <div id="editor_controls">
             <div class="cursor_pos_con sidemenu_margins borderless">
-                <div class="sidemenu_margins">
-                    <p>Cursor X:<p  class="cursor_x"></p></p>    
+                <div class="sidemenu_margins_col">
+                    <div class="inner_margin">
+                        <div>Cursor X:</div>  
+                        <div><p class="cursor_x"></p></div>
+                    </div>
+                    
                 </div>
-                <div class="sidemenu_margins">
-                    <p>Cursor Y:<p  class="cursor_y"></p></p>    
+                <div class="sidemenu_margins_col">
+                    <div>
+                        <div>Cursor Y:</div>  
+                        <div><p class="cursor_y"></p></div>
+                    </div>
                 </div>
             </div>
             <div id="applytext_con" class="borderless sidemenu_margins">
@@ -171,15 +178,17 @@
                     <p>Text Line Height</p>
                 </div>
                 <div class="sidemenu_margins">
-                    <select name="lineheight" id="lineheightsel" class="sidemenu_sel">
-                        <option value="10" class="edittextctls">10</option>
-                        <option value="18" class="edittextctls">18</option>
-                        <option value="24" selected class="edittextctls">24</option>
-                        <option value="34" class="edittextctls">34</option>
-                        <option value="50" class="edittextctls">50</option>
-                        <option value="80" class="edittextctls">80</option>
-                        <option value="100" class="edittextctls">100</option>
-                    </select>
+                    <div class="inner_margin">
+                        <select name="lineheight" id="lineheightsel" class="sidemenu_sel">
+                            <option value="10" class="edittextctls">10</option>
+                            <option value="18" class="edittextctls">18</option>
+                            <option value="24" selected class="edittextctls">24</option>
+                            <option value="34" class="edittextctls">34</option>
+                            <option value="50" class="edittextctls">50</option>
+                            <option value="80" class="edittextctls">80</option>
+                            <option value="100" class="edittextctls">100</option>
+                        </select>
+                    </div>
                     <input type="text" id="lineheight_input" class="numinput_sidemenu">
                 </div>
                 <div class="sidemenu_margins">
@@ -230,15 +239,17 @@
                     <p>Font Size</p>
                 </div>
                 <div class="sidemenu_margins">
-                    <select name="fontsize" id="fontsizesel" class="sidemenu_sel">
-                        <option value="10" class="edittextctls">10</option>
-                        <option value="30" selected class="edittextctls">30</option>
-                        <option value="50" class="edittextctls">50</option>
-                        <option value="80" class="edittextctls">80</option>
-                        <option value="100" class="edittextctls">100</option>
-                        <option value="120" class="edittextctls">120</option>
-                        <option value="150" class="edittextctls">150</option>
-                    </select>
+                    <div class="inner_margin">
+                        <select name="fontsize" id="fontsizesel" class="sidemenu_sel">
+                            <option value="10" class="edittextctls">10</option>
+                            <option value="30" selected class="edittextctls">30</option>
+                            <option value="50" class="edittextctls">50</option>
+                            <option value="80" class="edittextctls">80</option>
+                            <option value="100" class="edittextctls">100</option>
+                            <option value="120" class="edittextctls">120</option>
+                            <option value="150" class="edittextctls">150</option>
+                        </select>
+                    </div> 
                     <input type="text" id="textsize_input" class="numinput_sidemenu">
                 </div>
                 <div class="sidemenu_margins">
@@ -247,7 +258,7 @@
             </div>  
             <div id="fontcolor_con" class="borderless">
                 <div class="sidemenu_margins">
-                    <p>Font Color</p>
+                    <p class="inner_margin">Font Color</p>
                     <div id="colorpicker" class="colorpicker_class edittextctls"></div>
                 </div>
                 <div class="sidemenu_margins">
@@ -259,13 +270,15 @@
                     <p>Rotate</p>
                 </div>
                 <div class="sidemenu_margins">
-                    <select name="rotatetext" id="rotatetextsel" class="sidemenu_sel">
-                        <option value="0" selected class="edittextctls">0</option>
-                        <option value="45" class="edittextctls">45</option>
-                        <option value="90" class="edittextctls">90</option>
-                        <option value="180" class="edittextctls">180</option>
-                        <option value="270" class="edittextctls">270</option>
-                    </select>
+                    <div class="inner_margin">
+                        <select name="rotatetext" id="rotatetextsel" class="sidemenu_sel">
+                            <option value="0" selected class="edittextctls">0</option>
+                            <option value="45" class="edittextctls">45</option>
+                            <option value="90" class="edittextctls">90</option>
+                            <option value="180" class="edittextctls">180</option>
+                            <option value="270" class="edittextctls">270</option>
+                        </select>
+                    </div>
                     <input type="text" id="textrotation_input" class="numinput_sidemenu">
                 </div>
                 <div class="sidemenu_margins">
@@ -279,11 +292,18 @@
         <!-- Drawer -->
         <div id="pencil_controls">
             <div class="cursor_pos_con sidemenu_margins borderless">
-                <div class="sidemenu_margins">
-                    <p>Cursor X:<p  class="cursor_x"></p></p>    
+                <div class="sidemenu_margins_col">
+                    <div class="inner_margin">
+                        <div>Cursor X:</div>  
+                        <div><p class="cursor_x"></p></div>
+                    </div>
+                    
                 </div>
-                <div class="sidemenu_margins">
-                    <p>Cursor Y:<p  class="cursor_y"></p></p>    
+                <div class="sidemenu_margins_col">
+                    <div>
+                        <div>Cursor Y:</div>  
+                        <div><p class="cursor_y"></p></div>
+                    </div>
                 </div>
             </div>
             <div id="scale_draw_con" class="borderless">
@@ -305,7 +325,7 @@
             </div>
             <div id="pencilcolor_con" class="borderless">
                 <div class="sidemenu_margins">
-                    <p>Pencil Color</p>
+                    <p class="inner_margin">Pencil Color</p>
                     <div id="colorpicker_pencil" class="colorpicker_class edittextctls"></div>
                 </div>
                 <div class="sidemenu_margins">
@@ -330,13 +350,15 @@
                     <p>Rotate</p>
                 </div>
                 <div class="sidemenu_margins">
-                    <select name="rotatedraw" id="rotatedrawsel" class="sidemenu_sel">
-                        <option value="0" selected class="edittextctls">0</option>
-                        <option value="45" class="edittextctls">45</option>
-                        <option value="90" class="edittextctls">90</option>
-                        <option value="180" class="edittextctls">180</option>
-                        <option value="270" class="edittextctls">270</option>
-                    </select>
+                    <div class="inner_margin">
+                        <select name="rotatedraw" id="rotatedrawsel" class="sidemenu_sel">
+                            <option value="0" selected class="edittextctls">0</option>
+                            <option value="45" class="edittextctls">45</option>
+                            <option value="90" class="edittextctls">90</option>
+                            <option value="180" class="edittextctls">180</option>
+                            <option value="270" class="edittextctls">270</option>
+                        </select>
+                    </div>
                     <input type="text" id="drawrotation_input" class="numinput_sidemenu" value="0">
                 </div>
                 <div class="sidemenu_margins">
@@ -350,11 +372,18 @@
         <!-- Geometry -->
         <div id="shape_controls">
             <div class="cursor_pos_con sidemenu_margins borderless">
-                <div class="sidemenu_margins">
-                    <p>Cursor X:<p  class="cursor_x"></p></p>    
+                <div class="sidemenu_margins_col">
+                    <div class="inner_margin">
+                        <div>Cursor X:</div>  
+                        <div><p class="cursor_x"></p></div>
+                    </div>
+                    
                 </div>
-                <div class="sidemenu_margins">
-                    <p>Cursor Y:<p  class="cursor_y"></p></p>    
+                <div class="sidemenu_margins_col">
+                    <div>
+                        <div>Cursor Y:</div>  
+                        <div><p class="cursor_y"></p></div>
+                    </div>
                 </div>
             </div>
             <div id="triangle_point_con" class="borderless">
@@ -363,13 +392,13 @@
                 </div>
                 <div class="sidemenu_margins">
                     <div class="scale_column">
-                        <p>Point X</p>
+                        <p class="inner_margin">Point X</p>
                         <input type="text" id="xp2" class="numinput_sidemenu">
                     </div>
                 </div>
                 <div class="sidemenu_margins">
                     <div class="scale_column">
-                        <p>Point Y</p>
+                        <p class="inner_margin">Point Y</p>
                         <input type="text" id="yp2" class="numinput_sidemenu">
                     </div>
                 </div>
@@ -379,14 +408,12 @@
             </div>
             <div id="scale_geometry_con" class="borderless">
                 <div class="sidemenu_margins">
-                    <div class="scale_column">
-                        <label for="scale_width">Width</label>
-                        <input type="text" id="scale_width" class="numinput_sidemenu">
+                    <div class="sidemenu_margins_col">
+                        <p class="inner_margin margin_bottom">Width</p>
+                        <p class="inner_margin">Height</p>
                     </div>
-                </div>
-                <div class="sidemenu_margins">
-                    <div class="scale_column">
-                        <label for="scale_height">Height</label>
+                    <div class="sidemenu_margins_col">
+                        <input type="text" id="scale_width" class="numinput_sidemenu margin_bottom">
                         <input type="text" id="scale_height" class="numinput_sidemenu">
                     </div>
                 </div>
@@ -409,11 +436,11 @@
             </div>
             <div id="stroke_con" class="borderless">
                 <div class="sidemenu_margins">
-                    <p>Stroke Color</p>
+                    <p class="inner_margin">Stroke Color</p>
                     <div id="colorpicker_stroke" class="colorpicker_class edittextctls"></div>
                 </div>
                 <div class="sidemenu_margins">
-                    <input type="checkbox" id="stroke" name="stroke" value="stroke" checked>
+                    <input type="checkbox" id="stroke" class="inner_margin" name="stroke" value="stroke" checked>
                     <label for="stroke">Use Stroke</label>
                 </div>
                 <div class="sidemenu_margins">
@@ -435,11 +462,11 @@
             </div>
             <div id="fill_con" class="borderless">
                 <div class="sidemenu_margins">
-                    <p>Fill Color</p>
+                    <p class="inner_margin">Fill Color</p>
                     <div id="colorpicker_fill" class="colorpicker_class edittextctls"></div>
                 </div>
                 <div class="sidemenu_margins">
-                    <input type="checkbox" id="fill" name="fill" value="fill">
+                    <input type="checkbox" id="fill" class="inner_margin" name="fill" value="fill">
                     <label for="fill">Use Fill</label>
                 </div>
                 <div class="sidemenu_margins">
@@ -451,13 +478,15 @@
                     <p>Rotate</p>
                 </div>
                 <div class="sidemenu_margins">
-                    <select name="rotateshape" id="rotateshapesel" class="sidemenu_sel">
-                        <option value="0" selected class="edittextctls">0</option>
-                        <option value="45" class="edittextctls">45</option>
-                        <option value="90" class="edittextctls">90</option>
-                        <option value="180" class="edittextctls">180</option>
-                        <option value="270" class="edittextctls">270</option>
-                    </select>
+                    <div class="inner_margin">
+                        <select name="rotateshape" id="rotateshapesel" class="sidemenu_sel">
+                            <option value="0" selected class="edittextctls">0</option>
+                            <option value="45" class="edittextctls">45</option>
+                            <option value="90" class="edittextctls">90</option>
+                            <option value="180" class="edittextctls">180</option>
+                            <option value="270" class="edittextctls">270</option>
+                        </select>
+                    </div>
                     <input type="text" id="shaperotation_input" class="numinput_sidemenu"> 
                 </div>
                 <div class="sidemenu_margins">
@@ -471,11 +500,18 @@
         <!--Images-->
         <div id="img_controls">
             <div class="cursor_pos_con sidemenu_margins borderless">
-                <div class="sidemenu_margins">
-                    <p>Cursor X:<p  class="cursor_x"></p></p>    
+                <div class="sidemenu_margins_col">
+                    <div class="inner_margin">
+                        <div>Cursor X:</div>  
+                        <div><p class="cursor_x"></p></div>
+                    </div>
+                    
                 </div>
-                <div class="sidemenu_margins">
-                    <p>Cursor Y:<p  class="cursor_y"></p></p>    
+                <div class="sidemenu_margins_col">
+                    <div>
+                        <div>Cursor Y:</div>  
+                        <div><p class="cursor_y"></p></div>
+                    </div>
                 </div>
             </div>
             <div class="borderless">
@@ -495,13 +531,15 @@
             </div>
             <div class="borderless">
                 <div id="scale_img_con" class="sidemenu_margins">
-                    <div class="scale_column">
-                        <label for="scale_width_img">Width</label>
-                        <input type="text" id="scale_width_img" class="numinput_sidemenu">
-                    </div>
-                    <div class="scale_column">
-                        <label for="scale_height_img">Height</label>
-                        <input type="text" id="scale_height_img" class="numinput_sidemenu">
+                    <div class="sidemenu_margins">
+                        <div class="sidemenu_margins_col">
+                            <p class="inner_margin margin_bottom">Width</p>
+                            <p class="inner_margin">Height</p>
+                        </div>
+                        <div class="sidemenu_margins_col">
+                            <input type="text" id="scale_width_img" class="numinput_sidemenu margin_bottom">
+                            <input type="text" id="scale_height_img" class="numinput_sidemenu">
+                        </div>
                     </div>
                     <div class="sidemenu_margins">
                         <button id="scaleimg" class="edittextbtn_style" type="button">Scale</button>
@@ -539,13 +577,15 @@
                     <p>Rotate</p>
                 </div>
                 <div class="sidemenu_margins">
-                    <select name="rotateimg" id="rotateimgsel" class="sidemenu_sel">
-                        <option value="0" selected class="edittextctls">0</option>
-                        <option value="45" class="edittextctls">45</option>
-                        <option value="90" class="edittextctls">90</option>
-                        <option value="180" class="edittextctls">180</option>
-                        <option value="270" class="edittextctls">270</option>
-                    </select>
+                    <div class="inner_margin">
+                        <select name="rotateimg" id="rotateimgsel" class="sidemenu_sel">
+                            <option value="0" selected class="edittextctls">0</option>
+                            <option value="45" class="edittextctls">45</option>
+                            <option value="90" class="edittextctls">90</option>
+                            <option value="180" class="edittextctls">180</option>
+                            <option value="270" class="edittextctls">270</option>
+                        </select>
+                    </div>
                     <input type="text" id="imgrotation_input" class="numinput_sidemenu">
                 </div>
                 <div class="sidemenu_margins">

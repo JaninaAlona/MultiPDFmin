@@ -151,8 +151,6 @@ let rotateShapeInputFieldTriggered = false;
 const scaleInputFieldWidth = document.getElementById("scale_width");
 const scaleInputFieldHeight = document.getElementById("scale_height");
 const strokeCheckbox = document.getElementById("stroke");
-const sliderStokeWidth = document.querySelector("#strokewidth");
-const outputStrokeWidth = document.querySelector("#strokewidth_output");
 const fillCheckbox = document.getElementById("fill");
 const shapeRotationSelector = document.querySelector('#rotateshapesel');
 const shapeRotationInput = document.querySelector('#shaperotation_input');
@@ -585,9 +583,7 @@ function setStrokeColor(controlP) {
 }
 
 
-sliderStokeWidth.addEventListener("input", function () {
-    outputStrokeWidth.value = this.value;
-}, false);
+const strokeWidthInput = document.querySelector("#strokewidth");
 
 document.getElementById("applystrokewidth").addEventListener("click", function() {
     resetAllModes();
@@ -600,8 +596,25 @@ document.getElementById("applystrokewidth").addEventListener("click", function()
                     userModesGeometry[7] = false;
                 }
                 if (userModesGeometry[7]) {
-                    setStrokeWidth(geometryPointsList[i]);
-                    markSingleLayerOnEdit(geometryPointsList[i]);
+                    let triggerStrokeWidth = false;
+                    let strokeWidthValueToSet = strokeWidthInput.value;
+                    while (strokeWidthValueToSet.search(" ") > -1) {
+                        strokeWidthValueToSet = strokeWidthValueToSet.replace(" ", "");
+                    }
+                    if (!isNaN(strokeWidthValueToSet)) {
+                        strokeWidthValueToSet = parseInt(strokeWidthValueToSet);
+                        if (strokeWidthValueToSet => 0.1 && strokeWidthValueToSet <= 100) {
+                            triggerStrokeWidth = true;
+                        } else {
+                            triggerStrokeWidth = false;
+                        }
+                    } else {
+                        triggerStrokeWidth = false;
+                    }
+                    if (triggerStrokeWidth) {
+                        setStrokeWidth(geometryPointsList[i], strokeWidthValueToSet);
+                        markSingleLayerOnEdit(geometryPointsList[i]);
+                    }
                 }
             }
         }
@@ -612,15 +625,32 @@ document.getElementById("applystrokewidth").addEventListener("click", function()
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                setStrokeWidth(geometryPointsList[index]);
+                let triggerStrokeWidth = false;
+                let strokeWidthValueToSet = stokeWidthInput.value;
+                while (strokeWidthValueToSet.search(" ") > -1) {
+                    strokeWidthValueToSet = strokeWidthValueToSet.replace(" ", "");
+                }
+                if (!isNaN(strokeWidthValueToSet)) {
+                    strokeWidthValueToSet = parseInt(strokeWidthValueToSet);
+                    if (strokeWidthValueToSet => 0.1 && strokeWidthValueToSet <= 100) {
+                        triggerStrokeWidth = true;
+                    } else {
+                        triggerStrokeWidth = false;
+                    }
+                } else {
+                    triggerStrokeWidth = false;
+                }
+                if (triggerStrokeWidth) {
+                    setStrokeWidth(geometryPointsList[index], strokeWidthValueToSet);
+                }
             }
         }
     }
 }, false);
 
-function setStrokeWidth(controlP) {
+function setStrokeWidth(controlP, strokeWidth) {
     const currentShape = controlP.elementToControl;
-    currentShape.strokeWidth = sliderStokeWidth.valueAsNumber;
+    currentShape.strokeWidth = strokeWidth;
     currentShape.useStroke = true;
     if (!fillCheckbox.checked) {
         currentShape.useFill = false;
@@ -828,7 +858,7 @@ document.getElementById('applyscalegeo').addEventListener("click", function() {
                     }
                     if (!isNaN(scaleFactorValueToSet)) {
                         scaleFactorValueToSet = parseFloat(scaleFactorValueToSet);
-                        if (scaleFactorValueToSet > 0 && scaleFactorValueToSet <= 20) {
+                        if (scaleFactorValueToSet => 0.1 && scaleFactorValueToSet <= 20) {
                             triggerScaleByValue = true;
                         } else {
                             triggerScaleByValue = false;

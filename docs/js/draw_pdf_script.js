@@ -481,7 +481,6 @@ function moveDrawing(controlP) {
             endY = e.clientY - rect.top;
             let deltaX = endX - startX;
             let deltaY = endY - startY;
-            const writeLayers = document.getElementsByClassName("write_layer");
             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
             for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
                 context.beginPath();  
@@ -521,7 +520,7 @@ document.getElementById('applypencilsize').addEventListener("click", function() 
     }
     if (!isNaN(currentPencilSize)) {
         currentPencilSize = parseFloat(currentPencilSize);
-        if (currentPencilSize > 0 && currentPencilSize <= 50) {
+        if (currentPencilSize >= 0.1 && currentPencilSize <= 50) {
             pencilSize = currentPencilSize;
         }
     } 

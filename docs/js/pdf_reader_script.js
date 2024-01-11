@@ -1110,6 +1110,7 @@ function initEditor() {
         restrictInputValues('yp2', 1, 3000, true, false);
         restrictInputValues('scale_height', 1, 3000, true, false);
         restrictInputValues('scale_factor_geo', 0.1, 20.0, false, true);
+        restrictInputValues('strokewidth', 0.1, 100.0, true, false);
         initImagesEditorControls();
         restrictInputValues('scale_width_img', 1, 3000, true, false);
         restrictInputValues('scale_height_img', 1, 3000, true, false);
@@ -1258,9 +1259,7 @@ function initSidemenuControlsGeometry() {
     scaleInputFieldWidth.value = 100;
     scaleInputFieldHeight.value = 100;
     strokeCheckbox.checked = true;
-    sliderStokeWidth.value = 3;
-    sliderStokeWidth.wPosition = 3;
-    outputStrokeWidth.value = 3;
+    strokeWidthInput.value = "4";
     fillCheckbox.checked = false;
     shapeRotationSelector.selectedIndex = 0;
     shapeRotationInput.value = 0;

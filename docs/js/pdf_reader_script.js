@@ -1108,7 +1108,8 @@ function initEditor() {
         restrictInputValues('scale_height', 1, 3000, true, false);
         restrictInputValues('xp2', 1, 3000, true, false);
         restrictInputValues('yp2', 1, 3000, true, false);
-        restrictInputValues('shaperotation_input', -360, 360, true, false);
+        restrictInputValues('scale_height', 1, 3000, true, false);
+        restrictInputValues('scale_factor_geo', 0.1, 20.0, false, true);
         initImagesEditorControls();
         restrictInputValues('scale_width_img', 1, 3000, true, false);
         restrictInputValues('scale_height_img', 1, 3000, true, false);
@@ -1263,8 +1264,7 @@ function initSidemenuControlsGeometry() {
     fillCheckbox.checked = false;
     shapeRotationSelector.selectedIndex = 0;
     shapeRotationInput.value = 0;
-    scaleGeoSlider.value = 1.0;
-    scaleGeoOutput.value = 1.0;
+    scaleByFactorInput.value = 1;
 }
 
 function initUserModesGeometry() {

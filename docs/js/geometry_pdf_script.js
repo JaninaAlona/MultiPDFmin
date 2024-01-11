@@ -156,8 +156,6 @@ const outputStrokeWidth = document.querySelector("#strokewidth_output");
 const fillCheckbox = document.getElementById("fill");
 const shapeRotationSelector = document.querySelector('#rotateshapesel');
 const shapeRotationInput = document.querySelector('#shaperotation_input');
-const scaleGeoSlider = document.getElementById("scale_func_geo");
-const scaleGeoOutput = document.getElementById("scale_func_output_geo");
 
 
 document.getElementById('addRect').addEventListener("click", function(e) {
@@ -809,9 +807,7 @@ function setRotation(controlP, rotationAngle) {
 }
 
 
-scaleGeoSlider.addEventListener("input", function() {
-    scaleGeoOutput.value = this.value;
-}, false);
+const scaleByFactorInput = document.getElementById("scale_factor_geo");
 
 document.getElementById('applyscalegeo').addEventListener("click", function() {
     resetAllModes();
@@ -825,10 +821,27 @@ document.getElementById('applyscalegeo').addEventListener("click", function() {
                 }
                 if (userModesGeometry[10]) {
                     const currentShape = geometryPointsList[i].elementToControl;
-                    const scaleW = currentShape.width * scaleGeoSlider.valueAsNumber;
-                    const scaleH = currentShape.height * scaleGeoSlider.valueAsNumber;
-                    scalingShape(geometryPointsList[i], scaleW, scaleH);
-                    markSingleLayerOnEdit(geometryPointsList[i]);
+                    let triggerScaleByValue = false;
+                    let scaleFactorValueToSet = scaleByFactorInput.value;
+                    while (scaleFactorValueToSet.search(" ") > -1) {
+                        scaleFactorValueToSet = scaleFactorValueToSet.replace(" ", "");
+                    }
+                    if (!isNaN(scaleFactorValueToSet)) {
+                        scaleFactorValueToSet = parseFloat(scaleFactorValueToSet);
+                        if (scaleFactorValueToSet > 0 && scaleFactorValueToSet <= 20) {
+                            triggerScaleByValue = true;
+                        } else {
+                            triggerScaleByValue = false;
+                        }
+                    } else {
+                        triggerScaleByValue = false;
+                    }
+                    if (triggerScaleByValue) {
+                        const scaleW = currentShape.width * scaleFactorValueToSet;
+                        const scaleH = currentShape.height * scaleFactorValueToSet;
+                        scalingShape(geometryPointsList[i], scaleW, scaleH);
+                        markSingleLayerOnEdit(geometryPointsList[i]);
+                    }
                 }
             }
         }
@@ -840,9 +853,26 @@ document.getElementById('applyscalegeo').addEventListener("click", function() {
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
                 const currentShape = geometryPointsList[index].elementToControl;
-                const scaleW = currentShape.width * scaleGeoSlider.valueAsNumber;
-                const scaleH = currentShape.height * scaleGeoSlider.valueAsNumber;
-                scalingShape(geometryPointsList[index], scaleW, scaleH);
+                let triggerScaleByValue = false;
+                let scaleFactorValueToSet = scaleByFactorInput.value;
+                while (scaleFactorValueToSet.search(" ") > -1) {
+                    scaleFactorValueToSet = scaleFactorValueToSet.replace(" ", "");
+                }
+                if (!isNaN(scaleFactorValueToSet)) {
+                    scaleFactorValueToSet = parseFloat(scaleFactorValueToSet);
+                    if (scaleFactorValueToSet > 0 && scaleFactorValueToSet <= 20) {
+                        triggerScaleByValue = true;
+                    } else {
+                        triggerScaleByValue = false;
+                    }
+                } else {
+                    triggerScaleByValue = false;
+                }
+                if (triggerScaleByValue) {
+                    const scaleW = currentShape.width * scaleFactorValueToSet;
+                    const scaleH = currentShape.height * scaleFactorValueToSet;
+                    scalingShape(geometryPointsList[index], scaleW, scaleH);
+                }
             }
         }
     }

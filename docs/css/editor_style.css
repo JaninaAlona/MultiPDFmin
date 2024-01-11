@@ -202,9 +202,9 @@ div.drawing {
 
 .rangeinput_sidemenu {
     width: 100px;
-    overflow: visible;
+    overflow: hidden;
     margin: 0;
-    line-height: inherit;
+    transition: width 0.66s ease-out;
 }
 
 #layer_stack {

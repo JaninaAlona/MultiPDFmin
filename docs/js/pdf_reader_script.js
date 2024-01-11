@@ -50,6 +50,8 @@ for (let i = 0; i < inputFileButtons.length; i++) {
     inputFileButtons[i].addEventListener("change", function(e) {
         resetAllModes();
         cleanUp();
+        const encryptedErrorWidgets = document.getElementsByClassName("encrypted_error");
+        const noPDFErrorWidgets = document.getElementsByClassName("no_pdf_error");
         file = e.target.files[0];
         const fileReader = new FileReader(); 
         fileReader.onload = function() {
@@ -60,6 +62,12 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                 await kickOff(pdf);
                 if (!encrypted) {
                     if (file.name.endsWith(".pdf")) {
+                        for (let i = 0; i < encryptedErrorWidgets.length; i++) {
+                            encryptedErrorWidgets[i].style.display = "none";
+                        }
+                        for (let i = 0; i < noPDFErrorWidgets.length; i++) {
+                            noPDFErrorWidgets[i].style.display = "none";
+                        }
                         onetimeSetup = true;
                         pdfFileName = file.name;
                         document.getElementById("current_page").value = 1;
@@ -76,13 +84,11 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         setCustomFilename();
                     }
                 } else {
-                    const encryptedErrorWidgets = document.getElementsByClassName("encrypted_error");
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
                         encryptedErrorWidgets[i].style.display = "flex";
                     }
                 }
             }).catch(unsupportedFileErr => {
-                const noPDFErrorWidgets = document.getElementsByClassName("no_pdf_error");
                 for (let i = 0; i < noPDFErrorWidgets.length; i++) {
                     noPDFErrorWidgets[i].style.display = "flex";
                 }

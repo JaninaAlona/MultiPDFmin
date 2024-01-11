@@ -379,8 +379,43 @@ document.getElementById("inputfont").addEventListener("change", function(e) {
     }
     
     const currentFilename = file.name;
-    createFileListEntry(false, currentFilename, fontBytes.length, 'filelisting_font', document.getElementById("listpoint_font_con"));
+    createFileListEntryFont(currentFilename, fontBytes.length);
 }, false);
+
+function createFileListEntryFont(filename, index) {
+    if (filename.endsWith(".ttf")) {
+        const container = document.getElementById("listpoint_font_con");
+        const div = document.createElement("div");
+        div.className = "div_files_font";
+        const filelistingsFont = document.getElementsByClassName("filelisting_font");
+        if (filelistingsFont.length > 0) {
+            for (let i = 0; i < filelistingsFont.length; i++) {
+                filelistingsFont[i].checked = false;
+            }
+        }
+        const fileListing = document.createElement("input");
+        fileListing.type = 'radio';
+        fileListing.id = index + "filelist_font";
+        fileListing.name = index + "filelist_font";
+        fileListing.value = filename;
+        fileListing.className = 'filelisting_font';
+        fileListing.checked = true;
+        const label = document.createElement('label');
+        label.for = index + "filelist_font";
+        label.className = 'filelabel_font';
+        let tempFilename = filename;
+        let displayFilename = "";
+        while (tempFilename.length >= 20) {
+            displayFilename = displayFilename + tempFilename.substring(0, 20) + "<br />"
+            tempFilename = tempFilename.substring(20, tempFilename.length);
+        }
+        displayFilename = displayFilename + tempFilename.substring(0, tempFilename.length);
+        label.innerHTML = displayFilename;
+        div.appendChild(fileListing);
+        div.appendChild(label);
+        container.appendChild(div);
+    }
+}
 
 document.getElementById("clearlist_text").addEventListener("click", function(e) {
     clearFileList(document.getElementById("listpoint_font_con"));

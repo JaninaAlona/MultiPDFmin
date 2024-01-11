@@ -55,23 +55,30 @@ document.getElementById("inputimg").addEventListener("change", function(e) {
     }
     
     const currentFilename = file.name;
-    createFileListEntry(true, currentFilename, imagesBase64Strings.length, 'filelisting_img', document.getElementById("listpoint_img_con"));
+    createFileListEntryImage(currentFilename, imagesBase64Strings.length);
 }, false);
 
-function createFileListEntry(isImage, filename, index, filelistingClass, container) {
-    const div = document.createElement("div");
-    div.className = "div_files";
-    const fileListing = document.createElement("input");
-    fileListing.type = 'radio';
-    fileListing.id = index + "filelist";
-    fileListing.name = 'filelist';
-    fileListing.value = filename;
-    fileListing.className = filelistingClass;
-    fileListing.checked = true;
-    const label = document.createElement('label');
-    label.for = index + "filelist";
-    label.className = 'filelabel';
-    if (filename.endsWith(".jpg") || filename.endsWith(".png")) {
+function createFileListEntryImage(filename, index) {
+    if (filename.endsWith(".jpg") || filename.endsWith(".jpeg") || filename.endsWith(".png")) {
+        const container = document.getElementById("listpoint_img_con");
+        const div = document.createElement("div");
+        div.className = "div_files_img";
+        const filelistingsImg = document.getElementsByClassName("filelisting_img");
+        if (filelistingsImg.length > 0) {
+            for (let i = 0; i < filelistingsImg.length; i++) {
+                filelistingsImg[i].checked = false;
+            }
+        }
+        const fileListing = document.createElement("input");
+        fileListing.type = 'radio';
+        fileListing.id = index + "filelist_img";
+        fileListing.name = index + "filelist_img";
+        fileListing.value = filename;
+        fileListing.className = 'filelisting_img';
+        fileListing.checked = true;
+        const label = document.createElement('label');
+        label.for = index + "filelist_img";
+        label.className = 'filelabel_img';
         let tempFilename = filename;
         let displayFilename = "";
         while (tempFilename.length >= 20) {
@@ -80,21 +87,9 @@ function createFileListEntry(isImage, filename, index, filelistingClass, contain
         }
         displayFilename = displayFilename + tempFilename.substring(0, tempFilename.length);
         label.innerHTML = displayFilename;
-    } 
-    if (filename.endsWith(".jpeg")) {
-        let tempFilename = filename;
-        let displayFilename = "";
-        while (tempFilename.length >= 20) {
-            displayFilename = displayFilename + tempFilename.substring(0, 20) + "<br />"
-            tempFilename = tempFilename.substring(20, tempFilename.length);
-        }
-        displayFilename = displayFilename + tempFilename.substring(0, tempFilename.length);
-        label.innerHTML = displayFilename;
-    }
-    div.appendChild(fileListing);
-    div.appendChild(label);
-    container.appendChild(div);
-    if (isImage) {
+        div.appendChild(fileListing);
+        div.appendChild(label);
+        container.appendChild(div);
         const divDimW = document.createElement("div");
         divDimW.className = "div_dim_w"; 
         const labelOutputW = document.createElement('label');
@@ -102,7 +97,6 @@ function createFileListEntry(isImage, filename, index, filelistingClass, contain
         labelOutputW.innerHTML = "Original Image Width: ";
         const outputWidth = document.createElement('output');
         outputWidth.className = 'img_dim_width';
-        
         const divDimH = document.createElement("div");
         divDimH.className = "div_dim_h";
         const labelOutputH = document.createElement('label');
@@ -110,7 +104,6 @@ function createFileListEntry(isImage, filename, index, filelistingClass, contain
         labelOutputH.innerHTML = "Original Image Height: ";
         const outputHeight = document.createElement('output');
         outputHeight.className = 'img_dim_height';
-        
         divDimW.appendChild(labelOutputW);
         divDimW.appendChild(outputWidth);
         divDimH.appendChild(labelOutputH);
@@ -159,7 +152,7 @@ async function addImage(e, writeLayer) {
                 }
             }
             let imgBytes;
-            const label = document.getElementsByClassName("filelabel");
+            const label = document.getElementsByClassName("filelabel_img");
             if (label[checkedIndex].innerHTML.endsWith(".png")) {
                 currentUserImage.type = 'png';
                 imgBytes = await pdfLayer.embedPng(imagesBase64Strings[checkedIndex]);

@@ -53,6 +53,7 @@ const splitter = Vue.createApp({
                                 pdfToSplit = pdfToSplit.substring(0, 50).concat(pdfToSplit.substring(pdfToSplit.length-4, pdfToSplit.length));
                             }
                             document.getElementById("fileselected").innerText = pdfToSplit;
+                            document.getElementById("maxSplitP").innerText = srcPDFDoc.getPages().length;
                             document.getElementById('split_after').disabled = false;
                         }
                     }

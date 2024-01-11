@@ -34,6 +34,15 @@
   margin-right: 30px;
 }
 
+.flex_row_maxp {
+  display: flex;
+  flex-direction: row;
+}
+
+.inner_margin {
+  margin-right: 10px;
+}
+
 .pop_up {
     background-color: #dabdb6;
     padding: 20px;

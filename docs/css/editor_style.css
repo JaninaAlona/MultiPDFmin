@@ -204,7 +204,7 @@ div.drawing {
     width: 100px;
     overflow: hidden;
     margin: 0;
-    transition: width 0.66s ease-out;
+    transition: width 0.3s ease-out;
 }
 
 #layer_stack {

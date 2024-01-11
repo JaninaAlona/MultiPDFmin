@@ -513,8 +513,21 @@ function moveDrawing(controlP) {
 let sliderPencilsize = document.querySelector("#pencilsize");
 let outputPencilsize = document.querySelector("#pencilsize_output");
 
+function smoothSlider(slider, max) {
+    let sliderVal = slider.value;
+    let intervalLenght = 100/max;
+    let interval = sliderVal / intervalLenght;
+    let intervalRest = sliderVal % intervalLenght;
+    if (intervalRest != 0 && Math.floor(interval) < max) {
+        outputPencilsize.value = Math.floor(interval) + 1;
+    } else {
+        outputPencilsize.value = interval;
+    }
+}
+
 sliderPencilsize.addEventListener("input", function() {
-    outputPencilsize.value = this.value;
+    //outputPencilsize.value = this.value;
+    smoothSlider(sliderPencilsize, 50);
 }, false);
 
 document.getElementById('applypencilsize').addEventListener("click", function() {

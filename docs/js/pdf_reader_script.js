@@ -1114,6 +1114,8 @@ function initEditor() {
         initImagesEditorControls();
         restrictInputValues('scale_width_img', 1, 3000, true, false);
         restrictInputValues('scale_height_img', 1, 3000, true, false);
+        restrictInputValues('scale_factor_img', 0.1, 20.0, false, true);
+        restrictInputValues('img_opacity', 0.01, 1.0, false, true);
         restrictInputValues('imgrotation_input', -360, 360, true, false); 
         updateCursorX();
         updateCursorY();
@@ -1196,7 +1198,7 @@ function initSidemenuControlsWriter() {
     sidemenuVisible = true;
     textarea.value = "dummy";
     fontSelector.selectedIndex = 8;
-    fontSizeSelector.value = "30";
+    fontSizeSelector.value = 30;
     sizeInput.value = 30;
     textRotationSelector.selectedIndex = 0; 
     textRotationInput.value = 0;
@@ -1220,7 +1222,7 @@ function initSidemenuControlsDrawer() {
     sidemenuVisible = true;
     scaleInputFieldWidthDraw.value = 1;
     scaleInputFieldHeightDraw.value = 1;
-    pencilsizeInput.value = "4";
+    pencilsizeInput.value = 4;
     drawRotationSelector.selectedIndex = 0;
     drawRotationInput.value = 0;
 }
@@ -1259,7 +1261,7 @@ function initSidemenuControlsGeometry() {
     scaleInputFieldWidth.value = 100;
     scaleInputFieldHeight.value = 100;
     strokeCheckbox.checked = true;
-    strokeWidthInput.value = "4";
+    strokeWidthInput.value = 4;
     fillCheckbox.checked = false;
     shapeRotationSelector.selectedIndex = 0;
     shapeRotationInput.value = 0;
@@ -1309,9 +1311,8 @@ function initSidemenuControlsImages() {
     sidemenuVisible = true;   
     scaleInputFieldImgWidth.value = 200;
     scaleInputFieldImgHeight.value = 200;
-    scaleImgSlider.value = 1.0;
-    scaleImgOutput.value = 1.0;
-    opacitySlider.value = 1.0;
+    scaleByFactorImg.value = 1;
+    imgOpacityInput.value = 1;
     imgRotationSelector.selectedIndex = 0;
     imgRotationInput.value = 0;
 }

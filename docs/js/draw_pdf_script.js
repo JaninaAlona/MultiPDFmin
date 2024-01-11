@@ -526,7 +526,6 @@ function smoothSlider(slider, max) {
 }
 
 sliderPencilsize.addEventListener("input", function() {
-    //outputPencilsize.value = this.value;
     smoothSlider(sliderPencilsize, 50);
 }, false);
 

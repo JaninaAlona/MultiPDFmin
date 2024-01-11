@@ -71,12 +71,10 @@ const splitter = Vue.createApp({
                 splitMethod = regularSplitOpt;
                 switch(regularSplitOpt) {
                     case 0:
-                        document.getElementById('n_page_slider').disabled = true;
                         document.getElementById('splitlist').disabled = true;
                         document.getElementById('save_split').disabled = true;
                         break;
                     case 1:
-                        document.getElementById('n_page_slider').disabled = true;
                         document.getElementById('splitlist').disabled = true;
                         document.getElementById('save_split').disabled = false;
                         document.getElementById('save_split').classList.add("enable_filename");
@@ -85,7 +83,6 @@ const splitter = Vue.createApp({
                         document.getElementById("split_filename").value = this.splitPDFfilename;
                         break;
                     case 2:
-                        document.getElementById('n_page_slider').disabled = true;
                         document.getElementById('splitlist').disabled = true;
                         document.getElementById('save_split').disabled = false;
                         document.getElementById('save_split').classList.add("enable_filename");
@@ -94,7 +91,6 @@ const splitter = Vue.createApp({
                         document.getElementById("split_filename").value = this.splitPDFfilename;
                         break;
                     case 3:
-                        document.getElementById('n_page_slider').disabled = true;
                         document.getElementById('splitlist').disabled = true;
                         document.getElementById('save_split').disabled = false;
                         document.getElementById('save_split').classList.add("enable_filename");
@@ -103,48 +99,14 @@ const splitter = Vue.createApp({
                         document.getElementById("split_filename").value = this.splitPDFfilename;
                         break;
                     case 4:
-                        document.getElementById('n_page_slider').disabled = false;
-                        document.getElementById('splitlist').disabled = true;
-                        document.getElementById('save_split').disabled = false;
-                        document.getElementById('save_split').classList.add("enable_filename");
-                        this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
-                        this.splitPDFfilename = this.outputName +  '_split';
-                        document.getElementById("split_filename").value = this.splitPDFfilename;
-                        break;
-                    case 5:
-                        document.getElementById('n_page_slider').disabled = true;
                         document.getElementById('splitlist').disabled = false;
                         document.getElementById('save_split').disabled = false;
                         document.getElementById('save_split').classList.add("enable_filename");
                         this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
                         this.splitPDFfilename = this.outputName +  '_split';
                         document.getElementById("split_filename").value = this.splitPDFfilename;
+                        break;
                 }
-            }
-        },
-        async updateSlider() {
-            let srcPDFDoc = await PDFDocument.load(selectedPDFBytes);
-            if (srcPDFDoc.getPages().length <= 100) {
-                this.maxPages = 100;
-            } else {
-                this.maxPages = srcPDFDoc.getPages().length;
-            }
-            if (srcPDFDoc.getPages().length < 100) {
-                let slider = document.getElementById('n_page_slider');
-                let sliderVal = slider.value;
-                let pageIntervalLenght = 100/srcPDFDoc.getPages().length;
-                let pageInterval = sliderVal / pageIntervalLenght;
-                let intervalRest = sliderVal % pageIntervalLenght;
-                if (intervalRest != 0 && Math.floor(pageInterval) < srcPDFDoc.getPages().length) {
-                    this.afterNPages = Math.floor(pageInterval) + 1;
-                } else {
-                    this.afterNPages = pageInterval;
-                }
-            } else {
-                this.afterNPages = slider.value;
-            }
-            if (this.afterNPages > 1) {
-                this.afterNPages -= 1;
             }
         },
         setFilename() {
@@ -185,9 +147,6 @@ async function computeSplitOptions(n) {
             await splitAfter(0);
             break;
         case 4:
-            await splitAfterN(n);
-            break;
-        case 5:
             await splitList();
             break;
     }
@@ -252,23 +211,6 @@ async function splitAfter(nRest) {
         document.getElementById('save_split').disabled = true;
         triggerSaveSplit = false;
     } 
-}
-
-async function splitAfterN(n) {
-    let srcPDFDoc = await PDFDocument.load(selectedPDFBytes);
-    const firstPDFDoc = await PDFDocument.create(); 
-    for (let i = 0; i < n; i++) {  
-        const [currentPage] = await firstPDFDoc.copyPages(srcPDFDoc, [i]);
-        firstPDFDoc.addPage(currentPage);
-    }
-    splittedPDFs.push(firstPDFDoc);
-    const secondPDFDoc = await PDFDocument.create(); 
-    for (let i = n; i < srcPDFDoc.getPages().length; i++) {  
-        const [currentPage] = await secondPDFDoc.copyPages(srcPDFDoc, [i]);
-        secondPDFDoc.addPage(currentPage);
-    }
-    splittedPDFs.push(secondPDFDoc);
-    triggerSaveSplit = true;
 }
 
 async function splitList() {

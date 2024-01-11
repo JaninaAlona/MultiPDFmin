@@ -45,14 +45,9 @@
                             <option @click="selectRegularSplit(1)" id="every_p">every page</option>
                             <option @click="selectRegularSplit(2)" id="odd_p">odd pages</option>
                             <option @click="selectRegularSplit(3)" id="even_p">even pages</option>
-                            <option @click="selectRegularSplit(4)" id="n_p">single page</option>
-                            <option @click="selectRegularSplit(5)" id="list_p">list of pages</option>
+                            <option @click="selectRegularSplit(4)" id="list_p">list of pages</option>
                         </select>
                     </div>                        
-                    <div>
-                        <label for="n_page_slider" class="space_btw_radio">Split after page {{ afterNPages }}</label>
-                        <input @input="updateSlider" type="range" class="split_slider" id="n_page_slider" min="1" :max="maxPages-1" value="1" disabled>
-                    </div>
                     <div>
                         <label for="splitlist">List of split pages comma seperated</label>
                     </div>

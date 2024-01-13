@@ -633,6 +633,9 @@ function relocateLayers(box) {
                         selControlP = drawLayerStack[selIndex];
                         otherX = selControlP.x;
                         otherY = selControlP.y;
+                        console.log("index" + selControlP.index);
+                        console.log("initX" + otherX);
+                        console.log("initY" + otherY);
                         if (selIndex === boxIndex && selType === boxType) {
                             selControlP.x = priorX * pdfState.zoom + deltaX;
                             selControlP.y = priorY * pdfState.zoom + deltaY;
@@ -652,6 +655,8 @@ function relocateLayers(box) {
                             context.globalCompositeOperation = selControlP.elementToControl.paths[i][0].compositeOp;
                             selControlP.elementToControl.paths[i][0].x = (selControlP.elementToControl.paths[i][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
                             selControlP.elementToControl.paths[i][0].y = (selControlP.elementToControl.paths[i][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
+                            console.log(selControlP.elementToControl.paths[i][0].x);
+                            console.log(selControlP.elementToControl.paths[i][0].y);
                             context.moveTo(selControlP.elementToControl.paths[i][0].x, selControlP.elementToControl.paths[i][0].y);                
                             for (let j = 1; j < selControlP.elementToControl.paths[i].length; j++) {
                                 selControlP.elementToControl.paths[i][j].x = (selControlP.elementToControl.paths[i][j].x * pdfState.zoom + deltaX) / pdfState.zoom;

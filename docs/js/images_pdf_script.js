@@ -70,41 +70,47 @@ function createFileListEntryImage(filename, index) {
         fileListing.name = index + "filelist_img";
         fileListing.value = filename;
         fileListing.className = 'filelisting_img';
+        fileListing.classList.add("inner_margin");
         fileListing.checked = true;
         const label = document.createElement('label');
         label.for = index + "filelist_img";
         label.className = 'filelabel_img';
         let tempFilename = filename;
         let displayFilename = "";
-        while (tempFilename.length >= 20) {
-            displayFilename = displayFilename + tempFilename.substring(0, 20) + "<br />"
-            tempFilename = tempFilename.substring(20, tempFilename.length);
+        while (tempFilename.length >= 15) {
+            displayFilename = displayFilename + tempFilename.substring(0, 15) + "<br />"
+            tempFilename = tempFilename.substring(15, tempFilename.length);
         }
         displayFilename = displayFilename + tempFilename.substring(0, tempFilename.length);
         label.innerHTML = displayFilename;
         div.appendChild(fileListing);
         div.appendChild(label);
         container.appendChild(div);
-        const divDimW = document.createElement("div");
-        divDimW.className = "div_dim_w"; 
+        const dimensions = document.createElement("div");
+        dimensions.className = "flexrow"
+        const dimFontCon = document.createElement("div");
+        dimFontCon.className = "flexcol";
+        dimFontCon.classList.add("inner_margin");
         const labelOutputW = document.createElement('label');
         labelOutputW.for = 'img_dim_width';
-        labelOutputW.innerHTML = "Original Image Width: ";
-        const outputWidth = document.createElement('output');
-        outputWidth.className = 'img_dim_width';
-        const divDimH = document.createElement("div");
-        divDimH.className = "div_dim_h";
+        labelOutputW.innerHTML = "Original Width: ";
         const labelOutputH = document.createElement('label');
         labelOutputH.for = 'img_dim_height';
-        labelOutputH.innerHTML = "Original Image Height: ";
+        labelOutputH.innerHTML = "Original Height: ";
+        dimFontCon.appendChild(labelOutputW);
+        dimFontCon.appendChild(labelOutputH);
+        const dimsCon = document.createElement("div");
+        dimsCon.className = "flexcol";
+        const outputWidth = document.createElement('output');
+        outputWidth.className = 'img_dim_width';
+        outputWidth.classList.add('margin_bottom');
         const outputHeight = document.createElement('output');
         outputHeight.className = 'img_dim_height';
-        divDimW.appendChild(labelOutputW);
-        divDimW.appendChild(outputWidth);
-        divDimH.appendChild(labelOutputH);
-        divDimH.appendChild(outputHeight);
-        container.appendChild(divDimW);
-        container.appendChild(divDimH);
+        dimsCon.appendChild(outputWidth);
+        dimsCon.appendChild(outputHeight);
+        dimensions.appendChild(dimFontCon);
+        dimensions.appendChild(dimsCon);
+        container.appendChild(dimensions);
     }
 }
 
@@ -165,6 +171,7 @@ async function addImage(e, writeLayer) {
             currentUserImage.height = imgBytes.height;
             const imgDimOutputW = document.getElementsByClassName("img_dim_width");
             imgDimOutputW[checkedIndex].innerHTML = imgBytes.width;
+            console.log(imgBytes.width);
             const imgDimOutputH = document.getElementsByClassName("img_dim_height");
             imgDimOutputH[checkedIndex].innerHTML = imgBytes.height;
             currentUserImage.page = writePage;

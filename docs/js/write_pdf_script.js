@@ -396,15 +396,16 @@ function createFileListEntryFont(filename, index) {
         fileListing.name = index + "filelist_font";
         fileListing.value = filename;
         fileListing.className = 'filelisting_font';
+        fileListing.classList.add("inner_margin");
         fileListing.checked = true;
         const label = document.createElement('label');
         label.for = index + "filelist_font";
         label.className = 'filelabel_font';
         let tempFilename = filename;
         let displayFilename = "";
-        while (tempFilename.length >= 20) {
-            displayFilename = displayFilename + tempFilename.substring(0, 20) + "<br />"
-            tempFilename = tempFilename.substring(20, tempFilename.length);
+        while (tempFilename.length >= 15) {
+            displayFilename = displayFilename + tempFilename.substring(0, 15) + "<br />"
+            tempFilename = tempFilename.substring(15, tempFilename.length);
         }
         displayFilename = displayFilename + tempFilename.substring(0, tempFilename.length);
         label.innerHTML = displayFilename;

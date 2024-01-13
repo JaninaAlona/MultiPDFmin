@@ -178,8 +178,7 @@ div.drawing {
 .img_column {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding-left: 25px;
+    justify-content: flex-start;
 }
 
 .font_column {
@@ -394,4 +393,8 @@ input[type="checkbox"]:checked {
 
 .geo_width_height_pad {
     padding: 10px;
+}
+
+.negative_margin {
+    margin-left: -10px;
 }

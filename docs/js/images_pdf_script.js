@@ -154,10 +154,14 @@ async function addImage(e, writeLayer) {
             }
             let imgBytes;
             const label = document.getElementsByClassName("filelabel_img");
-            if (label[checkedIndex].innerHTML.endsWith(".png")) {
+            let labelName = label[checkedIndex].innerHTML;
+            while (labelName.search("<br>") > -1) {
+                labelName = labelName.replace("<br>", "");
+            }
+            if (labelName.endsWith(".png")) {
                 currentUserImage.type = 'png';
                 imgBytes = await pdfLayer.embedPng(imagesBase64Strings[checkedIndex]);
-            } else if (label[checkedIndex].innerHTML.endsWith(".jpg") || label[checkedIndex].innerHTML.endsWith(".jpeg")) {
+            } else if (labelName.endsWith(".jpg") || labelName.endsWith(".jpeg")) {
                 currentUserImage.type = 'jpg';
                 imgBytes = await pdfLayer.embedJpg(imagesBase64Strings[checkedIndex]);
             }
@@ -171,7 +175,6 @@ async function addImage(e, writeLayer) {
             currentUserImage.height = imgBytes.height;
             const imgDimOutputW = document.getElementsByClassName("img_dim_width");
             imgDimOutputW[checkedIndex].innerHTML = imgBytes.width;
-            console.log(imgBytes.width);
             const imgDimOutputH = document.getElementsByClassName("img_dim_height");
             imgDimOutputH[checkedIndex].innerHTML = imgBytes.height;
             currentUserImage.page = writePage;
@@ -446,31 +449,9 @@ document.getElementById('scaleimg').addEventListener("click", function() {
 }, false);
 
 async function scaleImage(controlP) {
-    let triggerWidth = false;
-    let triggerHeight = false;
-    let widthValueToSet;
-    let heightValueToSet;
-    widthValueToSet = scaleInputFieldImgWidth.value;
-    while (widthValueToSet.search(" ") > -1) {
-        widthValueToSet = widthValueToSet.replace(" ", "");
-    }
-    if (!isNaN(widthValueToSet)) {
-        widthValueToSet = parseInt(widthValueToSet);
-        triggerWidth = true;
-    } else {
-        triggerWidth = false;
-    }
-    heightValueToSet = scaleInputFieldImgHeight.value;
-    while (heightValueToSet.search(" ") > -1) {
-        heightValueToSet = heightValueToSet.replace(" ", "");
-    }
-    if (!isNaN(heightValueToSet)) {
-        heightValueToSet = parseInt(heightValueToSet);
-        triggerHeight = true;
-    } else {
-        triggerHeight = false;
-    }
-    if (triggerWidth && widthValueToSet >= 1 && widthValueToSet <= 3000 && triggerHeight && heightValueToSet >= 1 && heightValueToSet <= 3000) {
+    let successValueW = convertInputToSucess(scaleInputFieldImgWidth.value, 1, 3000, true, false);
+    let successValueH = convertInputToSucess(scaleInputFieldImgHeight.value, 1, 3000, true, false);
+    if (successValueW !== -1000 && successValueH !== -1000) {
         const pdfLayer = await PDFDocument.create();
         const currentImage = controlP.elementToControl;
         let imgBytes;
@@ -483,8 +464,8 @@ async function scaleImage(controlP) {
         const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentImage.pdfDoc = pdfLayer;
         currentImage.image = imgBytes;
-        currentImage.width = widthValueToSet * pdfState.zoom;
-        currentImage.height = heightValueToSet * pdfState.zoom;
+        currentImage.width = successValueW * pdfState.zoom;
+        currentImage.height = successValueH * pdfState.zoom;
         currentImage.setImageElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentImage.pdfBytes = pdfLayerBytes;
@@ -506,25 +487,8 @@ document.getElementById('applyscale').addEventListener("click", function() {
                     userModesImages[4] = false;
                 }
                 if (userModesImages[4]) {
-                    let triggerScaleByValue = false;
-                    let scaleFactorValueToSet = scaleByFactorImg.value;
-                    while (scaleFactorValueToSet.search(" ") > -1) {
-                        scaleFactorValueToSet = scaleFactorValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(scaleFactorValueToSet)) {
-                        scaleFactorValueToSet = parseFloat(scaleFactorValueToSet);
-                        if (scaleFactorValueToSet => 0.1 && scaleFactorValueToSet <= 20) {
-                            triggerScaleByValue = true;
-                        } else {
-                            triggerScaleByValue = false;
-                        }
-                    } else {
-                        triggerScaleByValue = false;
-                    }
-                    if (triggerScaleByValue) {
-                        scaleImageByFactor(userImageList[i], scaleFactorValueToSet);
-                        markSingleLayerOnEdit(userImageList[i]);
-                    }
+                    scaleImageByFactor(userImageList[i]);
+                    markSingleLayerOnEdit(userImageList[i]);
                 }
             }
         }
@@ -535,48 +499,34 @@ document.getElementById('applyscale').addEventListener("click", function() {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "image") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                let triggerScaleByValue = false;
-                let scaleFactorValueToSet = scaleByFactorImg.value;
-                while (scaleFactorValueToSet.search(" ") > -1) {
-                    scaleFactorValueToSet = scaleFactorValueToSet.replace(" ", "");
-                }
-                if (!isNaN(scaleFactorValueToSet)) {
-                    scaleFactorValueToSet = parseFloat(scaleFactorValueToSet);
-                    if (scaleFactorValueToSet => 0.1 && scaleFactorValueToSet <= 20) {
-                        triggerScaleByValue = true;
-                    } else {
-                        triggerScaleByValue = false;
-                    }
-                } else {
-                    triggerScaleByValue = false;
-                }
-                if (triggerScaleByValue) {
-                    scaleImageByFactor(userImageList[index], scaleFactorValueToSet);
-                }
+                scaleImageByFactor(userImageList[index]);
             }
         }
     }
 }, false);
 
-async function scaleImageByFactor(controlP, scaleByFactor) {
-    const pdfLayer = await PDFDocument.create();
-    const currentImage = controlP.elementToControl;
-    let imgBytes;
-    if (currentImage.type === 'png') {
-        imgBytes = await pdfLayer.embedPng(currentImage.base64String);
-    } else if (currentImage.type === 'jpg') {
-        imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
+async function scaleImageByFactor(controlP) {
+    let successValue = convertInputToSucess(scaleByFactorImg.value, 0.1, 20, false, true);
+    if (successValue !== -1000) {
+        const pdfLayer = await PDFDocument.create();
+        const currentImage = controlP.elementToControl;
+        let imgBytes;
+        if (currentImage.type === 'png') {
+            imgBytes = await pdfLayer.embedPng(currentImage.base64String);
+        } else if (currentImage.type === 'jpg') {
+            imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
+        }
+        let pdfCanvases = document.getElementsByClassName("render_context");
+        const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+        currentImage.pdfDoc = pdfLayer;
+        currentImage.image = imgBytes;
+        currentImage.width = currentImage.width * successValue;
+        currentImage.height = currentImage.height * successValue;
+        currentImage.setImageElem();
+        const pdfLayerBytes = await pdfLayer.save();
+        currentImage.pdfBytes = pdfLayerBytes;
+        await updateUserLayer(controlP, pdfLayerBytes); 
     }
-    let pdfCanvases = document.getElementsByClassName("render_context");
-    const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
-    currentImage.pdfDoc = pdfLayer;
-    currentImage.image = imgBytes;
-    currentImage.width = currentImage.width * scaleByFactor;
-    currentImage.height = currentImage.height * scaleByFactor;
-    currentImage.setImageElem();
-    const pdfLayerBytes = await pdfLayer.save();
-    currentImage.pdfBytes = pdfLayerBytes;
-    await updateUserLayer(controlP, pdfLayerBytes); 
 }
 
 
@@ -593,25 +543,8 @@ document.getElementById('applyopacity').addEventListener("click", function() {
                     userModesImages[5] = false;
                 }
                 if (userModesImages[5]) {
-                    let triggerOpacity = false;
-                    let opacityValueToSet = imgOpacityInput.value;
-                    while (opacityValueToSet.search(" ") > -1) {
-                        opacityValueToSet = opacityValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(opacityValueToSet)) {
-                        opacityValueToSet = parseFloat(opacityValueToSet);
-                        if (opacityValueToSet => 0.01 && opacityValueToSet <= 1.0) {
-                            triggerOpacity = true;
-                        } else {
-                            triggerOpacity = false;
-                        }
-                    } else {
-                        triggerOpacity = false;
-                    }
-                    if (triggerOpacity) {
-                        applyImgOpacity(userImageList[i], opacityValueToSet);
-                        markSingleLayerOnEdit(userImageList[i]);
-                    }
+                    applyImgOpacity(userImageList[i]);
+                    markSingleLayerOnEdit(userImageList[i]);
                 }
             }
         }
@@ -622,47 +555,33 @@ document.getElementById('applyopacity').addEventListener("click", function() {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "image") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                let triggerOpacity = false;
-                let opacityValueToSet = imgOpacityInput.value;
-                while (opacityValueToSet.search(" ") > -1) {
-                    opacityValueToSet = opacityValueToSet.replace(" ", "");
-                }
-                if (!isNaN(opacityValueToSet)) {
-                    opacityValueToSet = parseFloat(opacityValueToSet);
-                    if (opacityValueToSet => 0.01 && opacityValueToSet <= 1.0) {
-                        triggerOpacity = true;
-                    } else {
-                        triggerOpacity = false;
-                    }
-                } else {
-                    triggerOpacity = false;
-                }
-                if (triggerOpacity) {
-                    applyImgOpacity(userImageList[index], opacityValueToSet);
-                } 
+                applyImgOpacity(userImageList[index]);
             }
         }
     }
 }, false);
 
 async function applyImgOpacity(controlP, imageOpacity) {
-    const pdfLayer = await PDFDocument.create();
-    const currentImage = controlP.elementToControl;
-    let imgBytes;
-    if (currentImage.type === 'png') {
-        imgBytes = await pdfLayer.embedPng(currentImage.base64String);
-    } else if (currentImage.type === 'jpg') {
-        imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
+    let successValue = convertInputToSucess(imgOpacityInput.value, 0.01, 1, false, true);
+    if (successValue !== -1000) {
+        const pdfLayer = await PDFDocument.create();
+        const currentImage = controlP.elementToControl;
+        let imgBytes;
+        if (currentImage.type === 'png') {
+            imgBytes = await pdfLayer.embedPng(currentImage.base64String);
+        } else if (currentImage.type === 'jpg') {
+            imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
+        }
+        let pdfCanvases = document.getElementsByClassName("render_context");
+        const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+        currentImage.pdfDoc = pdfLayer;
+        currentImage.image = imgBytes;
+        currentImage.opacity = imageOpacity;
+        currentImage.setImageElem();
+        const pdfLayerBytes = await pdfLayer.save();
+        currentImage.pdfBytes = pdfLayerBytes;
+        await updateUserLayer(controlP, pdfLayerBytes);  
     }
-    let pdfCanvases = document.getElementsByClassName("render_context");
-    const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
-    currentImage.pdfDoc = pdfLayer;
-    currentImage.image = imgBytes;
-    currentImage.opacity = imageOpacity;
-    currentImage.setImageElem();
-    const pdfLayerBytes = await pdfLayer.save();
-    currentImage.pdfBytes = pdfLayerBytes;
-    await updateUserLayer(controlP, pdfLayerBytes);  
 }
 
 

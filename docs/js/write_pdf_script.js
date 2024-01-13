@@ -633,9 +633,9 @@ document.getElementById('applytextrotation').addEventListener('click', async fun
 async function applyTextRotation(controlP) {
     let successValue;
     if (rotateTextSelectorTriggered) {
-        successValue = convertInputToSucess(textRotationSelector.value, -359, 359, true, false);
+        successValue = convertInputToSucess(textRotationSelector.value, -360, 360, true, false);
     } else if (rotateTextInputFieldTriggered) {
-        successValue = convertInputToSucess(textRotationInput.value, -359, 359, true, false);
+        successValue = convertInputToSucess(textRotationInput.value, -360, 360, true, false);
     }
     if (successValue === 360 || successValue === -360) {
         successValue = 0;

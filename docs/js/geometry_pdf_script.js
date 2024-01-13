@@ -437,34 +437,8 @@ document.getElementById("scaleShape").addEventListener("click", function() {
                     userModesGeometry[5] = false;
                 }
                 if (userModesGeometry[5]) {
-                    let triggerWidth = false;
-                    let triggerHeight = false;
-                    let widthValueToSet;
-                    let heightValueToSet;
-                    widthValueToSet = scaleInputFieldWidth.value;
-                    while (widthValueToSet.search(" ") > -1) {
-                        widthValueToSet = widthValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(widthValueToSet)) {
-                        widthValueToSet = parseInt(widthValueToSet);
-                        triggerWidth = true;
-                    } else {
-                        triggerWidth = false;
-                    }
-                    heightValueToSet = scaleInputFieldHeight.value;
-                    while (heightValueToSet.search(" ") > -1) {
-                        heightValueToSet = heightValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(heightValueToSet)) {
-                        heightValueToSet = parseInt(heightValueToSet);
-                        triggerHeight = true;
-                    } else {
-                        triggerHeight = false;
-                    }
-                    if (triggerWidth && widthValueToSet >= 1 && widthValueToSet <= 3000 && triggerHeight && heightValueToSet >= 1 && heightValueToSet <= 3000) {
-                        scalingShape(geometryPointsList[i], widthValueToSet, heightValueToSet);
-                        markSingleLayerOnEdit(geometryPointsList[i]);
-                    }
+                    scalingShape(geometryPointsList[i], true);
+                    markSingleLayerOnEdit(geometryPointsList[i]);
                 }
             }
         }
@@ -475,58 +449,56 @@ document.getElementById("scaleShape").addEventListener("click", function() {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                let triggerWidth = false;
-                let triggerHeight = false;
-                let widthValueToSet;
-                let heightValueToSet;
-                widthValueToSet = scaleInputFieldWidth.value;
-                while (widthValueToSet.search(" ") > -1) {
-                    widthValueToSet = widthValueToSet.replace(" ", "");
-                }
-                if (!isNaN(widthValueToSet)) {
-                    widthValueToSet = parseInt(widthValueToSet);
-                    triggerWidth = true;
-                } else {
-                    triggerWidth = false;
-                }
-                heightValueToSet = scaleInputFieldHeight.value;
-                while (heightValueToSet.search(" ") > -1) {
-                    heightValueToSet = heightValueToSet.replace(" ", "");
-                }
-                if (!isNaN(heightValueToSet)) {
-                    heightValueToSet = parseInt(heightValueToSet);
-                    triggerHeight = true;
-                } else {
-                    triggerHeight = false;
-                }
-                if (triggerWidth && widthValueToSet >= 1 && widthValueToSet <= 3000 && triggerHeight && heightValueToSet >= 1 && heightValueToSet <= 3000) {
-                    scalingShape(geometryPointsList[index], widthValueToSet, heightValueToSet);
-                }
+                scalingShape(geometryPointsList[index], true);
             }
         }
     }
 }, false);
 
-function scalingShape(controlP, scaleW, scaleH) { 
+function scalingShape(controlP, differentWH) { 
+    let triggerScaleW = false;
+    let triggerScaleH = false;
     const currentShape = controlP.elementToControl;
-    let previousWidth = currentShape.width;
-    let previousHeight = currentShape.height;
-    const widthChangeFactor = (scaleW * pdfState.zoom) / previousWidth;
-    const heightChangeFactor = (scaleH * pdfState.zoom) / previousHeight;
-    currentShape.width = scaleW * pdfState.zoom;
-    currentShape.height = scaleH * pdfState.zoom;
-    if (currentShape.type === "triangle") {
-        currentShape.xp2 = currentShape.xp2 * widthChangeFactor;
-        currentShape.yp2 = currentShape.yp2 * heightChangeFactor;
+    if (differentWH) {
+        let successValueW = convertInputToSucess(scaleInputFieldWidth.value, 1, 3000, true, false);
+        if (successValueW !== -1000) {
+            scaleW = successValueW;
+            triggerScaleW = true;
+        }
+        let successValueH = convertInputToSucess(scaleInputFieldHeight.value, 1, 3000, true, false);
+        if (successValueH !== -1000) {
+            scaleH = successValueH;
+            triggerScaleH = true;
+        }
+    } else {
+        let successValue = convertInputToSucess(scaleByFactorInput.value, 0.1, 200, false, true);
+        if (successValue !== -1000) {
+            scaleW = currentShape.width * successValue;
+            scaleH = currentShape.height * successValue;
+            triggerScaleW = true;
+            triggerScaleH = true;
+        }
     }
-    if (currentShape.type === "rectangle" || currentShape.type === "triangle") {
-        currentShape.x = (controlP.x - currentShape.width/2 + 20/pdfState.zoom);
-        currentShape.y = (controlP.y - currentShape.height/2 + 20/pdfState.zoom);
-    } else if (currentShape.type === "circle") {
-        currentShape.x = (controlP.x + 20/pdfState.zoom);
-        currentShape.y = (controlP.y + 20/pdfState.zoom);
+    if (triggerScaleW && triggerScaleH) {
+        let previousWidth = currentShape.width;
+        let previousHeight = currentShape.height;
+        const widthChangeFactor = (scaleW * pdfState.zoom) / previousWidth;
+        const heightChangeFactor = (scaleH * pdfState.zoom) / previousHeight;
+        currentShape.width = scaleW * pdfState.zoom;
+        currentShape.height = scaleH * pdfState.zoom;
+        if (currentShape.type === "triangle") {
+            currentShape.xp2 = currentShape.xp2 * widthChangeFactor;
+            currentShape.yp2 = currentShape.yp2 * heightChangeFactor;
+        }
+        if (currentShape.type === "rectangle" || currentShape.type === "triangle") {
+            currentShape.x = (controlP.x - currentShape.width/2 + 20/pdfState.zoom);
+            currentShape.y = (controlP.y - currentShape.height/2 + 20/pdfState.zoom);
+        } else if (currentShape.type === "circle") {
+            currentShape.x = (controlP.x + 20/pdfState.zoom);
+            currentShape.y = (controlP.y + 20/pdfState.zoom);
+        }
+        updateUserShapeLayer(controlP);
     }
-    updateUserShapeLayer(controlP);
 }
 
 
@@ -596,25 +568,8 @@ document.getElementById("applystrokewidth").addEventListener("click", function()
                     userModesGeometry[7] = false;
                 }
                 if (userModesGeometry[7]) {
-                    let triggerStrokeWidth = false;
-                    let strokeWidthValueToSet = strokeWidthInput.value;
-                    while (strokeWidthValueToSet.search(" ") > -1) {
-                        strokeWidthValueToSet = strokeWidthValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(strokeWidthValueToSet)) {
-                        strokeWidthValueToSet = parseInt(strokeWidthValueToSet);
-                        if (strokeWidthValueToSet => 0.1 && strokeWidthValueToSet <= 100) {
-                            triggerStrokeWidth = true;
-                        } else {
-                            triggerStrokeWidth = false;
-                        }
-                    } else {
-                        triggerStrokeWidth = false;
-                    }
-                    if (triggerStrokeWidth) {
-                        setStrokeWidth(geometryPointsList[i], strokeWidthValueToSet);
-                        markSingleLayerOnEdit(geometryPointsList[i]);
-                    }
+                    setStrokeWidth(geometryPointsList[i]);
+                    markSingleLayerOnEdit(geometryPointsList[i]);
                 }
             }
         }
@@ -625,37 +580,23 @@ document.getElementById("applystrokewidth").addEventListener("click", function()
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                let triggerStrokeWidth = false;
-                let strokeWidthValueToSet = stokeWidthInput.value;
-                while (strokeWidthValueToSet.search(" ") > -1) {
-                    strokeWidthValueToSet = strokeWidthValueToSet.replace(" ", "");
-                }
-                if (!isNaN(strokeWidthValueToSet)) {
-                    strokeWidthValueToSet = parseInt(strokeWidthValueToSet);
-                    if (strokeWidthValueToSet => 0.1 && strokeWidthValueToSet <= 100) {
-                        triggerStrokeWidth = true;
-                    } else {
-                        triggerStrokeWidth = false;
-                    }
-                } else {
-                    triggerStrokeWidth = false;
-                }
-                if (triggerStrokeWidth) {
-                    setStrokeWidth(geometryPointsList[index], strokeWidthValueToSet);
-                }
+                setStrokeWidth(geometryPointsList[index]);
             }
         }
     }
 }, false);
 
-function setStrokeWidth(controlP, strokeWidth) {
-    const currentShape = controlP.elementToControl;
-    currentShape.strokeWidth = strokeWidth;
-    currentShape.useStroke = true;
-    if (!fillCheckbox.checked) {
-        currentShape.useFill = false;
+function setStrokeWidth(controlP) {
+    let successValue = convertInputToSucess(strokeWidthInput.value, 0.1, 200, true, false);
+    if (successValue !== -1000) {
+        const currentShape = controlP.elementToControl;
+        currentShape.strokeWidth = successValue;
+        currentShape.useStroke = true;
+        if (!fillCheckbox.checked) {
+            currentShape.useFill = false;
+        }
+        updateUserShapeLayer(controlP);      
     }
-    updateUserShapeLayer(controlP);      
 }
 
 
@@ -736,44 +677,8 @@ document.getElementById("applyshaperotation").addEventListener("click", function
                     userModesGeometry[9] = false;
                 }
                 if (userModesGeometry[9]) {
-                    let triggerRotation = false;
-                    let rotationValueToSet;
-                    if (rotateShapeSelectorTriggered) {
-                        rotationValueToSet = parseInt(shapeRotationSelector.value); 
-                        triggerRotation = true;
-                    } else if (rotateShapeInputFieldTriggered) {
-                        rotationValueToSet = shapeRotationInput.value;
-                        while (rotationValueToSet.search(" ") > -1) {
-                            rotationValueToSet = rotationValueToSet.replace(" ", "");
-                        }
-                        if (!isNaN(rotationValueToSet)) {
-                            rotationValueToSet = parseInt(rotationValueToSet);
-                            if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                                rotationValueToSet = 0;
-                            }
-                            triggerRotation = true;
-                        } else {
-                            triggerRotation = false;
-                        }
-                    } else {
-                        rotationValueToSet = shapeRotationInput.value;
-                        while (rotationValueToSet.search(" ") > -1) {
-                            rotationValueToSet = rotationValueToSet.replace(" ", "");
-                        }
-                        if (!isNaN(rotationValueToSet)) {
-                            rotationValueToSet = parseInt(rotationValueToSet);
-                            if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                                rotationValueToSet = 0;
-                            }
-                            triggerRotation = true;
-                        } else {
-                            triggerRotation = false;
-                        }
-                    }
-                    if (triggerRotation && rotationValueToSet >= -359 && rotationValueToSet <= 359) {
-                        setRotation(geometryPointsList[i], rotationValueToSet);
-                        markSingleLayerOnEdit(geometryPointsList[i]);
-                    }
+                    setRotation(geometryPointsList[i]);
+                    markSingleLayerOnEdit(geometryPointsList[i]);
                 }
             }
         }
@@ -784,56 +689,31 @@ document.getElementById("applyshaperotation").addEventListener("click", function
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                let triggerRotation = false;
-                let rotationValueToSet;
-                if (rotateShapeSelectorTriggered) {
-                    rotationValueToSet = parseInt(shapeRotationSelector.value); 
-                    triggerRotation = true;
-                } else if (rotateShapeInputFieldTriggered) {
-                    rotationValueToSet = shapeRotationInput.value;
-                    while (rotationValueToSet.search(" ") > -1) {
-                        rotationValueToSet = rotationValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(rotationValueToSet)) {
-                        rotationValueToSet = parseInt(rotationValueToSet);
-                        if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                            rotationValueToSet = 0;
-                        }
-                        triggerRotation = true;
-                    } else {
-                        triggerRotation = false;
-                    }
-                } else {
-                    rotationValueToSet = shapeRotationInput.value;
-                    while (rotationValueToSet.search(" ") > -1) {
-                        rotationValueToSet = rotationValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(rotationValueToSet)) {
-                        rotationValueToSet = parseInt(rotationValueToSet);
-                        if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                            rotationValueToSet = 0;
-                        }
-                        triggerRotation = true;
-                    } else {
-                        triggerRotation = false;
-                    }
-                }
-                if (triggerRotation && rotationValueToSet >= -359 && rotationValueToSet <= 359) {
-                    setRotation(geometryPointsList[index], rotationValueToSet);
-                }
+                setRotation(geometryPointsList[index]);
             }
         }
     }
 }, false);
 
-function setRotation(controlP, rotationAngle) {
-    const currentShape = controlP.elementToControl;
-    currentShape.rotation = rotationAngle;
-    controlP.rotation = rotationAngle;
-    controlP.originX = 0;
-    controlP.originY = 0;
-    controlP.rotateControlPoint();
-    updateUserShapeLayer(controlP);              
+function setRotation(controlP) {
+    let successValue;
+    if (rotateShapeSelectorTriggered) {
+        successValue = convertInputToSucess(shapeRotationSelector.value, -360, 360, true, false);
+    } else if (rotateShapeInputFieldTriggered) {
+        successValue = convertInputToSucess(shapeRotationInput.value, -360, 360, true, false);
+    }
+    if (successValue === 360 || successValue === -360) {
+        successValue = 0;
+    }
+    if (successValue !== -1000) {
+        const currentShape = controlP.elementToControl;
+        currentShape.rotation = successValue;
+        controlP.rotation = successValue;
+        controlP.originX = 0;
+        controlP.originY = 0;
+        controlP.rotateControlPoint();
+        updateUserShapeLayer(controlP);   
+    }           
 }
 
 
@@ -850,28 +730,8 @@ document.getElementById('applyscalegeo').addEventListener("click", function() {
                     userModesGeometry[10] = false;
                 }
                 if (userModesGeometry[10]) {
-                    const currentShape = geometryPointsList[i].elementToControl;
-                    let triggerScaleByValue = false;
-                    let scaleFactorValueToSet = scaleByFactorInput.value;
-                    while (scaleFactorValueToSet.search(" ") > -1) {
-                        scaleFactorValueToSet = scaleFactorValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(scaleFactorValueToSet)) {
-                        scaleFactorValueToSet = parseFloat(scaleFactorValueToSet);
-                        if (scaleFactorValueToSet => 0.1 && scaleFactorValueToSet <= 20) {
-                            triggerScaleByValue = true;
-                        } else {
-                            triggerScaleByValue = false;
-                        }
-                    } else {
-                        triggerScaleByValue = false;
-                    }
-                    if (triggerScaleByValue) {
-                        const scaleW = currentShape.width * scaleFactorValueToSet;
-                        const scaleH = currentShape.height * scaleFactorValueToSet;
-                        scalingShape(geometryPointsList[i], scaleW, scaleH);
-                        markSingleLayerOnEdit(geometryPointsList[i]);
-                    }
+                    scalingShape(geometryPointsList[i], false);
+                    markSingleLayerOnEdit(geometryPointsList[i]);
                 }
             }
         }
@@ -882,27 +742,7 @@ document.getElementById('applyscalegeo').addEventListener("click", function() {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                const currentShape = geometryPointsList[index].elementToControl;
-                let triggerScaleByValue = false;
-                let scaleFactorValueToSet = scaleByFactorInput.value;
-                while (scaleFactorValueToSet.search(" ") > -1) {
-                    scaleFactorValueToSet = scaleFactorValueToSet.replace(" ", "");
-                }
-                if (!isNaN(scaleFactorValueToSet)) {
-                    scaleFactorValueToSet = parseFloat(scaleFactorValueToSet);
-                    if (scaleFactorValueToSet > 0 && scaleFactorValueToSet <= 20) {
-                        triggerScaleByValue = true;
-                    } else {
-                        triggerScaleByValue = false;
-                    }
-                } else {
-                    triggerScaleByValue = false;
-                }
-                if (triggerScaleByValue) {
-                    const scaleW = currentShape.width * scaleFactorValueToSet;
-                    const scaleH = currentShape.height * scaleFactorValueToSet;
-                    scalingShape(geometryPointsList[index], scaleW, scaleH);
-                }
+                scalingShape(geometryPointsList[index], false);
             }
         }
     }
@@ -922,34 +762,8 @@ document.getElementById("tripoint").addEventListener("click", function() {
                     userModesGeometry[11] = false;
                 }
                 if (userModesGeometry[11]) {
-                    let triggerPX = false;
-                    let triggerPY = false;
-                    let pXValueToSet;
-                    let pYValueToSet;
-                    pXValueToSet = triPointX.value;
-                    while (pXValueToSet.search(" ") > -1) {
-                        pXValueToSet = pXValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(pXValueToSet)) {
-                        pXValueToSet = parseInt(pXValueToSet);
-                        triggerPX = true;
-                    } else {
-                        triggerPX = false;
-                    }
-                    pYValueToSet = triPointY.value;
-                    while (pYValueToSet.search(" ") > -1) {
-                        pYValueToSet = pYValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(pYValueToSet)) {
-                        pYValueToSet = parseInt(pYValueToSet);
-                        triggerPY = true;
-                    } else {
-                        triggerPY = false;
-                    }
-                    if (triggerPX && pXValueToSet >= 1 && pXValueToSet <= 3000 && triggerPY && pYValueToSet >= 1 && pYValueToSet <= 3000) {
-                        setTrianglePoint(geometryPointsList[i], pXValueToSet, pYValueToSet);
-                        markSingleLayerOnEdit(geometryPointsList[i]);
-                    }
+                    setTrianglePoint(geometryPointsList[i]);
+                    markSingleLayerOnEdit(geometryPointsList[i]);
                 }
             }
         }
@@ -960,44 +774,22 @@ document.getElementById("tripoint").addEventListener("click", function() {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                let triggerPX = false;
-                let triggerPY = false;
-                let pXValueToSet;
-                let pYValueToSet;
-                pXValueToSet = triPointX.value;
-                while (pXValueToSet.search(" ") > -1) {
-                    pXValueToSet = pXValueToSet.replace(" ", "");
-                }
-                if (!isNaN(pXValueToSet)) {
-                    pXValueToSet = parseInt(pXValueToSet);
-                    triggerPX = true;
-                } else {
-                    triggerPX = false;
-                }
-                pYValueToSet = triPointY.value;
-                while (pYValueToSet.search(" ") > -1) {
-                    pYValueToSet = pYValueToSet.replace(" ", "");
-                }
-                if (!isNaN(pYValueToSet)) {
-                    pYValueToSet = parseInt(pYValueToSet);
-                    triggerPY = true;
-                } else {
-                    triggerPY = false;
-                }
-                if (triggerPX && pXValueToSet >= 1 && pXValueToSet <= 3000 && triggerPY && pYValueToSet >= 1 && pYValueToSet <= 3000) {
-                    setTrianglePoint(geometryPointsList[index], pXValueToSet, pYValueToSet);
-                }
+                setTrianglePoint(geometryPointsList[index]);
             }
         }
     }
 }, false);
 
-function setTrianglePoint(controlP, pointX, pointY) {
-    const currentShape = controlP.elementToControl;
-    if (currentShape.type === "triangle") {
-        currentShape.xp2 = pointX * pdfState.zoom;
-        currentShape.yp2 = pointY * pdfState.zoom;
-        updateUserShapeLayer(controlP);
+function setTrianglePoint(controlP) {
+    let successValueX = convertInputToSucess(triPointX.value, 1, 3000, true, false);
+    let successValueY = convertInputToSucess(triPointY.value, 1, 3000, true, false);
+    if (successValueX !== -1000 && successValueY !== -1000) {
+        const currentShape = controlP.elementToControl;
+        if (currentShape.type === "triangle") {
+            currentShape.xp2 = successValueX * pdfState.zoom;
+            currentShape.yp2 = successValueY * pdfState.zoom;
+            updateUserShapeLayer(controlP);
+        }
     }
 }
 

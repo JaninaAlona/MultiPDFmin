@@ -699,41 +699,16 @@ document.getElementById('applyimgrotation').addEventListener("click", function()
 }, false);
 
 async function applyImgRotation(controlP) {
-    let triggerRotation = false;
-    let rotationValueToSet;
+    let successValue;
     if (rotateImgSelectorTriggered) {
-        rotationValueToSet = parseInt(imgRotationSelector.value); 
-        triggerRotation = true;
+        successValue = convertInputToSucess(imgRotationSelector.value, -360, 360, true, false);
     } else if (rotateImgInputFieldTriggered) {
-        rotationValueToSet = imgRotationInput.value;
-        while (rotationValueToSet.search(" ") > -1) {
-            rotationValueToSet = rotationValueToSet.replace(" ", "");
-        }
-        if (!isNaN(rotationValueToSet)) {
-            rotationValueToSet = parseInt(rotationValueToSet);
-            if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                rotationValueToSet = 0;
-            }
-            triggerRotation = true;
-        } else {
-            triggerRotation = false;
-        }
-    } else {
-        rotationValueToSet = imgRotationInput.value;
-        while (rotationValueToSet.search(" ") > -1) {
-            rotationValueToSet = rotationValueToSet.replace(" ", "");
-        }
-        if (!isNaN(rotationValueToSet)) {
-            rotationValueToSet = parseInt(rotationValueToSet);
-            if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                rotationValueToSet = 0;
-            }
-            triggerRotation = true;
-        } else {
-            triggerRotation = false;
-        }
+        successValue = convertInputToSucess(imgRotationInput.value, -360, 360, true, false);
     }
-    if (triggerRotation && rotationValueToSet >= -359 && rotationValueToSet <= 359) {
+    if (successValue === 360 || successValue === -360) {
+        successValue = 0;
+    }
+    if (successValue !== -1000) {
         const pdfLayer = await PDFDocument.create();
         const currentImage = controlP.elementToControl;
         let imgBytes;

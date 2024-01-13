@@ -115,7 +115,7 @@ async function addText(event, writeLayer) {
         currentUserText.size = 30;
         currentUserText.fontKey = StandardFonts.TimesRoman;
         currentUserText.font = font;
-        currentUserText.lineHeight = 24;
+        currentUserText.lineHeight = 34;
         currentUserText.color = rgb(0, 0, 0);
         currentUserText.page = writePage;
         currentUserText.opacity = 1.0;
@@ -523,9 +523,7 @@ async function applyFontSize(controlP) {
         triggerFontSize = true;
     } else if (fontSizeInputFieldTriggered) {
         fontSizeValueToSet = sizeInput.value;
-        while (fontSizeValueToSet.search(" ") > -1) {
-            fontSizeValueToSet = fontSizeValueToSet.replace(" ", "");
-        }
+        fontSizeValueToSet = fontSizeValueToSet.replace(/\s/g, "X");
         if (!isNaN(fontSizeValueToSet)) {
             fontSizeValueToSet = Number(fontSizeValueToSet);
             if (Number.isInteger(fontSizeValueToSet)) {
@@ -538,9 +536,7 @@ async function applyFontSize(controlP) {
         }
     } else {
         fontSizeValueToSet = sizeInput.value;
-        while (fontSizeValueToSet.search(" ") > -1) {
-            fontSizeValueToSet = fontSizeValueToSet.replace(" ", "");
-        }
+        fontSizeValueToSet = fontSizeValueToSet.replace(/\s/g, "X");
         if (!isNaN(fontSizeValueToSet)) {
             fontSizeValueToSet = Number(fontSizeValueToSet);
             if (Number.isInteger(fontSizeValueToSet)) {
@@ -552,7 +548,7 @@ async function applyFontSize(controlP) {
             triggerFontSize = false;
         }
     }
-    if (triggerFontSize && fontSizeValueToSet >= 3 && fontSizeValueToSet <= 400) {
+    if (triggerFontSize && fontSizeValueToSet >= 3 && fontSizeValueToSet <= 500) {
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);
         const currentText = controlP.elementToControl;
@@ -671,9 +667,7 @@ async function applyTextRotation(controlP) {
         triggerTextRotation = true;
     } else if (rotateTextInputFieldTriggered) {
         rotationValueToSet = textRotationInput.value;
-        while (rotationValueToSet.search(" ") > -1) {
-            rotationValueToSet = rotationValueToSet.replace(" ", "");
-        }
+        rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
         if (!isNaN(rotationValueToSet)) {
             rotationValueToSet = parseInt(rotationValueToSet);
             if (rotationValueToSet === 360 || rotationValueToSet === -360) {
@@ -685,9 +679,7 @@ async function applyTextRotation(controlP) {
         }
     } else {
         rotationValueToSet = textRotationInput.value;
-        while (rotationValueToSet.search(" ") > -1) {
-            rotationValueToSet = rotationValueToSet.replace(" ", "");
-        }
+        rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
         if (!isNaN(rotationValueToSet)) {
             rotationValueToSet = parseInt(rotationValueToSet);
             if (rotationValueToSet === 360 || rotationValueToSet === -360) {
@@ -762,9 +754,7 @@ async function applyLineHeight(controlP) {
         triggerLineHeight = true;
     } else if (lineheightInputFieldTriggered) {
         lineheightValueToSet = lineheightInput.value;
-        while (lineheightValueToSet.search(" ") > -1) {
-            lineheightValueToSet = lineheightValueToSet.replace(" ", "");
-        }
+        lineheightValueToSet = lineheightValueToSet.replace(/\s/g, "X");
         if (!isNaN(lineheightValueToSet)) {
             lineheightValueToSet = Number(lineheightValueToSet);
             if (Number.isInteger(lineheightValueToSet)) {
@@ -777,9 +767,7 @@ async function applyLineHeight(controlP) {
         }
     } else {
         lineheightValueToSet = lineheightInput.value;
-        while (lineheightValueToSet.search(" ") > -1) {
-            lineheightValueToSet = lineheightValueToSet.replace(" ", "");
-        }
+        lineheightValueToSet = lineheightValueToSet.replace(/\s/g, "X");
         if (!isNaN(lineheightValueToSet)) {
             lineheightValueToSet = Number(lineheightValueToSet);
             if (Number.isInteger(lineheightValueToSet)) {
@@ -791,7 +779,7 @@ async function applyLineHeight(controlP) {
             triggerLineHeight = false;
         }
     }
-    if (triggerLineHeight && lineheightValueToSet >= 1 && lineheightValueToSet <= 200) {
+    if (triggerLineHeight && lineheightValueToSet >= 1 && lineheightValueToSet <= 300) {
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);
         const currentText = controlP.elementToControl;

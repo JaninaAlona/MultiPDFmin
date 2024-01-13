@@ -97,7 +97,6 @@ div.drawing {
 .borderless {
     margin: 30px 10px 30px 10px;
     display: flex;
-    align-items: center;
     flex-direction: column;
 }
 
@@ -274,11 +273,6 @@ div.drawing {
     padding-left: 10px;
 }
 
-.flexrow {
-    display: flex;
-    flex-direction: row;
-}
-
 .layerlabel {
     display: flex;
     flex-direction: column;
@@ -387,4 +381,13 @@ input[type="checkbox"]:checked {
     position: absolute;
     top: 0;
     left: 68px;
+}
+
+.justifystart {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.minmax_pad {
+    padding: 5px;
 }

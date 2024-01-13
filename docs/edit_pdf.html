@@ -177,9 +177,13 @@
                     <button id="applytext" class="edittextbtn_style" type="button">Text</button>
                 </div>
             </div>
-            <div id="lineheight_con" class="borderless">
+            <div id="lineheight_con" class="borderless justifystart flexcol">
                 <div class="sidemenu_margins">
                     <p>Text Line Height</p>
+                </div>
+                <div class="flexrow minmax_pad">
+                    <div class="inner_margin">Min: 1</div>
+                    <div>Max: 300</div>
                 </div>
                 <div class="sidemenu_margins">
                     <div class="inner_margin">
@@ -191,6 +195,7 @@
                             <option value="50" class="edittextctls">50</option>
                             <option value="80" class="edittextctls">80</option>
                             <option value="100" class="edittextctls">100</option>
+                            <option value="150" class="edittextctls">150</option>
                         </select>
                     </div>
                     <input type="text" id="lineheight_input" class="numinput_sidemenu">
@@ -225,14 +230,14 @@
             </div>
             <div class="font_column borderless">
                 <div>
-                    <input type="file" id="inputfont" class="filestyle" data-btnClass="btn-success" data-input="false" accept=".ttf">
+                    <input type="file" id="inputfont" class="filestyle" data-btnClass="btn-dark" data-input="false" accept=".ttf">
                     <label for="inputfont">Select .ttf Font:</label>
                 </div>
                 <div>
                     <div id="listpoint_font_con"></div>
                 </div>
                 <div>
-                    <button id="clearlist_text" class="btn btn-success button_layout" type="button">Clear</button>
+                    <button id="clearlist_text" class="btn btn-dark button_layout" type="button">Clear</button>
                 </div>
                 <div>
                     <button id="applycustomfont" class="edittextbtn_style" type="button">Custom Font</button>
@@ -241,6 +246,10 @@
             <div id="fontsize_con" class="borderless">
                 <div class="sidemenu_margins">
                     <p>Font Size</p>
+                </div>
+                <div class="flexrow minmax_pad">
+                    <div class="inner_margin">Min: 3</div>
+                    <div>Max: 500</div>
                 </div>
                 <div class="sidemenu_margins">
                     <div class="inner_margin">
@@ -521,14 +530,14 @@
             <div class="borderless">
                 <div class="img_column">
                     <div>
-                        <input type="file" id="inputimg" class="filestyle" data-btnClass="btn-success" data-input="false" accept=".png,.jpg,.jpeg">
+                        <input type="file" id="inputimg" class="filestyle" data-btnClass="btn-dark" data-input="false" accept=".png,.jpg,.jpeg">
                         <label for="inputimg">Select Image:</label>
                     </div>
                     <div>
                         <div id="listpoint_img_con"></div>
                     </div>
                     <div>
-                        <button id="clearlist_img" class="btn btn-success button_layout" type="button">Clear</button>
+                        <button id="clearlist_img" class="btn btn-dark button_layout" type="button">Clear</button>
                     </div>
                 </div>
                 <div id="selectimg"></div>

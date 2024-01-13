@@ -1101,8 +1101,8 @@ function initEditor() {
         document.getElementById('show_btns').style.display = "none";
         initLayerVariables();
         initTextEditorControls();
-        restrictInputValues('lineheight_input', 1, 200, false, false);
-        restrictInputValues('textsize_input', 3, 400, false, false);
+        restrictInputValues('lineheight_input', 1, 300, false, false);
+        restrictInputValues('textsize_input', 3, 500, true, false);
         restrictInputValues('textrotation_input', -360, 360, true, false);
         initDrawerEditorControls();
         restrictInputValues('scale_width_draw', 0.1, 20.0, false, true);
@@ -1208,8 +1208,8 @@ function initSidemenuControlsWriter() {
     sizeInput.value = 30;
     textRotationSelector.selectedIndex = 0; 
     textRotationInput.value = 0;
-    lineheightSelector.selectedIndex = 2;
-    lineheightInput.value = 24;
+    lineheightSelector.selectedIndex = 3;
+    lineheightInput.value = 34;
 }
 
 

@@ -554,21 +554,19 @@
                 </div>
                 <div id="selectimg"></div>
             </div>
-            <div class="borderless">
-                <div id="scale_img_con" class="sidemenu_margins">
-                    <div class="sidemenu_margins">
-                        <div class="sidemenu_margins_col">
-                            <p class="inner_margin margin_bottom">Width</p>
-                            <p class="inner_margin">Height</p>
-                        </div>
-                        <div class="sidemenu_margins_col">
-                            <input type="text" id="scale_width_img" class="numinput_sidemenu margin_bottom">
-                            <input type="text" id="scale_height_img" class="numinput_sidemenu">
-                        </div>
+            <div id="scale_img_con borderless flex_col">
+                <div class="flexrow margin_bottom">
+                    <div class="flexcol">
+                        <p class="inner_margin margin_bottom">Width</p>
+                        <p class="inner_margin">Height</p>
                     </div>
-                    <div class="sidemenu_margins">
-                        <button id="scaleimg" class="edittextbtn_style" type="button">Scale</button>
+                    <div class="flexcol">
+                        <input type="text" id="scale_width_img" class="numinput_sidemenu margin_bottom">
+                        <input type="text" id="scale_height_img" class="numinput_sidemenu">
                     </div>
+                </div>
+                <div>
+                    <button id="scaleimg" class="edittextbtn_style" type="button">Scale</button>
                 </div>
             </div>
             <div id="scale_func_con" class="borderless">

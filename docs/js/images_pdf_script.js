@@ -561,7 +561,7 @@ document.getElementById('applyopacity').addEventListener("click", function() {
     }
 }, false);
 
-async function applyImgOpacity(controlP, imageOpacity) {
+async function applyImgOpacity(controlP) {
     let successValue = convertInputToSucess(imgOpacityInput.value, 0.01, 1, false, true);
     if (successValue !== -1000) {
         const pdfLayer = await PDFDocument.create();
@@ -576,7 +576,7 @@ async function applyImgOpacity(controlP, imageOpacity) {
         const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentImage.pdfDoc = pdfLayer;
         currentImage.image = imgBytes;
-        currentImage.opacity = imageOpacity;
+        currentImage.opacity = successValue;
         currentImage.setImageElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentImage.pdfBytes = pdfLayerBytes;
@@ -647,7 +647,7 @@ async function applyImgRotation(controlP) {
         const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentImage.pdfDoc = pdfLayer;
         currentImage.image = imgBytes;
-        currentImage.rotation = degrees(rotationValueToSet); 
+        currentImage.rotation = degrees(successValue); 
         currentImage.setImageElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentImage.pdfBytes = pdfLayerBytes;

@@ -372,6 +372,12 @@ input[type="checkbox"]:checked {
     flex-direction: column;
 }
 
+.dir_col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .flexrow {
     display: flex;
     flex-direction: row;

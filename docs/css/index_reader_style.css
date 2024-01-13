@@ -50,7 +50,6 @@ html {
     height: 116px;
     top: 58px;
     position: absolute;
-    /* z-index: 30; */
     z-index: 100;
 }
 
@@ -64,6 +63,14 @@ html {
     display: flex;
     flex-direction: row;
     justify-content: center;
+}
+
+.inner_margin {
+    margin-right: 10px;
+}
+
+.text_white {
+    color: white;
 }
 
 .dir_row_left {

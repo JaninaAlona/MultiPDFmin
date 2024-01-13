@@ -391,3 +391,7 @@ input[type="checkbox"]:checked {
 .minmax_pad {
     padding: 5px;
 }
+
+.geo_width_height_pad {
+    padding: 10px;
+}

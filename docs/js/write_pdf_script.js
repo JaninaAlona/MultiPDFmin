@@ -513,50 +513,24 @@ document.getElementById('applysize').addEventListener('click', function() {
 }, false);
 
 async function applyFontSize(controlP) {
-    let triggerFontSize = false;
-    let fontSizeValueToSet;
+    let successValue;
     if (fontSizeSelectorTriggered) {
-        fontSizeValueToSet = parseInt(fontSizeSelector.value); 
-        triggerFontSize = true;
+        successValue = convertInputToSucess(fontSizeSelector.value, 3, 500, true, false);
     } else if (fontSizeInputFieldTriggered) {
-        fontSizeValueToSet = sizeInput.value;
-        fontSizeValueToSet = fontSizeValueToSet.replace(/\s/g, "X");
-        if (!isNaN(fontSizeValueToSet)) {
-            fontSizeValueToSet = Number(fontSizeValueToSet);
-            if (Number.isInteger(fontSizeValueToSet)) {
-                triggerFontSize = true;
-            } else {
-                triggerFontSize = false;
-            }
-        } else {
-            triggerFontSize = false;
-        }
-    } else {
-        fontSizeValueToSet = sizeInput.value;
-        fontSizeValueToSet = fontSizeValueToSet.replace(/\s/g, "X");
-        if (!isNaN(fontSizeValueToSet)) {
-            fontSizeValueToSet = Number(fontSizeValueToSet);
-            if (Number.isInteger(fontSizeValueToSet)) {
-                triggerFontSize = true;
-            } else {
-                triggerFontSize = false;
-            }
-        } else {
-            triggerFontSize = false;
-        }
+        successValue = convertInputToSucess(sizeInput.value, 3, 500, true, false);
     }
-    if (triggerFontSize && fontSizeValueToSet >= 3 && fontSizeValueToSet <= 500) {
+    if (successValue != -1000) {
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);
         const currentText = controlP.elementToControl;
         let oldSize = currentText.size;
-        let changeSizeFactor = (fontSizeValueToSet/oldSize);
+        let changeSizeFactor = (successValue/oldSize);
         let oldLineHeight = currentText.lineHeight;
         currentText.font = await pdfLayer.embedFont(currentText.fontKey);
         let pdfCanvases = document.getElementsByClassName("render_context");
         const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentText.pdfDoc = pdfLayer;
-        currentText.size = fontSizeValueToSet;
+        currentText.size = successValue;
         currentText.lineHeight = oldLineHeight * changeSizeFactor;
         currentText.setTextElem();
         const pdfLayerBytes = await pdfLayer.save();
@@ -657,37 +631,16 @@ document.getElementById('applytextrotation').addEventListener('click', async fun
 }, false);
 
 async function applyTextRotation(controlP) {
-    let triggerTextRotation = false;
-    let rotationValueToSet;
+    let successValue;
     if (rotateTextSelectorTriggered) {
-        rotationValueToSet = parseInt(textRotationSelector.value); 
-        triggerTextRotation = true;
+        successValue = convertInputToSucess(textRotationSelector.value, -359, 359, true, false);
     } else if (rotateTextInputFieldTriggered) {
-        rotationValueToSet = textRotationInput.value;
-        rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
-        if (!isNaN(rotationValueToSet)) {
-            rotationValueToSet = parseInt(rotationValueToSet);
-            if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                rotationValueToSet = 0;
-            }
-            triggerTextRotation = true;
-        } else {
-            triggerTextRotation = false;
-        }
-    } else {
-        rotationValueToSet = textRotationInput.value;
-        rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
-        if (!isNaN(rotationValueToSet)) {
-            rotationValueToSet = parseInt(rotationValueToSet);
-            if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                rotationValueToSet = 0;
-            }
-            triggerTextRotation = true;
-        } else {
-            triggerTextRotation = false;
-        }
+        successValue = convertInputToSucess(textRotationInput.value, -359, 359, true, false);
     }
-    if (triggerTextRotation && rotationValueToSet >= -359 && rotationValueToSet <= 359) {
+    if (successValue === 360 || successValue === -360) {
+        successValue = 0;
+    }
+    if (successValue != -1000) {
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);
         const currentText = controlP.elementToControl;
@@ -695,7 +648,7 @@ async function applyTextRotation(controlP) {
         let pdfCanvases = document.getElementsByClassName("render_context");
         const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentText.pdfDoc = pdfLayer;
-        currentText.rotation = degrees(rotationValueToSet);
+        currentText.rotation = degrees(successValue);
         currentText.setTextElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentText.pdfBytes = pdfLayerBytes;
@@ -744,39 +697,13 @@ document.getElementById('applylineheight').addEventListener('click', function() 
 }, false);
 
 async function applyLineHeight(controlP) {
-    let triggerLineHeight = false;
-    let lineheightValueToSet;
+    let successValue;
     if (lineheightSelectorTriggered) {
-        lineheightValueToSet = parseInt(lineheightSelector.value); 
-        triggerLineHeight = true;
+        successValue = convertInputToSucess(lineheightSelector.value, 1, 300, true, false);
     } else if (lineheightInputFieldTriggered) {
-        lineheightValueToSet = lineheightInput.value;
-        lineheightValueToSet = lineheightValueToSet.replace(/\s/g, "X");
-        if (!isNaN(lineheightValueToSet)) {
-            lineheightValueToSet = Number(lineheightValueToSet);
-            if (Number.isInteger(lineheightValueToSet)) {
-                triggerLineHeight = true;
-            } else {
-                triggerLineHeight = false;
-            }
-        } else {
-            triggerLineHeight = false;
-        }
-    } else {
-        lineheightValueToSet = lineheightInput.value;
-        lineheightValueToSet = lineheightValueToSet.replace(/\s/g, "X");
-        if (!isNaN(lineheightValueToSet)) {
-            lineheightValueToSet = Number(lineheightValueToSet);
-            if (Number.isInteger(lineheightValueToSet)) {
-                triggerLineHeight = true;
-            } else {
-                triggerLineHeight = false;
-            }
-        } else {
-            triggerLineHeight = false;
-        }
+        successValue = convertInputToSucess(lineheightInput.value, 1, 300, true, false);
     }
-    if (triggerLineHeight && lineheightValueToSet >= 1 && lineheightValueToSet <= 300) {
+    if (successValue != -1000) {
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);
         const currentText = controlP.elementToControl;
@@ -784,7 +711,7 @@ async function applyLineHeight(controlP) {
         let pdfCanvases = document.getElementsByClassName("render_context");
         const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentText.pdfDoc = pdfLayer;
-        currentText.lineHeight = lineheightValueToSet;
+        currentText.lineHeight = successValue;
         currentText.setTextElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentText.pdfBytes = pdfLayerBytes;

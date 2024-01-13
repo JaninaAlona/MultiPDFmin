@@ -772,42 +772,44 @@ function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOpe
     let valToRestrict;
     inputElem.addEventListener('change', function() {
         valToRestrict = inputElem.value;
-        while (valToRestrict.search(" ") > -1) {
-            valToRestrict = valToRestrict.replace(" ", "");
-        }
-        if (!isNaN(valToRestrict)) {
-            if (parseIntOperation || parseFloatOperation) {  
-                if (parseIntOperation) {
-                    valToRestrict = parseInt(valToRestrict);
-                } 
-                if (parseFloatOperation) {
-                    valToRestrict = parseFloat(valToRestrict);
-                }
-                if (valToRestrict >= min && valToRestrict <= max) {
-                    document.getElementById(inputId).value = valToRestrict;
-                } else {
-                    if (valToRestrict < min) {
-                        document.getElementById(inputId).value = min;
-                    } else if (valToRestrict > max) {
-                        document.getElementById(inputId).value = max;
-                    }
-                }
+        valToRestrict = valToRestrict.replace(/\s+/g,'');
+        document.getElementById(inputId).value = valToRestrict;
+        if (typeof x == 'number' && !isNaN(valToRestrict)) { 
+            if (parseIntOperation) {
+                valToRestrict = parseInt(valToRestrict);
+                document.getElementById(inputId).value = valToRestrict;
+            } 
+            if (parseFloatOperation) {
+                valToRestrict = parseFloat(valToRestrict);
+            }
+            if (valToRestrict >= min && valToRestrict <= max) {
+                document.getElementById(inputId).value = valToRestrict;
             } else {
-                valToRestrict = Number(valToRestrict);
-                if (Number.isInteger(valToRestrict)) {
-                    if (valToRestrict >= min && valToRestrict <= max) {
-                        document.getElementById(inputId).value = valToRestrict;
-                    } else {
-                        if (valToRestrict < min) {
-                            document.getElementById(inputId).value = min;
-                        } else if (valToRestrict > max) {
-                            document.getElementById(inputId).value = max;
-                        }
-                    }
+                if (valToRestrict < min) {
+                    document.getElementById(inputId).value = min;
+                } else if (valToRestrict > max) {
+                    document.getElementById(inputId).value = max;
                 }
             }
         }
     }, false);
+}
+
+
+function convertInputToSucess(input, min, max, parseIntOperation, parseFloatOperation) {
+    let outputVal = input;
+    if (typeof x == 'number' && !isNaN(outputVal)) { 
+        if (parseIntOperation) {
+            outputVal = parseInt(outputVal);
+        } 
+        if (parseFloatOperation) {
+            outputVal = parseFloat(outputVal);
+        }
+        if (!(outputVal >= min && outputVal <= max)) {
+            outputVal = -1000;
+        }
+    }
+    return outputVal;
 }
 
 
@@ -1100,7 +1102,7 @@ function initEditor() {
         document.getElementById('show_btns').style.display = "none";
         initLayerVariables();
         initTextEditorControls();
-        restrictInputValues('lineheight_input', 1, 300, false, false);
+        restrictInputValues('lineheight_input', 1, 300, true, false);
         restrictInputValues('textsize_input', 3, 500, true, false);
         restrictInputValues('textrotation_input', -360, 360, true, false);
         initDrawerEditorControls();

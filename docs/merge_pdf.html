@@ -33,8 +33,8 @@
     </header>
     <div id="merge_app">
         <div class="pdf_widget merge_widget">
-            <div id="split_pop_up" class="pop_up">
-                <fieldset>
+            <div id="merge_pop_up" class="pop_up">
+                <div class="scrollwrap-margin">
                     <div class="next_to_open">
                         <input @input="selectFile" type="file" id="inputmergefile" class="filestyle" data-btnClass="btn-success" data-input="false" accept=".pdf">
                         <button @click="removeFile" id="remove" class="btn btn-success" disabled type="button">Remove</button>
@@ -42,7 +42,7 @@
                     <div class="scrollwrapper">
                         <ul id="sortlist"></ul>
                     </div>
-                </fieldset>
+                </div>
                 <div class="merge_btns">
                     <div class="pop_elem_size space_btw_radio">
                         <button @click="saveMergedPDF" id="save_merge" class="btn btn-success space_btw_radio" disabled type="button">Save</button>

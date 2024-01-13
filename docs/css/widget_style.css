@@ -76,6 +76,11 @@
     height: 330px
 }
 
+#merge_pop_up {
+  width: 500px;
+  height: 730px
+}
+
 #save_split {
   position: relative;
   top: 10px;
@@ -166,4 +171,8 @@
 
 .margin_bottom {
   margin-bottom: 10px;
+}
+
+.scrollwrap-margin {
+  margin-bottom: 30px;
 }

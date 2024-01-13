@@ -79,7 +79,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         document.getElementById("viewer_bg").style.display = "flex";
                         document.getElementById('maxPDFPages').innerHTML = pdf._pdfInfo.numPages + " pages";
                         pdfState.lastPage = pdf._pdfInfo.numPages;
-                        restrictInputValues('current_page', 1, pdf._pdfInfo.numPages, false, false);
+                        restrictInputValues('current_page', 1, pdf._pdfInfo.numPages, true, false);
                         restrictInputValues('zoom_factor', 1, 800, true, false);
                         setCustomFilename();
                     }
@@ -598,6 +598,7 @@ document.getElementById('go_previous').addEventListener('click', goPrevPage, fal
 document.getElementById('go_next').addEventListener('click', goNextPage, false);
 document.getElementById('current_page').addEventListener('keyup', enterPageNum, false);
 
+
 let scrollwrappers = document.getElementsByClassName("scrollwrapper");
 for (let i = 0; i < scrollwrappers.length; i++) {
     scrollwrappers[i].onscroll = displayPageNum;
@@ -608,18 +609,21 @@ document.getElementById('zoom_factor').addEventListener('keypress', debouncedEnt
 document.getElementById('zoom_out').addEventListener('click', debouncedZoomOut, false);
 
 
-document.getElementById("dragpdf").addEventListener("click", function() {
-    resetAllModes();
-    draggingMode = true;
-    const writeLayers = document.getElementsByClassName("write_layer");
-    for (let i = 0; i < writeLayers.length; i++) {
-        writeLayers[i].onmousedown = null;
-    }
-    const pdfViewerCons = document.getElementsByClassName("dragwrapper");
-    for (let i = 0; i < pdfViewerCons.length; i++) {
-        dragElement(pdfViewerCons[i]);
-    }
-}, false);
+const dragPDFs = document.getElementsByClassName("dragpdf");
+for (let j = 0; j < dragPDFs.length; j++) {
+    dragPDFs[j].addEventListener("click", function() {
+        resetAllModes();
+        draggingMode = true;
+        const writeLayers = document.getElementsByClassName("write_layer");
+        for (let i = 0; i < writeLayers.length; i++) {
+            writeLayers[i].onmousedown = null;
+        }
+        const pdfViewerCons = document.getElementsByClassName("dragwrapper");
+        for (let i = 0; i < pdfViewerCons.length; i++) {
+            dragElement(pdfViewerCons[i]);
+        }
+    }, false);
+}
 
 function dragElement(elmnt) {
     let pos1 = 0;
@@ -629,25 +633,12 @@ function dragElement(elmnt) {
     let currentWriteLayer;
     clicked = false;
     short = false;
-    let triggerCurrentPage = false;
-    let currentPage = document.getElementById("current_page").value;
-    while (currentPage.search(" ") > -1) {
-        currentPage = currentPage.replace(" ", "");
-    }
-    if (!isNaN(currentPage)) {
-        if (Number.isInteger) {
-            currentPage = parseInt(currentPage);
-            triggerCurrentPage = true;
-        } else {
-            triggerCurrentPage = false;
-        }
-    } else {
-        triggerCurrentPage = false;
-    }
-    if (triggerCurrentPage && currentPage >= 1 && currentPage <= pdfState.lastPage) {
+    let successValue = convertInputToSucess(document.getElementById("current_page").value, 1, pdfState.lastPage, true, false);
+    if (successValue !== -1000) {
+        console.log(successValue);
         const writeLayers = document.getElementsByClassName("write_layer");
         for (let i = 0; i < writeLayers.length; i++) {
-            if (parseInt(writeLayers[i].getAttribute("data-write")) === currentPage) {
+            if (parseInt(writeLayers[i].getAttribute("data-write")) === successValue) {
                 currentWriteLayer = writeLayers[i];
             }
         }
@@ -774,7 +765,7 @@ function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOpe
         valToRestrict = inputElem.value;
         valToRestrict = valToRestrict.replace(/\s+/g,'');
         document.getElementById(inputId).value = valToRestrict;
-        if (typeof x == 'number' && !isNaN(valToRestrict)) { 
+        if (valToRestrict.match(/^-?\d+$/) || valToRestrict.match(/^\d+\.\d+$/)) {
             if (parseIntOperation) {
                 valToRestrict = parseInt(valToRestrict);
                 document.getElementById(inputId).value = valToRestrict;
@@ -798,7 +789,9 @@ function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOpe
 
 function convertInputToSucess(input, min, max, parseIntOperation, parseFloatOperation) {
     let outputVal = input;
-    if (typeof x == 'number' && !isNaN(outputVal)) { 
+
+    // valid positive/negative integer or valid float
+    if (outputVal.match(/^-?\d+$/) || outputVal.match(/^\d+\.\d+$/)) {
         if (parseIntOperation) {
             outputVal = parseInt(outputVal);
         } 
@@ -807,7 +800,9 @@ function convertInputToSucess(input, min, max, parseIntOperation, parseFloatOper
         }
         if (!(outputVal >= min && outputVal <= max)) {
             outputVal = -1000;
-        }
+        } 
+    } else {
+        outputVal = -1000;
     }
     return outputVal;
 }

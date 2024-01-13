@@ -516,7 +516,6 @@ async function zoomText(controlP) {
 
 function zoomDrawing(controlP, zoomWidth, zoomHeight) {
     let context = controlP.editImg.getContext("2d");
-    context.save();
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
     context.save();
     scaleCanvas(controlP, zoomWidth, zoomHeight);
@@ -1106,7 +1105,7 @@ function initEditor() {
         restrictInputValues('textrotation_input', -360, 360, true, false);
         initDrawerEditorControls();
         restrictInputValues('scale_width_draw', 0.1, 20.0, false, true);
-        restrictInputValues('pencilsize', 0.1, 50.0, false, true);
+        restrictInputValues('pencilsize', 0.1, 500.0, false, true);
         restrictInputValues('scale_height_draw', 0.1, 20.0, false, true);
         restrictInputValues('drawrotation_input', -360, 360, true, false);
         initGeometryEditorControls();

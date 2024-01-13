@@ -136,7 +136,13 @@ function draw(writeLayer) {
                 if (typeof controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex] == 'undefined')
                     controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex] = [];
                 
-                controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:pencilSize, color:pencilColor, compositeOp:'source-over'});
+                controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({
+                    x: ((event.clientX - rect.left)/pdfState.zoom), 
+                    y: ((event.clientY - rect.top)/pdfState.zoom), 
+                    line: pencilSize, 
+                    color: pencilColor, 
+                    compositeOp: 'source-over'
+                });                
                 writeLayer.onmouseup = stopDrawing;
                 writeLayer.onmousemove = drawing;
             }
@@ -150,15 +156,19 @@ function draw(writeLayer) {
             let rect = controlP.editImg.getBoundingClientRect(); 
             context.lineTo((event.clientX - rect.left)/pdfState.zoom, (event.clientY - rect.top)/pdfState.zoom);
             context.stroke();
-            controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:pencilSize, color:pencilColor, compositeOp:'source-over'});     
+            controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({
+                x: ((event.clientX - rect.left)/pdfState.zoom), 
+                y: ((event.clientY - rect.top)/pdfState.zoom), 
+                line: pencilSize, 
+                color: pencilColor, 
+                compositeOp: 'source-over'
+            });
         }
     }
 
     function stopDrawing(event) {
         if (userModesDrawer[0]) {
             isDrawing = false;
-            let context = controlP.editImg.getContext("2d");
-            context.restore();
             controlP.elementToControl.currentPathIndex += 1;
             if (event.currentTarget === writeLayer) {
                 writeLayer.onmouseup = null;
@@ -324,7 +334,13 @@ function erase(writeLayer) {
                 if (typeof controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex] == 'undefined')
                     controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex] = [];
                 
-                controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:pencilSize, color:eraserColor, compositeOp:'destination-out'});
+                controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({
+                    x: ((event.clientX - rect.left)/pdfState.zoom), 
+                    y: ((event.clientY - rect.top)/pdfState.zoom), 
+                    line: pencilSize, 
+                    color: pencilColor, 
+                    compositeOp: 'destination-out'
+                });                
                 writeLayer.onmouseup = stopErasing;
                 writeLayer.onmousemove = erasing;
             }
@@ -338,15 +354,19 @@ function erase(writeLayer) {
             let rect = controlP.editImg.getBoundingClientRect(); 
             context.lineTo((event.clientX - rect.left)/pdfState.zoom, (event.clientY - rect.top)/pdfState.zoom);
             context.stroke();
-            controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({x:((event.clientX - rect.left)/pdfState.zoom), y:((event.clientY - rect.top)/pdfState.zoom), line:pencilSize, color:eraserColor, compositeOp:'destination-out'});       
+            controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({
+                x: ((event.clientX - rect.left)/pdfState.zoom), 
+                y: ((event.clientY - rect.top)/pdfState.zoom), 
+                line: pencilSize, 
+                color: pencilColor, 
+                compositeOp: 'destination-out'
+            }); 
         }
     }
 
     function stopErasing(event) {
         if (userModesDrawer[1]) {
             isErasing = false;
-            let context = controlP.editImg.getContext("2d");
-            context.restore();
             controlP.elementToControl.currentPathIndex += 1;
             if (event.currentTarget === writeLayer) {
                 writeLayer.onmouseup = null;
@@ -403,7 +423,6 @@ function deleteDrawing(controlP, page, boxIndex) {
         drawLayerStack[i].controlBox.dataset.index = i.toString();
         drawLayerStack[i].editImg.dataset.index = i.toString();
     }
-
     if (groupImages.children.length === 0) {
         groupImages.parentNode.removeChild(groupImages);
         const groupControlP = writeLayer.getElementsByClassName("control_group")[0];
@@ -515,12 +534,10 @@ let pencilsizeInput = document.querySelector("#pencilsize");
 document.getElementById('applypencilsize').addEventListener("click", function() {
     resetAllModes();
     let currentPencilSize = pencilsizeInput.value;
-    while (currentPencilSize.search(" ") > -1) {
-        currentPencilSize = currentPencilSize.replace(" ", "");
-    }
+    currentPencilSize = currentPencilSize.replace(/\s/g, "X");
     if (!isNaN(currentPencilSize)) {
         currentPencilSize = parseFloat(currentPencilSize);
-        if (currentPencilSize >= 0.1 && currentPencilSize <= 50) {
+        if (currentPencilSize >= 0.1 && currentPencilSize <= 500) {
             pencilSize = currentPencilSize;
         }
     } 
@@ -556,36 +573,10 @@ document.getElementById("scaleDraw").addEventListener("click", function() {
                     userModesDrawer[4] = false;
                 }
                 if (userModesDrawer[4]) {
-                    let triggerDrawWidth = false;
-                    let triggerDrawHeight = false;
-                    let drawWidthValueToSet;
-                    let drawHeightValueToSet;
-                    drawWidthValueToSet = scaleInputFieldWidthDraw.value;
-                    while (drawWidthValueToSet.search(" ") > -1) {
-                        drawWidthValueToSet = drawWidthValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(drawWidthValueToSet)) {
-                        drawWidthValueToSet = parseFloat(drawWidthValueToSet);
-                        triggerDrawWidth = true;
-                    } else {
-                        triggerDrawWidth = false;
-                    }
-                    drawHeightValueToSet = scaleInputFieldHeightDraw.value;
-                    while (drawHeightValueToSet.search(" ") > -1) {
-                        drawHeightValueToSet = drawHeightValueToSet.replace(" ", "");
-                    }
-                    if (!isNaN(drawHeightValueToSet)) {
-                        drawHeightValueToSet = parseFloat(drawHeightValueToSet);
-                        triggerDrawHeight = true;
-                    } else {
-                        triggerDrawHeight = false;
-                    }
-                    if (triggerDrawWidth && drawWidthValueToSet >= 0.1 && drawWidthValueToSet <= 20.0 && triggerDrawHeight && drawHeightValueToSet >= 0.1 && drawHeightValueToSet <= 20.0) {
-                        zoomDrawing(drawLayerStack[i], pdfState.zoom, pdfState.zoom);
-                        scalingDrawing(drawLayerStack[i], drawWidthValueToSet, drawHeightValueToSet);
-                        rotateDrawing(drawLayerStack[i], drawLayerStack[i].elementToControl.rotation);
-                        markSingleLayerOnEdit(drawLayerStack[i]);
-                    }
+                    zoomDrawing(drawLayerStack[i], pdfState.zoom, pdfState.zoom);
+                    scalingDrawing(drawLayerStack[i]);
+                    rotateDrawing(drawLayerStack[i], drawLayerStack[i].elementToControl.rotation);
+                    markSingleLayerOnEdit(drawLayerStack[i]);
                 }
             }
         }
@@ -596,88 +587,85 @@ document.getElementById("scaleDraw").addEventListener("click", function() {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "drawing") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                let triggerDrawWidth = false;
-                let triggerDrawHeight = false;
-                let drawWidthValueToSet;
-                let drawHeightValueToSet;
-                drawWidthValueToSet = scaleInputFieldWidthDraw.value;
-                while (drawWidthValueToSet.search(" ") > -1) {
-                    drawWidthValueToSet = drawWidthValueToSet.replace(" ", "");
-                }
-                if (!isNaN(drawWidthValueToSet)) {
-                    drawWidthValueToSet = parseFloat(drawWidthValueToSet);
-                    triggerDrawWidth = true;
-                } else {
-                    triggerDrawWidth = false;
-                }
-                drawHeightValueToSet = scaleInputFieldHeightDraw.value;
-                while (drawHeightValueToSet.search(" ") > -1) {
-                    drawHeightValueToSet = drawHeightValueToSet.replace(" ", "");
-                }
-                if (!isNaN(drawHeightValueToSet)) {
-                    drawHeightValueToSet = parseFloat(drawHeightValueToSet);
-                    triggerDrawHeight = true;
-                } else {
-                    triggerDrawHeight = false;
-                }
-                if (triggerDrawWidth && drawWidthValueToSet >= 0.1 && drawWidthValueToSet <= 20.0 && triggerDrawHeight && drawHeightValueToSet >= 0.1 && drawHeightValueToSet <= 20.0) {
-                    zoomDrawing(drawLayerStack[index], pdfState.zoom, pdfState.zoom);
-                    scalingDrawing(drawLayerStack[index], drawWidthValueToSet, drawHeightValueToSet);
-                    rotateDrawing(drawLayerStack[index], drawLayerStack[index].elementToControl.rotation);
-                }
+                zoomDrawing(drawLayerStack[index], pdfState.zoom, pdfState.zoom);
+                scalingDrawing(drawLayerStack[index]);
+                rotateDrawing(drawLayerStack[index], drawLayerStack[index].elementToControl.rotation);
             }
         }
     }
 }, false);
 
-function scalingDrawing(controlP, scaleWidth, scaleHeight) {
-    let context = controlP.editImg.getContext("2d");
-    context.save();
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
-    context.save();
-    if (userModesDrawer[0]) {
-        context.globalCompositeOperation = 'source-over';
-    } else if (userModesDrawer[1]) {
-        context.globalCompositeOperation = 'destination-out';
-    } 
-    for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
-        context.beginPath();  
-        context.lineCap = "round";
-        context.lineJoin = "round";       
-        context.lineWidth = controlP.elementToControl.paths[i][0].line;
-        context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
-        context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
-        let priorX = controlP.elementToControl.paths[i][0].x;
-        let scaleX = controlP.elementToControl.paths[i][0].x * scaleWidth;
-        let priorY = controlP.elementToControl.paths[i][0].y;
-        let scaleY = controlP.elementToControl.paths[i][0].y * scaleHeight;
-        let translateX = Math.abs(scaleX - priorX);
-        let translateY = Math.abs(scaleY - priorY);
-        context.moveTo(priorX, priorY);                
-        for (let j = 1; j < controlP.elementToControl.paths[i].length; j++) {
-            scaleX = controlP.elementToControl.paths[i][j].x * scaleWidth;
-            scaleY = controlP.elementToControl.paths[i][j].y * scaleHeight;
-            if (scaleWidth >= 1.0 && scaleHeight >= 1.0) {
-                controlP.elementToControl.paths[i][j].x = Math.abs(scaleX - translateX);
-                controlP.elementToControl.paths[i][j].y = Math.abs(scaleY - translateY);
-                context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
-            } else if (scaleWidth < 1.0 && scaleHeight < 1.0) {
-                controlP.elementToControl.paths[i][j].x = scaleX + translateX;
-                controlP.elementToControl.paths[i][j].y = scaleY + translateY;
-                context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
-            } else if (scaleWidth >= 1.0 && scaleHeight < 1.0) {
-                controlP.elementToControl.paths[i][j].x = Math.abs(scaleX - translateX);
-                controlP.elementToControl.paths[i][j].y = scaleY + translateY;
-                context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
-            } else if (scaleWidth < 1.0 && scaleHeight >= 1.0) {
-                controlP.elementToControl.paths[i][j].x = scaleX + translateX;
-                controlP.elementToControl.paths[i][j].y = Math.abs(scaleY - translateY);
-                context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
-            }
-        }
-        context.stroke();
+function scalingDrawing(controlP) {
+    let triggerDrawWidth = false;
+    let triggerDrawHeight = false;
+    let drawWidthValueToSet;
+    let drawHeightValueToSet;
+    drawWidthValueToSet = scaleInputFieldWidthDraw.value;
+    drawWidthValueToSet = drawWidthValueToSet.replace(/\s/g, "X");
+    if (!isNaN(drawWidthValueToSet)) {
+        drawWidthValueToSet = parseFloat(drawWidthValueToSet);
+        triggerDrawWidth = true;
+    } else {
+        triggerDrawWidth = false;
     }
+    drawHeightValueToSet = scaleInputFieldHeightDraw.value;
+    drawHeightValueToSet = drawHeightValueToSet.replace(/\s/g, "X");
+    if (!isNaN(drawHeightValueToSet)) {
+        drawHeightValueToSet = parseFloat(drawHeightValueToSet);
+        triggerDrawHeight = true;
+    } else {
+        triggerDrawHeight = false;
+    }
+    if (triggerDrawWidth && drawWidthValueToSet >= 0.1 && drawWidthValueToSet <= 20.0 && triggerDrawHeight && drawHeightValueToSet >= 0.1 && drawHeightValueToSet <= 20.0) {
+        let scaleWidth = drawWidthValueToSet;
+        let scaleHeight = drawHeightValueToSet;
+        let context = controlP.editImg.getContext("2d");
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
+        context.save();
+        if (userModesDrawer[0]) {
+            context.globalCompositeOperation = 'source-over';
+        } else if (userModesDrawer[1]) {
+            context.globalCompositeOperation = 'destination-out';
+        } 
+        for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
+            context.beginPath();  
+            context.lineCap = "round";
+            context.lineJoin = "round";       
+            context.lineWidth = controlP.elementToControl.paths[i][0].line;
+            context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
+            context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
+            let priorX = controlP.elementToControl.paths[i][0].x;
+            let scaleX = controlP.elementToControl.paths[i][0].x * scaleWidth;
+            let priorY = controlP.elementToControl.paths[i][0].y;
+            let scaleY = controlP.elementToControl.paths[i][0].y * scaleHeight;
+            let translateX = Math.abs(scaleX - priorX);
+            let translateY = Math.abs(scaleY - priorY);
+            context.moveTo(priorX, priorY);                
+            for (let j = 1; j < controlP.elementToControl.paths[i].length; j++) {
+                scaleX = controlP.elementToControl.paths[i][j].x * scaleWidth;
+                scaleY = controlP.elementToControl.paths[i][j].y * scaleHeight;
+                if (scaleWidth >= 1.0 && scaleHeight >= 1.0) {
+                    controlP.elementToControl.paths[i][j].x = Math.abs(scaleX - translateX);
+                    controlP.elementToControl.paths[i][j].y = Math.abs(scaleY - translateY);
+                    context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
+                } else if (scaleWidth < 1.0 && scaleHeight < 1.0) {
+                    controlP.elementToControl.paths[i][j].x = scaleX + translateX;
+                    controlP.elementToControl.paths[i][j].y = scaleY + translateY;
+                    context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
+                } else if (scaleWidth >= 1.0 && scaleHeight < 1.0) {
+                    controlP.elementToControl.paths[i][j].x = Math.abs(scaleX - translateX);
+                    controlP.elementToControl.paths[i][j].y = scaleY + translateY;
+                    context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
+                } else if (scaleWidth < 1.0 && scaleHeight >= 1.0) {
+                    controlP.elementToControl.paths[i][j].x = scaleX + translateX;
+                    controlP.elementToControl.paths[i][j].y = Math.abs(scaleY - translateY);
+                    context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
+                }
+            }
+            context.stroke();
+        }
     context.restore();
+    }
 }
 
 
@@ -712,9 +700,7 @@ document.getElementById("applydrawrotation").addEventListener("click", function(
                         triggerDrawRotation = true;
                     } else if (rotateDrawInputFieldTriggered) {
                         rotationValueToSet = drawRotationInput.value;
-                        while (rotationValueToSet.search(" ") > -1) {
-                            rotationValueToSet = rotationValueToSet.replace(" ", "");
-                        }
+                        rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
                         if (!isNaN(rotationValueToSet)) {
                             rotationValueToSet = parseInt(rotationValueToSet);
                             if (rotationValueToSet === 360 || rotationValueToSet === -360) {
@@ -726,9 +712,7 @@ document.getElementById("applydrawrotation").addEventListener("click", function(
                         }
                     } else {
                         rotationValueToSet = drawRotationInput.value;
-                        while (rotationValueToSet.search(" ") > -1) {
-                            rotationValueToSet = rotationValueToSet.replace(" ", "");
-                        }
+                        rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
                         if (!isNaN(rotationValueToSet)) {
                             rotationValueToSet = parseInt(rotationValueToSet);
                             if (rotationValueToSet === 360 || rotationValueToSet === -360) {
@@ -761,9 +745,7 @@ document.getElementById("applydrawrotation").addEventListener("click", function(
                     triggerDrawRotation = true;
                 } else if (rotateDrawInputFieldTriggered) {
                     rotationValueToSet = drawRotationInput.value;
-                    while (rotationValueToSet.search(" ") > -1) {
-                        rotationValueToSet = rotationValueToSet.replace(" ", "");
-                    }
+                    rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
                     if (!isNaN(rotationValueToSet)) {
                         rotationValueToSet = parseInt(rotationValueToSet);
                         if (rotationValueToSet === 360 || rotationValueToSet === -360) {
@@ -775,9 +757,7 @@ document.getElementById("applydrawrotation").addEventListener("click", function(
                     }
                 } else {
                     rotationValueToSet = drawRotationInput.value;
-                    while (rotationValueToSet.search(" ") > -1) {
-                        rotationValueToSet = rotationValueToSet.replace(" ", "");
-                    }
+                    rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
                     if (!isNaN(rotationValueToSet)) {
                         rotationValueToSet = parseInt(rotationValueToSet);
                         if (rotationValueToSet === 360 || rotationValueToSet === -360) {

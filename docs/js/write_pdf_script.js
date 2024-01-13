@@ -107,7 +107,6 @@ async function addText(event, writeLayer) {
         let rect = writeLayer.getBoundingClientRect();
         let mousePos = { x: event.clientX - rect.left, y: event.clientY - rect.top };
         let writePage = parseInt(writeLayer.getAttribute("data-write"));
-
         currentUserText.pdfDoc = pdfLayer;
         currentUserText.text = "dummy";
         currentUserText.x = mousePos.x / pdfState.zoom;
@@ -123,7 +122,6 @@ async function addText(event, writeLayer) {
         currentUserText.setTextElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentUserText.pdfBytes = pdfLayerBytes;
-        
         controlP.x = mousePos.x;
         controlP.y = mousePos.y;
         controlP.elementToControl = currentUserText;
@@ -181,7 +179,6 @@ function deleteText(controlP, page, boxIndex) {
         userTextList[i].controlBox.dataset.index = i.toString();
         userTextList[i].editImg.dataset.index = i.toString();
     }
-
     if (groupImages.children.length === 0) {
         groupImages.parentNode.removeChild(groupImages);
         const groupControlP = writeLayer.getElementsByClassName("control_group")[0];

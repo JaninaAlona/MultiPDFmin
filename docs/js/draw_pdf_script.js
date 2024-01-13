@@ -533,14 +533,10 @@ let pencilsizeInput = document.querySelector("#pencilsize");
 
 document.getElementById('applypencilsize').addEventListener("click", function() {
     resetAllModes();
-    let currentPencilSize = pencilsizeInput.value;
-    currentPencilSize = currentPencilSize.replace(/\s/g, "X");
-    if (!isNaN(currentPencilSize)) {
-        currentPencilSize = parseFloat(currentPencilSize);
-        if (currentPencilSize >= 0.1 && currentPencilSize <= 500) {
-            pencilSize = currentPencilSize;
-        }
-    } 
+    let successValue = convertInputToSucess(pencilsizeInput.value, 0.1, 500, true, false);
+    if (successValue !== -1000) {
+        pencilSize = successValue;
+    }
 }, false);
 
 
@@ -596,29 +592,11 @@ document.getElementById("scaleDraw").addEventListener("click", function() {
 }, false);
 
 function scalingDrawing(controlP) {
-    let triggerDrawWidth = false;
-    let triggerDrawHeight = false;
-    let drawWidthValueToSet;
-    let drawHeightValueToSet;
-    drawWidthValueToSet = scaleInputFieldWidthDraw.value;
-    drawWidthValueToSet = drawWidthValueToSet.replace(/\s/g, "X");
-    if (!isNaN(drawWidthValueToSet)) {
-        drawWidthValueToSet = parseFloat(drawWidthValueToSet);
-        triggerDrawWidth = true;
-    } else {
-        triggerDrawWidth = false;
-    }
-    drawHeightValueToSet = scaleInputFieldHeightDraw.value;
-    drawHeightValueToSet = drawHeightValueToSet.replace(/\s/g, "X");
-    if (!isNaN(drawHeightValueToSet)) {
-        drawHeightValueToSet = parseFloat(drawHeightValueToSet);
-        triggerDrawHeight = true;
-    } else {
-        triggerDrawHeight = false;
-    }
-    if (triggerDrawWidth && drawWidthValueToSet >= 0.1 && drawWidthValueToSet <= 20.0 && triggerDrawHeight && drawHeightValueToSet >= 0.1 && drawHeightValueToSet <= 20.0) {
-        let scaleWidth = drawWidthValueToSet;
-        let scaleHeight = drawHeightValueToSet;
+    let successValueW = convertInputToSucess(scaleInputFieldWidthDraw.value, 0.1, 20.0, false, true);
+    let successValueH = convertInputToSucess(scaleInputFieldHeightDraw.value, 0.1, 20.0, false, true);
+    if (successValueW !== -1000 && successValueH !== -1000) {
+        let scaleWidth = successValueW;
+        let scaleHeight = successValueH;
         let context = controlP.editImg.getContext("2d");
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
         context.save();
@@ -664,7 +642,7 @@ function scalingDrawing(controlP) {
             }
             context.stroke();
         }
-    context.restore();
+        context.restore();
     }
 }
 
@@ -693,39 +671,15 @@ document.getElementById("applydrawrotation").addEventListener("click", function(
                     userModesDrawer[5] = false;
                 }
                 if (userModesDrawer[5]) {
-                    let triggerDrawRotation = false;
-                    let rotationValueToSet;
+                    let successValue;
                     if (rotateDrawSelectorTriggered) {
-                        rotationValueToSet = parseInt(drawRotationSelector.value); 
-                        triggerDrawRotation = true;
+                        successValue = convertInputToSucess(drawRotationSelector.value, 3, 500, true, false);
                     } else if (rotateDrawInputFieldTriggered) {
-                        rotationValueToSet = drawRotationInput.value;
-                        rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
-                        if (!isNaN(rotationValueToSet)) {
-                            rotationValueToSet = parseInt(rotationValueToSet);
-                            if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                                rotationValueToSet = 0;
-                            }
-                            triggerDrawRotation = true;
-                        } else {
-                            triggerDrawRotation = false;
-                        }
-                    } else {
-                        rotationValueToSet = drawRotationInput.value;
-                        rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
-                        if (!isNaN(rotationValueToSet)) {
-                            rotationValueToSet = parseInt(rotationValueToSet);
-                            if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                                rotationValueToSet = 0;
-                            }
-                            triggerDrawRotation = true;
-                        } else {
-                            triggerDrawRotation = false;
-                        }
+                        successValue = convertInputToSucess(drawRotationInput.value, 3, 500, true, false);
                     }
-                    if (triggerDrawRotation && rotationValueToSet >= -359 && rotationValueToSet <= 359) {
+                    if (successValue !== -1000) {
                         zoomDrawing(drawLayerStack[i], pdfState.zoom, pdfState.zoom);
-                        rotateDrawing(drawLayerStack[i], rotationValueToSet);    
+                        rotateDrawing(drawLayerStack[i], successValue);    
                         markSingleLayerOnEdit(drawLayerStack[i]);
                     }
                 }
@@ -738,40 +692,16 @@ document.getElementById("applydrawrotation").addEventListener("click", function(
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "drawing") {
                 let index = parseInt(layercontainer.getAttribute("data-index"));
-                let triggerDrawRotation = false;
-                let rotationValueToSet;
-                if (rotateDrawSelectorTriggered) {
-                    rotationValueToSet = parseInt(drawRotationSelector.value); 
-                    triggerDrawRotation = true;
-                } else if (rotateDrawInputFieldTriggered) {
-                    rotationValueToSet = drawRotationInput.value;
-                    rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
-                    if (!isNaN(rotationValueToSet)) {
-                        rotationValueToSet = parseInt(rotationValueToSet);
-                        if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                            rotationValueToSet = 0;
-                        }
-                        triggerDrawRotation = true;
-                    } else {
-                        triggerDrawRotation = false;
+                let successValue;
+                    if (rotateDrawSelectorTriggered) {
+                        successValue = convertInputToSucess(drawRotationSelector.value, 3, 500, true, false);
+                    } else if (rotateDrawInputFieldTriggered) {
+                        successValue = convertInputToSucess(drawRotationInput.value, 3, 500, true, false);
                     }
-                } else {
-                    rotationValueToSet = drawRotationInput.value;
-                    rotationValueToSet = rotationValueToSet.replace(/\s/g, "X");
-                    if (!isNaN(rotationValueToSet)) {
-                        rotationValueToSet = parseInt(rotationValueToSet);
-                        if (rotationValueToSet === 360 || rotationValueToSet === -360) {
-                            rotationValueToSet = 0;
-                        }
-                        triggerDrawRotation = true;
-                    } else {
-                        triggerDrawRotation = false;
+                    if (successValue !== -1000) {
+                        zoomDrawing(drawLayerStack[index], pdfState.zoom, pdfState.zoom);
+                        rotateDrawing(drawLayerStack[index], successValue);    
                     }
-                }
-                if (triggerDrawRotation && rotationValueToSet >= -359 && rotationValueToSet <= 359) {
-                    zoomDrawing(drawLayerStack[i], pdfState.zoom, pdfState.zoom);
-                    rotateDrawing(drawLayerStack[index], rotationValueToSet);    
-                }
             }
         }
     }

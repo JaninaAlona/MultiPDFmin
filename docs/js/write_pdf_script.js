@@ -519,7 +519,7 @@ async function applyFontSize(controlP) {
     } else if (fontSizeInputFieldTriggered) {
         successValue = convertInputToSucess(sizeInput.value, 3, 500, true, false);
     }
-    if (successValue != -1000) {
+    if (successValue !== -1000) {
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);
         const currentText = controlP.elementToControl;
@@ -640,7 +640,7 @@ async function applyTextRotation(controlP) {
     if (successValue === 360 || successValue === -360) {
         successValue = 0;
     }
-    if (successValue != -1000) {
+    if (successValue !== -1000) {
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);
         const currentText = controlP.elementToControl;
@@ -703,7 +703,7 @@ async function applyLineHeight(controlP) {
     } else if (lineheightInputFieldTriggered) {
         successValue = convertInputToSucess(lineheightInput.value, 1, 300, true, false);
     }
-    if (successValue != -1000) {
+    if (successValue !== -1000) {
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);
         const currentText = controlP.elementToControl;

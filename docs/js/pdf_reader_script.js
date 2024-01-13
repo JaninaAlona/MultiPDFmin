@@ -635,7 +635,6 @@ function dragElement(elmnt) {
     short = false;
     let successValue = convertInputToSucess(document.getElementById("current_page").value, 1, pdfState.lastPage, true, false);
     if (successValue !== -1000) {
-        console.log(successValue);
         const writeLayers = document.getElementsByClassName("write_layer");
         for (let i = 0; i < writeLayers.length; i++) {
             if (parseInt(writeLayers[i].getAttribute("data-write")) === successValue) {
@@ -691,22 +690,15 @@ function dragElement(elmnt) {
 if (document.getElementById('spin_right') !== undefined && document.getElementById('spin_right') !== null) {
     document.getElementById("spin_right").addEventListener("click", async function() {
         resetAllModes();
-        let currentPage = document.getElementById("current_page").value;
-        while (currentPage.search(" ") > -1) {
-            currentPage = currentPage.replace(" ", "");
-        }
-        if (!isNaN(currentPage)) {
-            currentPage = Number(currentPage);
-            if (Number.isInteger(currentPage) && currentPage >= 1 && currentPage <= pdfState.pdf._pdfInfo.numPages) {
-                currentPage = parseInt(currentPage);
-                const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
-                let currentRotation = pdfDoc.getPages()[currentPage-1].getRotation().angle;
-                let newRotation = currentRotation + 90;
-                if (newRotation === 360) {
-                    newRotation = 0;
-                }
-                await setPageRotation(pdfDoc, currentPage, newRotation);
+        let currentPage = convertInputToSucess(document.getElementById("current_page").value, 1, pdfState.lastPage, true, false);
+        if (currentPage !== -1000) {
+            const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
+            let currentRotation = pdfDoc.getPages()[currentPage-1].getRotation().angle;
+            let newRotation = currentRotation + 90;
+            if (newRotation === 360) {
+                newRotation = 0;
             }
+            await setPageRotation(pdfDoc, currentPage, newRotation);
         }
     }, false);
 }
@@ -714,22 +706,15 @@ if (document.getElementById('spin_right') !== undefined && document.getElementBy
 if (document.getElementById('spin_left') !== undefined && document.getElementById('spin_left') !== null) {
     document.getElementById("spin_left").addEventListener("click", async function() {
         resetAllModes();
-        let currentPage = document.getElementById("current_page").value;
-        while (currentPage.search(" ") > -1) {
-            currentPage = currentPage.replace(" ", "");
-        }
-        if (!isNaN(currentPage)) {
-            currentPage = Number(currentPage);
-            if (Number.isInteger(currentPage) && currentPage >= 1 && currentPage <= pdfState.pdf._pdfInfo.numPages) {
-                currentPage = parseInt(currentPage);
-                const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
-                let currentRotation = pdfDoc.getPages()[currentPage-1].getRotation().angle;
-                let newRotation = currentRotation - 90;
-                if (newRotation === -360) {
-                    newRotation = 0;
-                }
-                await setPageRotation(pdfDoc, currentPage, newRotation);
+        let currentPage = convertInputToSucess(document.getElementById("current_page").value, 1, pdfState.lastPage, true, false);
+        if (currentPage !== -1000) {
+            const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
+            let currentRotation = pdfDoc.getPages()[currentPage-1].getRotation().angle;
+            let newRotation = currentRotation - 90;
+            if (newRotation === -360) {
+                newRotation = 0;
             }
+            await setPageRotation(pdfDoc, currentPage, newRotation);
         }
     }, false);
 }

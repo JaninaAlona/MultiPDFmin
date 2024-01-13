@@ -92,14 +92,35 @@
   color: #FFFFFF;
   padding: 10px;
   z-index: 20;
+  position: relative;
+  top: 0;
+  width: 300px;
+  height: 80px;
 }
 
-#save_blank:hover + .filename_hover, .enable_filename:hover + .filename_hover {
+.filename_hover_split {
+  display: none;
+  background-color: #000000;
+  color: #FFFFFF;
+  padding: 10px;
+  z-index: 20;
+  position: relative;
+  top: 10px;
+  width: 300px;
+  height: 80px;
+}
+
+#save_blank:hover + .filename_hover, .enable_filename:hover + .filename_hover, .enable_filename:hover + .filename_hover_split {
   display: flex;
   flex-direction: column;
 }
 
 .filename_hover:hover {
+  display: flex;
+  flex-direction: column;
+}
+
+.filename_hover_split:hover {
   display: flex;
   flex-direction: column;
 }
@@ -111,12 +132,6 @@
 .scrollwrapper {
   position: relative;
   top: 20px;
-}
-
-.merge_filename_box {
-  position: relative;
-  top: 0;
-  width: 460px;
 }
 
 .merge_btns {

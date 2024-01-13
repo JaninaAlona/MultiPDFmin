@@ -36,9 +36,13 @@
         <div class="pdf_widget create_widget">
             <div id="create_pop_up" class="pop_up">
                 <fieldset>
-                    <div class="pop_bottom_pad">
+                    <div class="pop_bottom_pad next_to_open">
                         <label for="blank_pages">Number of pages</label>
-                        <input id="blank_pages" type="text" value="1" />
+                        <input id="blank_pages" class="inputfield_height inner_margin" type="text" value="1">
+                        <div>
+                            <div>Min: 1</div>
+                            <div>Max: 3000</div>
+                        </div>
                     </div>
                     <div class="pop_bottom_pad">
                         <label for="dinasize">DIN A page sizes</label>
@@ -69,19 +73,25 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pop_bottom_pad">
-                        <label for="blank_width">Width in mm</label>
-                        <input id="blank_width" type="text" value="210" />
-                    </div>
-                    <div class="pop_bottom_pad">
-                        <label for="blank_height">Height in mm</label>
-                        <input id="blank_height" type="text" value="297" />
+                    <div class="next_to_open">
+                        <div>
+                            <div class="margin_bottom">Width in mm</div>
+                            <div>Height in mm</div>
+                        </div>
+                        <div class="inner_margin flex_dir_col">
+                            <input id="blank_width" class="margin_bottom" type="text" value="210">
+                            <input id="blank_height" type="text" value="297">
+                        </div>
+                        <div>
+                            <div class="margin_bottom">Min: 10</div>
+                            <div>Max: 10000</div>
+                        </div>
                     </div>
                     <div>
                         <button @click="savePDF" id="save_blank" class="btn btn-success space_btw_radio" type="button">Save</button>
                         <div class="filename_hover">
                             <label for="blank_filename">Provide PDF Filename:</label>
-                            <input @input="setFilename" id="blank_filename" type="text" :value="blankPDFfilename" />
+                            <input @input="setFilename" id="blank_filename" type="text" :value="blankPDFfilename">
                         </div> 
                     </div>
                 </fieldset> 

@@ -550,6 +550,9 @@ function setStrokeColor(controlP) {
         const currentShape = controlP.elementToControl;
         currentShape.stroke = userStrokeColor;
         currentShape.useStroke = true;
+        if (!fillCheckbox.checked) {
+            currentShape.useFill = false;
+        }
         updateUserShapeLayer(controlP);      
     }
 }
@@ -590,12 +593,10 @@ function setStrokeWidth(controlP) {
     let successValue = convertInputToSucess(strokeWidthInput.value, 0.1, 200, true, false);
     if (successValue !== -1000) {
         const currentShape = controlP.elementToControl;
-        currentShape.strokeWidth = successValue;
-        currentShape.useStroke = true;
-        if (!fillCheckbox.checked) {
-            currentShape.useFill = false;
-        }
-        updateUserShapeLayer(controlP);      
+        if (currentShape.useStroke) { 
+            currentShape.strokeWidth = successValue;
+            updateUserShapeLayer(controlP);
+        }  
     }
 }
 

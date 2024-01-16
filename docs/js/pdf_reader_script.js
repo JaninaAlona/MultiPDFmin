@@ -893,7 +893,7 @@ if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && doc
                 document.getElementById('images_controls').style.display = "flex";
                 document.getElementById('img_controls').style.display = "flex";
             }
-            setTimeout(initEditor, 1000);
+            setTimeout(initEditor, 300);
         }
     }, false);
 }

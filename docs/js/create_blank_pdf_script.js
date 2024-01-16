@@ -127,15 +127,10 @@ function restrictInputValues(inputId, valToRestrict, min, max) {
     }
 }
 
-function initRestrictInputEvents(inputId, valToRestrict, min, max) {
-    const inputElem = document.getElementById(inputId);
-    inputElem.addEventListener('change', () => restrictInputValues(inputId, valToRestrict, min, max), false);
-}
-
 function initialiseBlankEvents() {
-    initRestrictInputEvents('blank_pages', blankNumOfPagesCount, 1, 3000);
-    initRestrictInputEvents('blank_width', blankPageWidth, 10, 10000);
-    initRestrictInputEvents('blank_height', blankPageHeight, 10, 10000);
+    restrictInputValues('blank_pages', 1, 3000, true, false);
+    restrictInputValues('blank_width', 10, 10000, true, false);
+    restrictInputValues('blank_height', 10, 10000, true, false);
     const dinaSelector = document.querySelector('#dinasize');
     dinaSelector.addEventListener('click', function() {
         const dinaSizes = setDINAFormats(dinaSelector.selectedIndex);
@@ -151,29 +146,9 @@ function initialiseBlankEvents() {
         }
     }, false);
     document.getElementById('portrait').addEventListener('click', function() {
-        let triggerPortraitW = false;
-        let triggerPortraitH = false;
-        let width = document.getElementById('blank_width').value;
-        while (width.search(" ") > -1) {
-            width = width.replace(" ", "");
-        }
-        if (!isNaN(width)) {
-            width = parseInt(width);
-            triggerPortraitW = true;
-        } else {
-            triggerPortraitW = false;
-        }
-        let height = document.getElementById('blank_height').value;
-        while (height.search(" ") > -1) {
-            height = height.replace(" ", "");
-        }
-        if (!isNaN(width)) {
-            width = parseInt(width);
-            triggerPortraitH = true;
-        } else {
-            triggerPortraitH = false;
-        }
-        if (triggerPortraitW && triggerPortraitH && width > height) {
+        let successWidth = convertInputToSucess(document.getElementById('blank_width').value, 10, 10000, true, false);
+        let successHeight = convertInputToSucess(document.getElementById('blank_height').value, 10, 10000, true, false);
+        if (successWidth !== -1000 && successHeight !== -1000 && successWidth > successHeight) {
             blankPageWidth = height;
             blankPageHeight = width;
             document.getElementById('blank_width').value = height;

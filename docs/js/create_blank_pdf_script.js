@@ -13,7 +13,7 @@ const canceler = Vue.createApp({
         }
     },
     mounted() {
-        initialiseBlankEvents();
+        initBlankEvents();
     },
     methods: {
         async savePDF() {
@@ -47,52 +47,29 @@ canceler.mount('#create_blank_app');
 
 
 function blankSaveInput() {
-    let triggerSaveA = false;
-    let triggerSaveB = false;
-    let triggerSaveC = false;
-    blankNumOfPagesCount = document.getElementById('blank_pages').value;
-    while (blankNumOfPagesCount.search(" ") > -1) {
-        blankNumOfPagesCount = blankNumOfPagesCount.replace(" ", "");
+    let successNumPages = convertInputToSucess(document.getElementById('blank_pages').value, 1, 3000, true, false);
+    if (successNumPages !== -1000) {
+        blankNumOfPagesCount = successNumPages;
+        document.getElementById('blank_pages').value = blankNumOfPagesCount;
     }
-    if (!isNaN(blankNumOfPagesCount)) {
-        blankNumOfPagesCount = Number(blankNumOfPagesCount);
-        if (Number.isInteger(blankNumOfPagesCount)) {
-            document.getElementById('blank_pages').value = blankNumOfPagesCount;
-            triggerSaveA = true;
-        } else {
-            triggerSaveA = false;
-        }
-    } else {
-        triggerSaveA = false;
+    let successWidth = convertInputToSucess(document.getElementById('blank_width').value, 10, 10000, true, false);
+    if (successWidth !== -1000) {
+        blankPageWidth = successWidth;
+        document.getElementById('blank_width').value = blankPageWidth;
     }
-    blankPageWidth = document.getElementById('blank_width').value;
-    while (blankPageWidth.search(" ") > -1) {
-        blankPageWidth = blankPageWidth.replace(" ", "");
+    let successHeight = convertInputToSucess(document.getElementById('blank_height').value, 10, 10000, true, false);
+    if (successHeight !== -1000) {
+        blankPageHeight = successHeight;
+        document.getElementById('blank_height').value = blankPageHeight;
     }
-    if (!isNaN(blankPageWidth)) {
-        document.getElementById('blank_width').value = parseInt(blankPageWidth);
-        triggerSaveB = true;
-    } else {
-        triggerSaveB = false;
-    }
-    blankPageHeight = document.getElementById('blank_height').value;
-    while (blankPageHeight.search(" ") > -1) {
-        blankPageHeight = blankPageHeight.replace(" ", "");
-    }
-    if (!isNaN(blankPageHeight)) {
-        document.getElementById('blank_height').value = parseInt(blankPageHeight);
-        triggerSaveC = true;
-    } else {
-        triggerSaveC = false;
-    }
-    if (triggerSaveA && triggerSaveB && triggerSaveC) {
+    if (successNumPages != 1000 && successWidth !== 1000 && successHeight !== 1000) {
         triggerSaveBlank = true;
     } else {
         triggerSaveBlank = false;
     }
 }
 
-function initialiseBlankEvents() {
+function initBlankEvents() {
     restrictInputValues('blank_pages', 1, 3000, true, false);
     restrictInputValues('blank_width', 10, 10000, true, false);
     restrictInputValues('blank_height', 10, 10000, true, false);
@@ -104,9 +81,7 @@ function initialiseBlankEvents() {
     const portraitRadio = document.getElementById('portrait');
     portraitRadio.checked = true;
     const landscapeRadio = document.getElementById('landscape');
-    landscapeRadio.checked = false;
     const quadraticRadio = document.getElementById('quadratic');
-    quadraticRadio.checked = false;
     dinaSelector.addEventListener('click', function() {
         const dinaSizes = setDINAFormats(dinaSelector.selectedIndex);
         blankPageWidth = dinaSizes[1];
@@ -119,6 +94,7 @@ function initialiseBlankEvents() {
             document.getElementById('blank_width').value = dinaSizes[0];
             document.getElementById('blank_height').value = dinaSizes[1];
         }
+        portraitRadio.checked = true;
     }, false);
     portraitRadio.addEventListener('click', function() {
         let width = convertInputToSucess(document.getElementById('blank_width').value, 10, 10000, true, false);

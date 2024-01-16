@@ -92,46 +92,21 @@ function blankSaveInput() {
     }
 }
 
-
-function restrictInputValues(inputId, valToRestrict, min, max) {
-    valToRestrict = document.getElementById(inputId).value;
-    while (valToRestrict.search(" ") > -1) {
-        valToRestrict = valToRestrict.replace(" ", "");
-    }
-    if (!isNaN(valToRestrict)) {
-        valToRestrict = Number(valToRestrict);
-        if (inputId === 'blank_pages') {
-            if (Number.isInteger(valToRestrict)) {
-                if (valToRestrict >= min && valToRestrict <= max) {
-                    document.getElementById(inputId).value = valToRestrict;
-                } else {
-                    if (valToRestrict < min) {
-                        document.getElementById(inputId).value = min;
-                    } else if (valToRestrict > max) {
-                        document.getElementById(inputId).value = max;
-                    }
-                }
-            }
-        } else if (inputId === 'blank_width' || inputId === 'blank_height') {
-            valToRestrict = parseInt(valToRestrict);
-            if (valToRestrict >= min && valToRestrict <= max) {
-                document.getElementById(inputId).value = valToRestrict;
-            } else {
-                if (valToRestrict < min) {
-                    document.getElementById(inputId).value = min;
-                } else if (valToRestrict > max) {
-                    document.getElementById(inputId).value = max;
-                }
-            }
-        }
-    }
-}
-
 function initialiseBlankEvents() {
     restrictInputValues('blank_pages', 1, 3000, true, false);
     restrictInputValues('blank_width', 10, 10000, true, false);
     restrictInputValues('blank_height', 10, 10000, true, false);
+    document.getElementById('blank_pages').value = 1;
+    document.getElementById('blank_width').value = 210;
+    document.getElementById('blank_height').value = 297;
     const dinaSelector = document.querySelector('#dinasize');
+    dinaSelector.selectedIndex = 3;
+    const portraitRadio = document.getElementById('portrait');
+    portraitRadio.checked = true;
+    const landscapeRadio = document.getElementById('landscape');
+    landscapeRadio.checked = false;
+    const quadraticRadio = document.getElementById('quadratic');
+    quadraticRadio.checked = false;
     dinaSelector.addEventListener('click', function() {
         const dinaSizes = setDINAFormats(dinaSelector.selectedIndex);
         blankPageWidth = dinaSizes[1];
@@ -145,60 +120,29 @@ function initialiseBlankEvents() {
             document.getElementById('blank_height').value = dinaSizes[1];
         }
     }, false);
-    document.getElementById('portrait').addEventListener('click', function() {
-        let successWidth = convertInputToSucess(document.getElementById('blank_width').value, 10, 10000, true, false);
-        let successHeight = convertInputToSucess(document.getElementById('blank_height').value, 10, 10000, true, false);
-        if (successWidth !== -1000 && successHeight !== -1000 && successWidth > successHeight) {
+    portraitRadio.addEventListener('click', function() {
+        let width = convertInputToSucess(document.getElementById('blank_width').value, 10, 10000, true, false);
+        let height = convertInputToSucess(document.getElementById('blank_height').value, 10, 10000, true, false);
+        if (width !== -1000 && height !== -1000 && width > height) {
             blankPageWidth = height;
             blankPageHeight = width;
             document.getElementById('blank_width').value = height;
             document.getElementById('blank_height').value = width;
         }
     }, false);
-    document.getElementById('landscape').addEventListener('click', function() {
-        let triggerLandscapeW = false;
-        let triggerLandscapeH = false;
-        let width = document.getElementById('blank_width').value;
-        while (width.search(" ") > -1) {
-            width = width.replace(" ", "");
-        }
-        if (!isNaN(width)) {
-            width = parseInt(width);
-            triggerLandscapeW = true;
-        } else {
-            triggerLandscapeW = false;
-        }
-        let height = document.getElementById('blank_height').value;
-        while (height.search(" ") > -1) {
-            height = height.replace(" ", "");
-        }
-        if (!isNaN(width)) {
-            width = parseInt(width);
-            triggerLandscapeH = true;
-        } else {
-            triggerLandscapeH = false;
-        }
-        if (triggerLandscapeW && triggerLandscapeH && width < height) {
+    landscapeRadio.addEventListener('click', function() {
+        let width = convertInputToSucess(document.getElementById('blank_width').value, 10, 10000, true, false);
+        let height = convertInputToSucess(document.getElementById('blank_height').value, 10, 10000, true, false);
+        if (width !== -1000 && height !== -1000 && width < height) {
             blankPageWidth = height;
             blankPageHeight = width;
             document.getElementById('blank_width').value = height;
             document.getElementById('blank_height').value = width;
         }
-
     }, false);
-    document.getElementById('quadratic').addEventListener('click', function() {
-        let triggerQuadraticW = false;
-        let width = document.getElementById('blank_width').value;
-        while (width.search(" ") > -1) {
-            width = width.replace(" ", "");
-        }
-        if (!isNaN(width)) {
-            width = parseInt(width);
-            triggerQuadraticW = true;
-        } else {
-            triggerQuadraticW = false;
-        }
-        if (triggerQuadraticW) {
+    quadraticRadio.addEventListener('click', function() {
+        let width = convertInputToSucess(document.getElementById('blank_width').value, 10, 10000, true, false);
+        if (width !== -1000) {
             blankPageWidth = width;
             blankPageHeight = width;
             document.getElementById('blank_width').value = width;

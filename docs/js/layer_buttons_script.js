@@ -541,7 +541,6 @@ function relocateLayers(box) {
                     priorY = controlP.y;
                     rect = controlP.editImg.getBoundingClientRect();  
                     context = controlP.editImg.getContext('2d');
-                    
                     x = controlP.controlBox.offsetLeft - e.clientX;
                     y = controlP.controlBox.offsetTop - e.clientY;
                     startX = e.clientX - rect.left;
@@ -633,35 +632,30 @@ function relocateLayers(box) {
                         selControlP = drawLayerStack[selIndex];
                         otherX = selControlP.x;
                         otherY = selControlP.y;
-                        console.log("index" + selControlP.index);
-                        console.log("initX" + otherX);
-                        console.log("initY" + otherY);
                         if (selIndex === boxIndex && selType === boxType) {
                             selControlP.x = priorX * pdfState.zoom + deltaX;
                             selControlP.y = priorY * pdfState.zoom + deltaY;
                         } else {
-                            selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
-                            selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
+                            selControlP.x = otherX * pdfState.zoom  + deltaX;
+                            selControlP.y = otherY * pdfState.zoom  + deltaY;
                         }
                         selControlP.controlBox.style.left = selControlP.x + "px";
                         selControlP.controlBox.style.top = selControlP.y + "px";
                         const context = selControlP.editImg.getContext("2d");
                         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-                        for (let i = 0; i < selControlP.elementToControl.paths.length; i++) {
+                        for (let h = 0; h < controlP.elementToControl.paths.length; h++) {
                             context.beginPath();  
                             context.lineJoin = "round";       
-                            context.lineWidth = selControlP.elementToControl.paths[i][0].line;
-                            context.strokeStyle = selControlP.elementToControl.paths[i][0].color;   
-                            context.globalCompositeOperation = selControlP.elementToControl.paths[i][0].compositeOp;
-                            selControlP.elementToControl.paths[i][0].x = (selControlP.elementToControl.paths[i][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
-                            selControlP.elementToControl.paths[i][0].y = (selControlP.elementToControl.paths[i][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
-                            console.log(selControlP.elementToControl.paths[i][0].x);
-                            console.log(selControlP.elementToControl.paths[i][0].y);
-                            context.moveTo(selControlP.elementToControl.paths[i][0].x, selControlP.elementToControl.paths[i][0].y);                
-                            for (let j = 1; j < selControlP.elementToControl.paths[i].length; j++) {
-                                selControlP.elementToControl.paths[i][j].x = (selControlP.elementToControl.paths[i][j].x * pdfState.zoom + deltaX) / pdfState.zoom;
-                                selControlP.elementToControl.paths[i][j].y = (selControlP.elementToControl.paths[i][j].y * pdfState.zoom + deltaY) / pdfState.zoom;
-                                context.lineTo(selControlP.elementToControl.paths[i][j].x, selControlP.elementToControl.paths[i][j].y);
+                            context.lineWidth = controlP.elementToControl.paths[h][0].line;
+                            context.strokeStyle = controlP.elementToControl.paths[h][0].color;   
+                            context.globalCompositeOperation = controlP.elementToControl.paths[h][0].compositeOp;
+                            controlP.elementToControl.paths[h][0].x = (controlP.elementToControl.paths[h][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
+                            controlP.elementToControl.paths[h][0].y = (controlP.elementToControl.paths[h][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
+                            context.moveTo(controlP.elementToControl.paths[h][0].x, controlP.elementToControl.paths[h][0].y);                
+                            for (let j = 1; j < controlP.elementToControl.paths[h].length; j++) {
+                                controlP.elementToControl.paths[h][j].x = (controlP.elementToControl.paths[h][j].x * pdfState.zoom + deltaX) / pdfState.zoom;
+                                controlP.elementToControl.paths[h][j].y = (controlP.elementToControl.paths[h][j].y * pdfState.zoom + deltaY) / pdfState.zoom;
+                                context.lineTo(controlP.elementToControl.paths[h][j].x, controlP.elementToControl.paths[h][j].y);
                             }
                             context.stroke(); 
                         } 

@@ -1136,7 +1136,7 @@ function initSidemenuControlsWriter() {
     sidemenuVisible = true;
     textarea.value = "dummy";
     fontSelector.selectedIndex = 8;
-    fontSizeSelector.value = 30;
+    fontSizeSelector.selectedIndex = 1;
     sizeInput.value = 30;
     textRotationSelector.selectedIndex = 0; 
     textRotationInput.value = 0;

@@ -87,7 +87,7 @@ function convertPageListToSucess(input, numOfPages) {
     }
     if (outputPageList.length > 0) {
             
-        //remove dublicates in trimmedPages
+        //remove dublicates in list
         outputPageList = outputPageList.filter((value, index) => outputPageList.indexOf(value) === index);
 
         //sort in ascending order

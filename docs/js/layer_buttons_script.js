@@ -644,55 +644,29 @@ function relocateLayers(selectedLayer) {
                             selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
                             selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
                         }
-                        if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
-                            let context = selControlP.editImg.getContext("2d");
-                            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-                            for (let h = 0; h < selControlP.elementToControl.paths.length; h++) {
-                                context.beginPath();  
-                                context.lineCap = "round";
-                                context.lineJoin = "round";       
-                                context.lineWidth = selControlP.elementToControl.paths[h][0].line;
-                                context.strokeStyle = selControlP.elementToControl.paths[h][0].color;   
-                                context.globalCompositeOperation = selControlP.elementToControl.paths[h][0].compositeOp;
-                                let newPosX = (selControlP.elementToControl.paths[h][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
-                                let newPosY = (selControlP.elementToControl.paths[h][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
-                                context.moveTo(newPosX, newPosY);   
-                                selControlP.elementToControl.paths[h][0].x = newPosX;
-                                selControlP.elementToControl.paths[h][0].y = newPosY;
-                                for (let j = 1; j < selControlP.elementToControl.paths[h].length; j++) {
-                                    newPosX = (selControlP.elementToControl.paths[h][j].x * pdfState.zoom + deltaX) / pdfState.zoom;
-                                    newPosY = (selControlP.elementToControl.paths[h][j].y * pdfState.zoom + deltaY) / pdfState.zoom;
-                                    context.lineTo(newPosX, newPosY);
-                                    selControlP.elementToControl.paths[h][j].x = newPosX;
-                                    selControlP.elementToControl.paths[h][j].y = newPosY;
-                                }
-                                context.stroke(); 
-                            } 
-                        } else if (selIndex === boxIndex && selType === boxType) {
-                            let context = selControlP.editImg.getContext("2d");
-                            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-                            for (let h = 0; h < selControlP.elementToControl.paths.length; h++) {
-                                context.beginPath();  
-                                context.lineCap = "round";
-                                context.lineJoin = "round";       
-                                context.lineWidth = selControlP.elementToControl.paths[h][0].line;
-                                context.strokeStyle = selControlP.elementToControl.paths[h][0].color;   
-                                context.globalCompositeOperation = selControlP.elementToControl.paths[h][0].compositeOp;
-                                let newPosX = (selControlP.elementToControl.paths[h][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
-                                let newPosY = (selControlP.elementToControl.paths[h][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
-                                context.moveTo(newPosX, newPosY);   
-                                selControlP.elementToControl.paths[h][0].x = newPosX;
-                                selControlP.elementToControl.paths[h][0].y = newPosY;
-                                for (let j = 1; j < selControlP.elementToControl.paths[h].length; j++) {
-                                    newPosX = (selControlP.elementToControl.paths[h][j].x * pdfState.zoom + deltaX) / pdfState.zoom;
-                                    newPosY = (selControlP.elementToControl.paths[h][j].y * pdfState.zoom + deltaY) / pdfState.zoom;
-                                    context.lineTo(newPosX, newPosY);
-                                    selControlP.elementToControl.paths[h][j].x = newPosX;
-                                    selControlP.elementToControl.paths[h][j].y = newPosY;
-                                }
-                                context.stroke(); 
-                            } 
-                        }
+                        let context = selControlP.editImg.getContext("2d");
+                        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+                        for (let h = 0; h < selControlP.elementToControl.paths.length; h++) {
+                            context.beginPath();  
+                            context.lineCap = "round";
+                            context.lineJoin = "round";       
+                            context.lineWidth = selControlP.elementToControl.paths[h][0].line;
+                            context.strokeStyle = selControlP.elementToControl.paths[h][0].color;   
+                            context.globalCompositeOperation = selControlP.elementToControl.paths[h][0].compositeOp;
+                            let newPosX = (selControlP.elementToControl.paths[h][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
+                            let newPosY = (selControlP.elementToControl.paths[h][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
+                            context.moveTo(newPosX, newPosY);   
+                            selControlP.elementToControl.paths[h][0].x = newPosX;
+                            selControlP.elementToControl.paths[h][0].y = newPosY;
+                            for (let j = 1; j < selControlP.elementToControl.paths[h].length; j++) {
+                                newPosX = (selControlP.elementToControl.paths[h][j].x * pdfState.zoom + deltaX) / pdfState.zoom;
+                                newPosY = (selControlP.elementToControl.paths[h][j].y * pdfState.zoom + deltaY) / pdfState.zoom;
+                                context.lineTo(newPosX, newPosY);
+                                selControlP.elementToControl.paths[h][j].x = newPosX;
+                                selControlP.elementToControl.paths[h][j].y = newPosY;
+                            }
+                            context.stroke(); 
+                        } 
                         zoomDrawing(selControlP, pdfState.zoom, pdfState.zoom);
                         rotateDrawing(selControlP, selControlP.elementToControl.rotation);  
                     } else if (selType === "shape") {

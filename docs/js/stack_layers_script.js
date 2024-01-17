@@ -48,7 +48,6 @@ function createStackLayer(thisPage, editImgClass, editImgIndex) {
     layerCon.setAttribute('data-page', thisPage);
     layerCon.setAttribute('data-index', editImgIndex);
     layerCon.setAttribute('data-type', editImgClass);
-
     const eyeLabel = document.createElement("label");
     eyeLabel.style.width = "25px";
     eyeLabel.style.height = "25px";
@@ -67,7 +66,6 @@ function createStackLayer(thisPage, editImgClass, editImgIndex) {
     layerEye.addEventListener("input", function() {
         hideLayer(layerEye);
     }, false);
-
     const layerName = document.createElement("input");
     layerName.type = "text";
     layerName.className = "layername";
@@ -91,7 +89,6 @@ function createStackLayer(thisPage, editImgClass, editImgIndex) {
     layerName.addEventListener("click", function() {
         markLayer(layerName); 
     }, false);
-
     eyeLabel.appendChild(layerEye);
     layerCon.appendChild(eyeLabel);
     layerCon.appendChild(layerName);

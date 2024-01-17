@@ -175,8 +175,6 @@ function draw(writeLayer) {
                 writeLayer.onmousemove = null;
                 writeLayer.style.cursor = "default";
             }
-            console.log("afterDraw");
-            console.log(controlP);
         }
     }
 }
@@ -449,10 +447,6 @@ document.getElementById('translate_draw').addEventListener("click", function() {
                 relocateLayers(selectedLayers[i]);
             }
         }
-        // const boxes = document.getElementsByClassName("box");
-        // for(let i = 0; i < boxes.length; i++) {
-        //     relocateLayers(boxes[i]);
-        // }
     }
 }, false);
 
@@ -461,7 +455,6 @@ function moveDrawing(controlP) {
     let startY;
     let endX;
     let endY;
-    // let rect = controlP.editImg.getBoundingClientRect();  
     clicked = false;
     short = false;
     controlP.controlBox.onclick = detectClick;
@@ -484,8 +477,6 @@ function moveDrawing(controlP) {
             markSingleLayerOnEdit(controlP);
             x = controlP.controlBox.offsetLeft - e.clientX;
             y = controlP.controlBox.offsetTop - e.clientY;
-            // startX = e.clientX - rect.left;
-            // startY = e.clientY - rect.top;
             startX = controlP.x;
             startY = controlP.y;
             controlP.controlBox.onmouseup = stopMovingDrawing;
@@ -502,11 +493,9 @@ function moveDrawing(controlP) {
         }
     }
 
-    function stopMovingDrawing(e) {
+    function stopMovingDrawing() {
         if (userModesDrawer[3] && !clicked && !short) {
             mouseIsDown = false;
-            // endX = e.clientX - rect.left;
-            // endY = e.clientY - rect.top;
             endX = controlP.x;
             endY = controlP.y;
             let deltaX = endX - startX;

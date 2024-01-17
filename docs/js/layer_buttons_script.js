@@ -400,7 +400,37 @@ async function dublicateElement(thisPage, index, type) {
         let pdfCanvases = document.getElementsByClassName("render_context");
         const drawingLayer = Object.create(drawLayer);
         const controlP = Object.create(controlPoint);
-        drawingLayer.paths = [...drawingLayerToDublicate.paths];
+        drawingLayer.paths = [];
+
+        // for (let i = 0; i < drawingLayerToDublicate.paths; i++) {
+        //     drawingLayer.paths.push(drawingLayerToDublicate.paths[i]);
+        // } 
+
+        // for (let i = 0; i < drawingLayerToDublicate.paths; i++) {
+        //     for (let j = 0; j < drawingLayerToDublicate.paths[i].length; j++) {
+        //         drawingLayer.paths[i].push({
+        //             x: drawingLayerToDublicate[i][j].x, 
+        //             y: drawingLayerToDublicate[i][j].y, 
+        //             line: drawingLayerToDublicate[i][j].line, 
+        //             color: drawingLayerToDublicate[i][j].color, 
+        //             compositeOp: drawingLayerToDublicate[i][j].compositeOp,
+        //         });
+        //     }
+        // } 
+
+        for (let i = 0; i < drawingLayerToDublicate.paths; i++) {
+            drawingLayer.paths.push(drawingLayerToDublicate.paths[i]);
+            for (let j = 0; j < drawingLayerToDublicate.paths[i].length; j++) {
+                drawingLayer.paths[i].push({
+                    x: drawingLayerToDublicate[i][j].x, 
+                    y: drawingLayerToDublicate[i][j].y, 
+                    line: drawingLayerToDublicate[i][j].line, 
+                    color: drawingLayerToDublicate[i][j].color, 
+                    compositeOp: drawingLayerToDublicate[i][j].compositeOp,
+                });
+            }
+        } 
+
         drawingLayer.currentPathIndex = drawingLayerToDublicate.currentPathIndex;
         drawingLayer.rotation = drawingLayerToDublicate.rotation;
         const canvasContainer = document.createElement("canvas");
@@ -590,15 +620,17 @@ function relocateLayers(box) {
             // endY = e.clientY - rect.top;
             let deltaX = endX - startX;
             let deltaY = endY - startY;
+            console.log("dx" + deltaX);
+            console.log("dy" + deltaY);
+            
             const selectedLayers = document.getElementsByClassName("layer_selected");
             for (let i = 0; i < selectedLayers.length; i++) {
                 let selLayer = selectedLayers[i];
                 if (selLayer.classList.contains("unlocked")) {
                     let selType = selLayer.getAttribute("data-type");
                     let selIndex = parseInt(selLayer.getAttribute("data-index"));
-                    let selControlP;
                     if (selType === "text") {
-                        selControlP = userTextList[selIndex];
+                        let selControlP = userTextList[selIndex];
                         otherX = selControlP.x;
                         otherY = selControlP.y;
                         if (selIndex === boxIndex && selType === boxType) {
@@ -633,7 +665,9 @@ function relocateLayers(box) {
                         currentText.x = selControlP.x;
                         currentText.y = selControlP.layer.height - selControlP.y;
                     } else if (selType === "drawing") {
-                        selControlP = drawLayerStack[selIndex];
+                        console.log("seli" + selIndex);
+                        let selControlP = drawLayerStack[selIndex];
+                        console.log("paths" + selControlP.elementToControl.paths.length);
                         // otherX = selControlP.x;
                         // otherY = selControlP.y;
                         // if (selIndex === boxIndex && selType === boxType) {
@@ -651,13 +685,11 @@ function relocateLayers(box) {
                         //     selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
                         //     selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
                         // }
-                        if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
-                            selControlP.controlBox.style.left = (selControlP.x * pdfState.zoom  + deltaX) + "px";
-                            selControlP.controlBox.style.top = (selControlP.y * pdfState.zoom  + deltaY) + "px";
-                            selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
-                            selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
-                        }
-                        const context = selControlP.editImg.getContext("2d");
+                        console.log("elemindex" + selIndex);
+                        console.log("cornerUnmovedX" + selControlP.x);
+                        console.log("cornerUnmovedY" + selControlP.y);
+                        let context = selControlP.editImg.getContext("2d");
+                        console.log(context);
                         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
                         for (let h = 0; h < selControlP.elementToControl.paths.length; h++) {
                             context.beginPath();  
@@ -665,18 +697,38 @@ function relocateLayers(box) {
                             context.lineWidth = selControlP.elementToControl.paths[h][0].line;
                             context.strokeStyle = selControlP.elementToControl.paths[h][0].color;   
                             context.globalCompositeOperation = selControlP.elementToControl.paths[h][0].compositeOp;
+                            
+                            console.log("unmovedX" + selControlP.elementToControl.paths[h][0].x);      
+                            console.log("unmovedY" + selControlP.elementToControl.paths[h][0].y);   
+
                             selControlP.elementToControl.paths[h][0].x = (selControlP.elementToControl.paths[h][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
                             selControlP.elementToControl.paths[h][0].y = (selControlP.elementToControl.paths[h][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
-                            context.moveTo(selControlP.elementToControl.paths[h][0].x, selControlP.elementToControl.paths[h][0].y);                
+                            context.moveTo(selControlP.elementToControl.paths[h][0].x, selControlP.elementToControl.paths[h][0].y);   
+                            
+                            // context.moveTo((selControlP.elementToControl.paths[h][0].x * pdfState.zoom + deltaX) / pdfState.zoom, (selControlP.elementToControl.paths[h][0].y * pdfState.zoom + deltaY) / pdfState.zoom);   
+
+                            console.log("LineX" + ((selControlP.elementToControl.paths[h][0].x * pdfState.zoom + deltaX) / pdfState.zoom));      
+                            console.log("LineY" + ((selControlP.elementToControl.paths[h][0].y * pdfState.zoom + deltaY) / pdfState.zoom));         
+                            // console.log("LineX" + selControlP.elementToControl.paths[h][0].x);      
+                            // console.log("LineY" + selControlP.elementToControl.paths[h][0].y);     
                             for (let j = 1; j < selControlP.elementToControl.paths[h].length; j++) {
                                 selControlP.elementToControl.paths[h][j].x = (selControlP.elementToControl.paths[h][j].x * pdfState.zoom + deltaX) / pdfState.zoom;
                                 selControlP.elementToControl.paths[h][j].y = (selControlP.elementToControl.paths[h][j].y * pdfState.zoom + deltaY) / pdfState.zoom;
                                 context.lineTo(selControlP.elementToControl.paths[h][j].x, selControlP.elementToControl.paths[h][j].y);
+                                
+                                // context.lineTo((selControlP.elementToControl.paths[h][j].x * pdfState.zoom + deltaX) / pdfState.zoom, (selControlP.elementToControl.paths[h][j].y * pdfState.zoom + deltaY) / pdfState.zoom);
                             }
                             context.stroke(); 
                         } 
 
-
+                        if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
+                            selControlP.controlBox.style.left = (selControlP.x * pdfState.zoom  + deltaX) + "px";
+                            selControlP.controlBox.style.top = (selControlP.y * pdfState.zoom  + deltaY) + "px";
+                            selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
+                            selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
+                        }
+                        console.log("cornerX" + selControlP.x);
+                        console.log("cornerY" + selControlP.y);
                         // if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
                         //     selControlP.controlBox.style.left = (selControlP.x * pdfState.zoom  + deltaX) + "px";
                         //     selControlP.controlBox.style.top = (selControlP.y * pdfState.zoom  + deltaY) + "px";
@@ -731,7 +783,7 @@ function relocateLayers(box) {
                         // zoomDrawing(selControlP, pdfState.zoom, pdfState.zoom);
                         // rotateDrawing(selControlP, selControlP.elementToControl.rotation);  
                     } else if (selType === "shape") {
-                        selControlP = geometryPointsList[selIndex];
+                        let selControlP = geometryPointsList[selIndex];
                         otherX = selControlP.x;
                         otherY = selControlP.y;
                         if (selIndex === boxIndex && selType === boxType) {
@@ -763,7 +815,7 @@ function relocateLayers(box) {
                             selControlP.y = otherY  + deltaY / pdfState.zoom;
                         }
                     } else if (selType === "image") {
-                        selControlP = userImageList[selIndex];
+                        let selControlP = userImageList[selIndex];
                         otherX = selControlP.x;
                         otherY = selControlP.y;
                         if (selIndex === boxIndex && selType === boxType) {

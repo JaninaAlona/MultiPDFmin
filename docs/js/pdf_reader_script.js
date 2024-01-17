@@ -82,6 +82,10 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         restrictInputValues('current_page', 1, pdf._pdfInfo.numPages, true, false);
                         restrictInputValues('zoom_factor', 1, 800, true, false);
                         setCustomFilename();
+                        const scrollwrappers = document.getElementsByClassName('scrollwrapper');
+                        for(let i = 0; i < scrollwrappers.length; i++) {
+                            scrollwrappers[i].scrollTo(0, 0);
+                        }
                     }
                 } else {
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
@@ -893,6 +897,12 @@ if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && doc
                 document.getElementById('images_controls').style.display = "flex";
                 document.getElementById('img_controls').style.display = "flex";
             }
+            const sidemenupos = document.getElementsByClassName("sidemenupos");
+            for (let i = 0; i < sidemenupos.length; i++) {
+                sidemenupos[i].scrollTo(0, 0);
+            }
+            const layerstack = document.getElementById("layer_stack");
+            layerstack.scrollTo(0, 0);
             setTimeout(initEditor, 300);
         }
     }, false);

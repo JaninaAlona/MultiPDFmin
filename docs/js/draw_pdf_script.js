@@ -175,6 +175,8 @@ function draw(writeLayer) {
                 writeLayer.onmousemove = null;
                 writeLayer.style.cursor = "default";
             }
+            console.log("afterDraw");
+            console.log(controlP);
         }
     }
 }
@@ -453,8 +455,7 @@ function moveDrawing(controlP) {
     let startY;
     let endX;
     let endY;
-    let rect = controlP.editImg.getBoundingClientRect();  
-    const context = controlP.editImg.getContext('2d');  
+    // let rect = controlP.editImg.getBoundingClientRect();  
     clicked = false;
     short = false;
     controlP.controlBox.onclick = detectClick;
@@ -477,8 +478,10 @@ function moveDrawing(controlP) {
             markSingleLayerOnEdit(controlP);
             x = controlP.controlBox.offsetLeft - e.clientX;
             y = controlP.controlBox.offsetTop - e.clientY;
-            startX = e.clientX - rect.left;
-            startY = e.clientY - rect.top;
+            // startX = e.clientX - rect.left;
+            // startY = e.clientY - rect.top;
+            startX = controlP.x;
+            startY = controlP.y;
             controlP.controlBox.onmouseup = stopMovingDrawing;
             controlP.controlBox.onmousemove = movingDrawing;
         }
@@ -496,10 +499,13 @@ function moveDrawing(controlP) {
     function stopMovingDrawing(e) {
         if (userModesDrawer[3] && !clicked && !short) {
             mouseIsDown = false;
-            endX = e.clientX - rect.left;
-            endY = e.clientY - rect.top;
+            // endX = e.clientX - rect.left;
+            // endY = e.clientY - rect.top;
+            endX = controlP.x;
+            endY = controlP.y;
             let deltaX = endX - startX;
             let deltaY = endY - startY;
+            let context = controlP.editImg.getContext('2d');  
             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
             for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
                 context.beginPath();  

@@ -444,7 +444,6 @@ document.getElementById('translate_draw').addEventListener("click", function() {
         const selectedLayers = document.getElementsByClassName("layer_selected");
         for(let i = 0; i < selectedLayers.length; i++) {
             if (selectedLayers[i].classList.contains("unlocked")) {
-                // relocateDrawingLayers(selectedLayers[i]);
                 relocateLayers(selectedLayers[i]);
             }
         }

@@ -537,14 +537,16 @@ function relocateLayers(box) {
                     } else if (boxType === "image") {
                         controlP = userImageList[boxIndex];
                     }
-                    priorX = controlP.x;
-                    priorY = controlP.y;
+                    // priorX = controlP.x;
+                    // priorY = controlP.y;
                     rect = controlP.editImg.getBoundingClientRect();  
                     context = controlP.editImg.getContext('2d');
                     x = controlP.controlBox.offsetLeft - e.clientX;
                     y = controlP.controlBox.offsetTop - e.clientY;
-                    startX = e.clientX - rect.left;
-                    startY = e.clientY - rect.top;
+                    // startX = e.clientX - rect.left;
+                    // startY = e.clientY - rect.top;
+                    startX = controlP.x;
+                    startY = controlP.y;
                     box.onmouseup = async function(e) {
                         await stopRelocating(e);
                     }
@@ -575,15 +577,17 @@ function relocateLayers(box) {
                 controlP.controlBox.style.top = (e.clientY + y) + "px"; 
                 controlP.x = e.clientX + x;
                 controlP.y = e.clientY + y;
-            } 
+            }    
         }
     }
 
     async function stopRelocating(e){
         if (relocateLayersMode && !clicked && !short) {
             mouseIsDown = false;
-            endX = e.clientX - rect.left;
-            endY = e.clientY - rect.top;
+            endX = controlP.x;
+            endY = controlP.y;
+            // endX = e.clientX - rect.left;
+            // endY = e.clientY - rect.top;
             let deltaX = endX - startX;
             let deltaY = endY - startY;
             const selectedLayers = document.getElementsByClassName("layer_selected");
@@ -630,17 +634,29 @@ function relocateLayers(box) {
                         currentText.y = selControlP.layer.height - selControlP.y;
                     } else if (selType === "drawing") {
                         selControlP = drawLayerStack[selIndex];
-                        otherX = selControlP.x;
-                        otherY = selControlP.y;
-                        if (selIndex === boxIndex && selType === boxType) {
-                            selControlP.x = priorX * pdfState.zoom + deltaX;
-                            selControlP.y = priorY * pdfState.zoom + deltaY;
-                        } else {
-                            selControlP.x = otherX * pdfState.zoom  + deltaX;
-                            selControlP.y = otherY * pdfState.zoom  + deltaY;
+                        // otherX = selControlP.x;
+                        // otherY = selControlP.y;
+                        // if (selIndex === boxIndex && selType === boxType) {
+                        //     selControlP.x = priorX * pdfState.zoom + deltaX;
+                        //     selControlP.y = priorY * pdfState.zoom + deltaY;
+                        // } else {
+                        //     selControlP.x = otherX * pdfState.zoom  + deltaX;
+                        //     selControlP.y = otherY * pdfState.zoom  + deltaY;
+                        // }
+                        // if (selIndex !== boxIndex) {
+                        //     selControlP.x = priorX * pdfState.zoom  + deltaX;
+                        //     selControlP.y = priorY * pdfState.zoom  + deltaY;
+                        // }
+                        // } else {
+                        //     selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
+                        //     selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
+                        // }
+                        if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
+                            selControlP.controlBox.style.left = (selControlP.x * pdfState.zoom  + deltaX) + "px";
+                            selControlP.controlBox.style.top = (selControlP.y * pdfState.zoom  + deltaY) + "px";
+                            selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
+                            selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
                         }
-                        selControlP.controlBox.style.left = selControlP.x + "px";
-                        selControlP.controlBox.style.top = selControlP.y + "px";
                         const context = selControlP.editImg.getContext("2d");
                         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
                         for (let h = 0; h < controlP.elementToControl.paths.length; h++) {
@@ -659,13 +675,13 @@ function relocateLayers(box) {
                             }
                             context.stroke(); 
                         } 
-                        if (selIndex === boxIndex && selType === boxType) {
-                            selControlP.x = priorX + deltaX / pdfState.zoom;
-                            selControlP.y = priorY + deltaY / pdfState.zoom;
-                        } else {
-                            selControlP.x = otherX  + deltaX / pdfState.zoom;
-                            selControlP.y = otherY  + deltaY / pdfState.zoom;
-                        }
+                        // if (selIndex === boxIndex && selType === boxType) {
+                        //     selControlP.x = priorX + deltaX / pdfState.zoom;
+                        //     selControlP.y = priorY + deltaY / pdfState.zoom;
+                        // } else {
+                        //     selControlP.x = otherX  + deltaX / pdfState.zoom;
+                        //     selControlP.y = otherY  + deltaY / pdfState.zoom;
+                        // }
                         zoomDrawing(selControlP, pdfState.zoom, pdfState.zoom);
                         rotateDrawing(selControlP, selControlP.elementToControl.rotation);  
                     } else if (selType === "shape") {

@@ -267,7 +267,6 @@ async function dublicateElement(thisPage, index, type) {
         currentUserImage.setImageElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentUserImage.pdfBytes = pdfLayerBytes;
-        
         controlP.x = elementToDublicate.x * pdfState.zoom;
         controlP.y = elementToDublicate.y * pdfState.zoom;
         controlP.elementToControl = currentUserImage;
@@ -277,7 +276,6 @@ async function dublicateElement(thisPage, index, type) {
         controlP.index = imageControllerPointCounter;
         controlP.setControlPoint();
         userImageList.push(controlP);
-
         const canvasContainer = document.createElement("canvas");
         canvasContainer.style.display = "flex";
         canvasContainer.style.position = "absolute";
@@ -291,7 +289,6 @@ async function dublicateElement(thisPage, index, type) {
         canvasContainer.classList.add("image");
         controlP.editImg = canvasContainer;
         const ctx = canvasContainer.getContext('2d');
-
         const loadingTask = pdfjsLib.getDocument(pdfLayerBytes);
         loadingTask.promise.then(pdf => {
             pdf.getPage(1).then(function(page) {
@@ -327,7 +324,6 @@ async function dublicateElement(thisPage, index, type) {
         pdfLayer.registerFontkit(fontkit);
         const font = await pdfLayer.embedFont(textToDublicate.fontKey);
         const pageLayer = pdfLayer.addPage([pdfCanvases[thisPage-1].width, pdfCanvases[thisPage-1].height]);
-
         currentUserText.pdfDoc = pdfLayer;
         currentUserText.text = textToDublicate.text;
         currentUserText.x = elementToDublicate.x;
@@ -344,7 +340,6 @@ async function dublicateElement(thisPage, index, type) {
         currentUserText.setTextElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentUserText.pdfBytes = pdfLayerBytes;
-        
         controlP.x = elementToDublicate.x * pdfState.zoom;
         controlP.y = elementToDublicate.y * pdfState.zoom;
         controlP.elementToControl = currentUserText;
@@ -354,7 +349,6 @@ async function dublicateElement(thisPage, index, type) {
         controlP.index = textControllerPointCounter;
         controlP.setControlPoint();
         userTextList.push(controlP);
-        
         const canvasContainer = document.createElement("canvas");
         canvasContainer.style.display = "flex";
         canvasContainer.style.position = "absolute";
@@ -368,7 +362,6 @@ async function dublicateElement(thisPage, index, type) {
         canvasContainer.classList.add("text");
         controlP.editImg = canvasContainer;
         const ctx = canvasContainer.getContext('2d');
-
         const loadingTask = pdfjsLib.getDocument(pdfLayerBytes);
         loadingTask.promise.then(pdf => {
             pdf.getPage(1).then(function(page) {
@@ -400,11 +393,7 @@ async function dublicateElement(thisPage, index, type) {
         let pdfCanvases = document.getElementsByClassName("render_context");
         const drawingLayer = Object.create(drawLayer);
         const controlP = Object.create(controlPoint);
-        drawingLayer.paths = [];
-        drawingLayer.paths.length = drawingLayerToDublicate.paths.length;
-        for (let i = 0; i < drawingLayerToDublicate.paths.length; i++) {
-            drawingLayer.paths[i] = drawingLayerToDublicate.paths[i];
-        } 
+        drawingLayer.paths = deepCopy(drawingLayerToDublicate.paths);
         drawingLayer.currentPathIndex = drawingLayerToDublicate.currentPathIndex;
         drawingLayer.rotation = drawingLayerToDublicate.rotation;
         const canvasContainer = document.createElement("canvas");
@@ -491,6 +480,39 @@ async function dublicateElement(thisPage, index, type) {
     }
 }
 
+const deepCopy = (arr) => {
+    let copy = [];
+    arr.forEach(elem => {
+        if(Array.isArray(elem)) {
+            copy.push(deepCopy(elem))
+        } else {
+            if (typeof elem === 'object') {
+                copy.push(deepCopyObject(elem))
+            } else {
+                copy.push(elem)
+            }
+        }
+    })
+    return copy;
+}
+
+// Helper function to deal with Objects
+const deepCopyObject = (obj) => {
+    let tempObj = {};
+    for (let [key, value] of Object.entries(obj)) {
+        if (Array.isArray(value)) {
+            tempObj[key] = deepCopy(value);
+        } else {
+            if (typeof value === 'object') {
+                tempObj[key] = deepCopyObject(value);
+            } else {
+                tempObj[key] = value
+            }
+        }
+    }
+    return tempObj;
+}
+
 
 function relocateLayers(selectedLayer) {
     relocateLayersMode = true;
@@ -543,8 +565,6 @@ function relocateLayers(selectedLayer) {
                 } else if (boxType === "image") {
                     controlP = userImageList[boxIndex];
                 }
-                console.log("controlPX" + controlP.index);
-                console.log(controlP.x);
                 x = controlP.controlBox.offsetLeft - e.clientX;
                 y = controlP.controlBox.offsetTop - e.clientY;
                 startX = controlP.x;
@@ -589,8 +609,6 @@ function relocateLayers(selectedLayer) {
             endY = controlP.y;
             let deltaX = endX - startX;
             let deltaY = endY - startY;
-            console.log("dx" + deltaX);
-            console.log("dy" + deltaY);
             const selectedLayers = document.getElementsByClassName("layer_selected");
             for (let i = 0; i < selectedLayers.length; i++) {
                 let selLayer = selectedLayers[i];
@@ -620,9 +638,6 @@ function relocateLayers(selectedLayer) {
                         await updateUserLayer(selControlP, pdfLayerBytes);
                     } else if (selType === "drawing") {
                         const selControlP = drawLayerStack[selIndex];
-                        console.log("BeforeMove" + selControlP.index);
-                        console.log(selControlP.x);
-                        console.log(selControlP.controlBox.style.left);
                         if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
                             selControlP.controlBox.style.left = (selControlP.x * pdfState.zoom  + deltaX) + "px";
                             selControlP.controlBox.style.top = (selControlP.y * pdfState.zoom  + deltaY) + "px";
@@ -641,8 +656,30 @@ function relocateLayers(selectedLayer) {
                                 context.globalCompositeOperation = selControlP.elementToControl.paths[h][0].compositeOp;
                                 let newPosX = (selControlP.elementToControl.paths[h][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
                                 let newPosY = (selControlP.elementToControl.paths[h][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
-                                console.log("newPosX" + newPosX);
-                                console.log("newPosY" + newPosY);
+                                context.moveTo(newPosX, newPosY);   
+                                selControlP.elementToControl.paths[h][0].x = newPosX;
+                                selControlP.elementToControl.paths[h][0].y = newPosY;
+                                for (let j = 1; j < selControlP.elementToControl.paths[h].length; j++) {
+                                    newPosX = (selControlP.elementToControl.paths[h][j].x * pdfState.zoom + deltaX) / pdfState.zoom;
+                                    newPosY = (selControlP.elementToControl.paths[h][j].y * pdfState.zoom + deltaY) / pdfState.zoom;
+                                    context.lineTo(newPosX, newPosY);
+                                    selControlP.elementToControl.paths[h][j].x = newPosX;
+                                    selControlP.elementToControl.paths[h][j].y = newPosY;
+                                }
+                                context.stroke(); 
+                            } 
+                        } else if (selIndex === boxIndex && selType === boxType) {
+                            let context = selControlP.editImg.getContext("2d");
+                            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+                            for (let h = 0; h < selControlP.elementToControl.paths.length; h++) {
+                                context.beginPath();  
+                                context.lineCap = "round";
+                                context.lineJoin = "round";       
+                                context.lineWidth = selControlP.elementToControl.paths[h][0].line;
+                                context.strokeStyle = selControlP.elementToControl.paths[h][0].color;   
+                                context.globalCompositeOperation = selControlP.elementToControl.paths[h][0].compositeOp;
+                                let newPosX = (selControlP.elementToControl.paths[h][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
+                                let newPosY = (selControlP.elementToControl.paths[h][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
                                 context.moveTo(newPosX, newPosY);   
                                 selControlP.elementToControl.paths[h][0].x = newPosX;
                                 selControlP.elementToControl.paths[h][0].y = newPosY;
@@ -658,9 +695,6 @@ function relocateLayers(selectedLayer) {
                         }
                         zoomDrawing(selControlP, pdfState.zoom, pdfState.zoom);
                         rotateDrawing(selControlP, selControlP.elementToControl.rotation);  
-                        console.log("AfterMove");
-                        console.log(selControlP.x);
-                        console.log(selControlP.controlBox.style.left)
                     } else if (selType === "shape") {
                         let selControlP = geometryPointsList[selIndex];
                         if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {

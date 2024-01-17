@@ -443,10 +443,16 @@ document.getElementById('translate_draw').addEventListener("click", function() {
         } 
     }
     if (layerApplyMode) {
-        const boxes = document.getElementsByClassName("box");
-        for(let i = 0; i < boxes.length; i++) {
-            relocateLayers(boxes[i]);
+        const selectedLayers = document.getElementsByClassName("layer_selected");
+        for(let i = 0; i < selectedLayers.length; i++) {
+            if (selectedLayers[i].classList.contains("unlocked")) {
+                relocateLayers(selectedLayers[i]);
+            }
         }
+        // const boxes = document.getElementsByClassName("box");
+        // for(let i = 0; i < boxes.length; i++) {
+        //     relocateLayers(boxes[i]);
+        // }
     }
 }, false);
 

@@ -1,8 +1,3 @@
-let startLayerPaths = {
-    startPaths: [],
-    index: 0
-}
-
 let layerApplyMode = false;
 let boxApplyMode = true;
 let clicked = false;
@@ -533,7 +528,7 @@ async function dublicateElement(thisPage, index, type) {
 }
 
 
-function relocateLayers(box) {
+function relocateLayers(selectedLayer) {
     relocateLayersMode = true;
     let startX;
     let startY;
@@ -544,19 +539,30 @@ function relocateLayers(box) {
     let priorY;
     let otherX;
     let otherY;
-    // let rect;
+    let layerBox;
     let startLayerPathList;
     let boxType;
     let boxIndex;
     let rotateOnce = true;
-    let selectedLayers;
     clicked = false;
     short = false;
 
-    box.onclick = async function() {
+    let layerIndex = parseInt(selectedLayer.getAttribute("data-index"));
+    let layerType = selectedLayer.getAttribute("data-type");
+    console.log(layerType);
+    const boxes = document.getElementsByClassName("box");
+    for (let i = 0; i < boxes.length; i++) {
+        let currentBoxType = boxes[i].classList[0];
+        let currentBoxIndex = parseInt(boxes[i].getAttribute("data-index"));
+        if (currentBoxType === layerType && currentBoxIndex === layerIndex) {
+            layerBox = boxes[i];
+        } 
+    }
+    
+    layerBox.onclick = async function() {
         await detectClick();
     }
-    box.onmousedown = async function(e) {
+    layerBox.onmousedown = async function(e) {
         await startRelocating(e);
     }
     
@@ -568,70 +574,42 @@ function relocateLayers(box) {
     }
 
     async function startRelocating(e) {
-        let disable = checkForLockStatus(box);
-        if (relocateLayersMode && !clicked && !disable) {
+        if (relocateLayersMode && !clicked) {
             mouseIsDown = true;
-            let currentBox = e.currentTarget;
-            boxType = currentBox.classList[0];
-            boxIndex = parseInt(currentBox.getAttribute("data-index"));
-            selectedLayers = document.getElementsByClassName("layer_selected");
-            startLayerPathList = [];
-            for (let i = 0; i < selectedLayers.length; i++) {
-                if (selectedLayers[i].classList.contains("unlocked")) {
-                    let layerType = selectedLayers[i].getAttribute("data-type");
-                    let layerIndex = parseInt(selectedLayers[i].getAttribute("data-index"));
-                    if (layerType === "drawing") {
-                        let drawLayerControlP = drawLayerStack[layerIndex];
-                        const startPaths = Object.create(startLayerPaths);
-                        startPaths.index = layerIndex;
-                        startPaths.startPaths = [];
-                        startPaths.startPaths.length = drawLayerControlP.elementToControl.paths.length;
-                        for (let j = 0; j < drawLayerControlP.elementToControl.paths.length; j++) {
-                            startPaths.startPaths[j] = drawLayerControlP.elementToControl.paths[j];
-                        }
-                        startLayerPathList.push(startPaths);
-                    }
+            let box = e.currentTarget;
+            boxType = box.classList[0];
+            boxIndex = parseInt(box.getAttribute("data-index"));
+            
+            console.log("startMove");
+            console.log(drawLayerStack[layerIndex]);
+            if (boxIndex === layerIndex && boxType === layerType) {
+                if (boxType === "text") {
+                    controlP = userTextList[boxIndex];
+                } else if (boxType === "drawing") {
+                    controlP = drawLayerStack[boxIndex];
+                } else if (boxType === "shape") {
+                    controlP = geometryPointsList[boxIndex];
+                } else if (boxType === "image") {
+                    controlP = userImageList[boxIndex];
                 }
-            }
-            for (let i = 0; i < selectedLayers.length; i++) {
-                if (selectedLayers[i].classList.contains("unlocked")) {
-                    let layerIndex = parseInt(selectedLayers[i].getAttribute("data-index"));
-                    let layerType = selectedLayers[i].getAttribute("data-type");
-                    console.log("startMove");
-                    console.log(drawLayerStack[layerIndex]);
-                    if (boxIndex === layerIndex && boxType === layerType) {
-                        if (boxType === "text") {
-                            controlP = userTextList[boxIndex];
-                        } else if (boxType === "drawing") {
-                            controlP = drawLayerStack[boxIndex];
-                        } else if (boxType === "shape") {
-                            controlP = geometryPointsList[boxIndex];
-                        } else if (boxType === "image") {
-                            controlP = userImageList[boxIndex];
-                        }
-                        priorX = controlP.x;
-                        priorY = controlP.y;
-                        // rect = controlP.editImg.getBoundingClientRect();  
-                        x = controlP.controlBox.offsetLeft - e.clientX;
-                        y = controlP.controlBox.offsetTop - e.clientY;
-                        // startX = e.clientX - rect.left;
-                        // startY = e.clientY - rect.top;
-                        startX = controlP.x;
-                        startY = controlP.y;
-                        box.onmouseup = async function(e) {
-                            await stopRelocating(e);
-                        }
-                        box.onmousemove = async function(e) {
-                            await relocating(e);
-                        }
-                    }
+                priorX = controlP.x;
+                priorY = controlP.y;
+                x = controlP.controlBox.offsetLeft - e.clientX;
+                y = controlP.controlBox.offsetTop - e.clientY;
+                startX = controlP.x;
+                startY = controlP.y;
+                layerBox.onmouseup = async function(e) {
+                    await stopRelocating(e);
+                }
+                layerBox.onmousemove = async function(e) {
+                    await relocating(e);
                 }
             }
         }
     }
 
     async function relocating(e) {
-        if (relocateLayersMode && mouseIsDown && !clicked) {  
+        if (relocateLayersMode && mouseIsDown) {  
             short = false;
             let relocateX = (e.clientX + x);
             let relocateY = (e.clientY + y);
@@ -655,17 +633,16 @@ function relocateLayers(box) {
         }
     }
 
-    async function stopRelocating(e){
+    async function stopRelocating(){
         if (relocateLayersMode && !clicked && !short) {
             mouseIsDown = false;
             endX = controlP.x;
             endY = controlP.y;
-            // endX = e.clientX - rect.left;
-            // endY = e.clientY - rect.top;
             let deltaX = endX - startX;
             let deltaY = endY - startY;
             console.log("dx" + deltaX);
             console.log("dy" + deltaY);
+            const selectedLayers = document.getElementsByClassName("layer_selected");
             for (let i = 0; i < selectedLayers.length; i++) {
                 let selLayer = selectedLayers[i];
                 if (selLayer.classList.contains("unlocked")) {
@@ -742,13 +719,6 @@ function relocateLayers(box) {
 
                         let context = selControlP.editImg.getContext("2d");
                         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-                        
-                        let currentStartLayerPaths;
-                        for (let h = 0; h < startLayerPathList.length; h++) {
-                            if (startLayerPathList[i].index === selIndex) {
-                                currentStartLayerPaths = startLayerPathList[i];
-                            }
-                        }
 
                         for (let h = 0; h < selControlP.elementToControl.paths.length; h++) {
                             context.beginPath();  
@@ -918,9 +888,9 @@ function relocateLayers(box) {
             }
             clicked = false;
             short = false;
-            box.onmouseup = null;
-            box.onmousemove = null;
-            box.onclick = null;
+            layerBox.onmouseup = null;
+            layerBox.onmousemove = null;
+            layerBox.onclick = null;
         }
     }
 }

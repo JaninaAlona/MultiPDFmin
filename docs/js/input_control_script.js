@@ -4,7 +4,7 @@ function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOpe
     inputElem.addEventListener('change', function() {
         valToRestrict = inputElem.value;
 
-        //remove white space
+        // remove white space
         valToRestrict = valToRestrict.replace(/\s+/g,'');
         document.getElementById(inputId).value = valToRestrict;
         if (valToRestrict.match(/^-?\d+$/) || valToRestrict.match(/^\d+\.\d+$/)) {
@@ -55,10 +55,10 @@ function convertPageListToSucess(input, numOfPages) {
         for (let i = 0; i < pages.length; i++) {
             let singlePage = pages[i];
 
-            //Remove white space
+            // Remove white space
             singlePage = singlePage.replace(/\s+/g,'');
             
-            //Check if page is an Integer
+            // Check if page is an Integer
             if (singlePage.match(/^-?\d+$/)) {
                 singlePage = parseInt(singlePage);
                 if (singlePage >= 1 && singlePage <= numOfPages) {
@@ -87,10 +87,10 @@ function convertPageListToSucess(input, numOfPages) {
     }
     if (outputPageList.length > 0) {
             
-        //remove dublicates in list
+        // remove dublicates in list
         outputPageList = outputPageList.filter((value, index) => outputPageList.indexOf(value) === index);
 
-        //sort in ascending order
+        // sort in ascending order
         outputPageList.sort((a,b) => a-b);  
     }
     return outputPageList;

@@ -53,7 +53,8 @@ async function groupMark(removeState, addState, selectStateT, selectStateD, sele
         for (let i = 0; i < layercontainers.length; i++) {
             markOnState(layercontainers[i]);
         }
-        await extractPages(pagelist);  
+        let listInput = pagelist.value;
+        trimmedPages = convertPageListToSucess(listInput, pdfState.lastPage);
         for (let i = 0; i < layercontainers.length; i++) {
             filterSelect(layercontainers[i], removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU);
         }
@@ -68,26 +69,6 @@ pagelist.addEventListener("change", function() {
     trimmedPages = [];
 }, false);
 
-async function extractPages(list) {
-    let input = list.value;
-    if (input.trim() !== "") {
-        const pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
-        if (input.includes(",")) {
-            const pages = input.split(",");
-            for (let i = 0; i < pages.length; i++) {
-                let singlePage = parseInt(pages[i].trim());
-                if (singlePage > 0 && singlePage <= pdfDoc.getPages().length) {
-                    trimmedPages.push(singlePage);
-                }
-            }
-        } else {
-            let singlePage = parseInt(input.trim());
-            if (singlePage > 0 && singlePage <= pdfDoc.getPages().length) {
-                trimmedPages.push(singlePage);
-            }
-        }
-    }
-}
 
 function filterSelect(layercon, removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU) {
     if (trimmedPages.length > 0) {
@@ -99,6 +80,7 @@ function filterSelect(layercon, removeState, addState, selectStateT, selectState
             }
         }
     } else {
+        pagelist.value = "";
         filterForType(layercon, removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU);
     }
 }
@@ -184,7 +166,8 @@ async function groupUnmark(removeState, addState, selectStateT, selectStateD, se
             }
         } 
     } else {
-        await unextractPages(unpagelist);   
+        let listInput = unpagelist.value;
+        untrimmedPages = convertPageListToSucess(listInput, pdfState.lastPage);
         for (let i = 0; i < layercontainers.length; i++) {
             if (layercontainers[i].classList.contains("layer_selected")) {
                 filterUnselect(layercontainers[i], removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU);
@@ -206,6 +189,7 @@ function filterUnselect(layercon, removeState, addState, selectStateT, selectSta
             }
         }
     } else {
+        unpagelist.value = "";
         filterForType(layercon, removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU);
     }
 }
@@ -214,20 +198,6 @@ const unpagelist = document.getElementsByClassName("un_pagelist")[0];
 unpagelist.addEventListener("change", function() {
     untrimmedPages = [];
 }, false); 
-
-async function unextractPages(list) {
-    let input = list.value;
-    if (input.trim() !== "") {
-        const pages = input.split(",");
-        for (let i = 0; i < pages.length; i++) {
-            let singlePage = parseInt(pages[i].trim());
-            const pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
-            if (singlePage > 0 && singlePage <= pdfDoc.getPages().length) {
-                untrimmedPages.push(singlePage);
-            }
-        }
-    }
-}
 
 
 const textType = document.getElementsByClassName("texttype")[0];

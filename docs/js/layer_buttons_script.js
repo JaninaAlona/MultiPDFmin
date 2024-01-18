@@ -295,7 +295,6 @@ async function dublicateElement(thisPage, index, type) {
                 const viewport = page.getViewport({
                     scale: pdfState.zoom
                 });
-
                 const renderContext = { 
                     canvasContext: ctx, 
                     background: 'rgba(0,0,0,0)',

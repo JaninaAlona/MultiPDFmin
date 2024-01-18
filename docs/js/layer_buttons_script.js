@@ -267,6 +267,8 @@ async function dublicateElement(thisPage, index, type) {
         currentUserImage.setImageElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentUserImage.pdfBytes = pdfLayerBytes;
+        let origX = elementToDublicate.x;
+        let origY = elementToDublicate.y;
         controlP.x = elementToDublicate.x * pdfState.zoom;
         controlP.y = elementToDublicate.y * pdfState.zoom;
         controlP.elementToControl = currentUserImage;
@@ -275,6 +277,8 @@ async function dublicateElement(thisPage, index, type) {
         controlP.page = elementToDublicate.page;
         controlP.index = imageControllerPointCounter;
         controlP.setControlPoint();
+        controlP.x = origX;
+        controlP.y = origY;
         userImageList.push(controlP);
         const canvasContainer = document.createElement("canvas");
         canvasContainer.style.display = "flex";
@@ -288,31 +292,9 @@ async function dublicateElement(thisPage, index, type) {
         canvasContainer.classList.add("editimg");
         canvasContainer.classList.add("image");
         controlP.editImg = canvasContainer;
-        const ctx = canvasContainer.getContext('2d');
-        const loadingTask = pdfjsLib.getDocument(pdfLayerBytes);
-        loadingTask.promise.then(pdf => {
-            pdf.getPage(1).then(function(page) {
-                const viewport = page.getViewport({
-                    scale: pdfState.zoom
-                });
-                const renderContext = { 
-                    canvasContext: ctx, 
-                    background: 'rgba(0,0,0,0)',
-                    viewport: viewport 
-                };
-                page.render(renderContext).promise.then(async () => {
-                    if (currentUserImage.opacity < 1.0) {
-                        let screenData = ctx.getImageData(0, 0, pdfCanvases[thisPage-1].width, pdfCanvases[thisPage-1].height);
-                        for(let i = 3; i < screenData.data.length; i+=4) {
-                            screenData.data[i] = currentUserImage.opacity * screenData.data[i];
-                        }
-                        ctx.putImageData(screenData, 0, 0);
-                    }
-                    elementToDublicate.controlBox.parentNode.insertBefore(controlP.controlBox, elementToDublicate.controlBox.nextSibling);
-                    elementToDublicate.editImg.parentNode.insertBefore(controlP.editImg, elementToDublicate.editImg.nextSibling);
-                });
-            });
-        });
+        await updateUserLayer(controlP, pdfLayerBytes);
+        elementToDublicate.controlBox.parentNode.insertBefore(controlP.controlBox, elementToDublicate.controlBox.nextSibling);
+        elementToDublicate.editImg.parentNode.insertBefore(controlP.editImg, elementToDublicate.editImg.nextSibling);
     } else if (type === "text") {
         const elementToDublicate = userTextList[index];
         const textToDublicate = elementToDublicate.elementToControl;
@@ -325,8 +307,8 @@ async function dublicateElement(thisPage, index, type) {
         const pageLayer = pdfLayer.addPage([pdfCanvases[thisPage-1].width, pdfCanvases[thisPage-1].height]);
         currentUserText.pdfDoc = pdfLayer;
         currentUserText.text = textToDublicate.text;
-        currentUserText.x = elementToDublicate.elementToControl.x * pdfState.zoom;
-        currentUserText.y = elementToDublicate.elementToControl.y * pdfState.zoom;
+        currentUserText.x = elementToDublicate.x;
+        currentUserText.y = elementToDublicate.layer.height - elementToDublicate.y;
         currentUserText.size = textToDublicate.size;
         currentUserText.fontKey = textToDublicate.fontKey;
         currentUserText.font = font;
@@ -338,14 +320,18 @@ async function dublicateElement(thisPage, index, type) {
         currentUserText.setTextElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentUserText.pdfBytes = pdfLayerBytes;
-        controlP.x = elementToDublicate.elementToControl.x * pdfState.zoom;
-        controlP.y = (elementToDublicate.layer.height - elementToDublicate.elementToControl.y) * pdfState.zoom;
+        let origX = elementToDublicate.x;
+        let origY = elementToDublicate.y;
+        controlP.x = elementToDublicate.x * pdfState.zoom;
+        controlP.y = elementToDublicate.y * pdfState.zoom;
         controlP.elementToControl = currentUserText;
         controlP.type = "text";
         controlP.layer = elementToDublicate.layer;
         controlP.page = elementToDublicate.page;
         controlP.index = textControllerPointCounter;
         controlP.setControlPoint();
+        controlP.x = origX;
+        controlP.y = origY;
         userTextList.push(controlP);
         const canvasContainer = document.createElement("canvas");
         canvasContainer.style.display = "flex";
@@ -359,31 +345,9 @@ async function dublicateElement(thisPage, index, type) {
         canvasContainer.classList.add("editimg");
         canvasContainer.classList.add("text");
         controlP.editImg = canvasContainer;
-        const ctx = canvasContainer.getContext('2d');
-        const loadingTask = pdfjsLib.getDocument(pdfLayerBytes);
-        loadingTask.promise.then(pdf => {
-            pdf.getPage(1).then(function(page) {
-                const viewport = page.getViewport({
-                    scale: pdfState.zoom
-                });
-                const renderContext = { 
-                    canvasContext: ctx, 
-                    background: 'rgba(0,0,0,0)',
-                    viewport: viewport 
-                };
-                page.render(renderContext).promise.then(async () => {
-                    if (currentUserText.opacity < 1.0) {
-                        let screenData = ctx.getImageData(0, 0, pdfCanvases[thisPage-1].width, pdfCanvases[thisPage-1].height);
-                        for(let i = 3; i < screenData.data.length; i+=4) {
-                            screenData.data[i] = currentUserText.opacity * screenData.data[i];
-                        }
-                        ctx.putImageData(screenData, 0, 0);
-                    }
-                    elementToDublicate.controlBox.parentNode.insertBefore(controlP.controlBox, elementToDublicate.controlBox.nextSibling);
-                    elementToDublicate.editImg.parentNode.insertBefore(controlP.editImg, elementToDublicate.editImg.nextSibling);
-                });
-            });
-        });
+        await updateUserLayer(controlP, pdfLayerBytes);
+        elementToDublicate.controlBox.parentNode.insertBefore(controlP.controlBox, elementToDublicate.controlBox.nextSibling);
+        elementToDublicate.editImg.parentNode.insertBefore(controlP.editImg, elementToDublicate.editImg.nextSibling);
     } else if (type === "drawing") {
         const elementToDublicate = drawLayerStack[index];
         const drawingLayerToDublicate = elementToDublicate.elementToControl;

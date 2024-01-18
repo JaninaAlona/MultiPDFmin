@@ -617,6 +617,7 @@ function relocateLayers(selectedLayer) {
             endY = e.clientY - rect.top;
             let deltaX = endX - startX;
             let deltaY = endY - startY;
+            let selControlP;
             const selectedLayers = document.getElementsByClassName("layer_selected");
             for (let i = 0; i < selectedLayers.length; i++) {
                 let selLayer = selectedLayers[i];
@@ -624,13 +625,18 @@ function relocateLayers(selectedLayer) {
                     let selType = selLayer.getAttribute("data-type");
                     let selIndex = parseInt(selLayer.getAttribute("data-index"));
                     if (selType === "text") {
-                        let selControlP = userTextList[selIndex];
-                        if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
-                            selControlP.controlBox.style.left = (selControlP.x * pdfState.zoom  + deltaX) + "px";
-                            selControlP.controlBox.style.top = (selControlP.y * pdfState.zoom  + deltaY) + "px";
-                            selControlP.x = selControlP.x * pdfState.zoom + deltaX;
-                            selControlP.y = selControlP.y * pdfState.zoom + deltaY;
+                        selControlP = userTextList[selIndex];
+                        otherX = selControlP.x;
+                        otherY = selControlP.y;
+                        if (selIndex === boxIndex && selType === boxType) {
+                            selControlP.x = priorX * pdfState.zoom + deltaX;
+                            selControlP.y = priorY * pdfState.zoom + deltaY;
+                        } else {
+                            selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
+                            selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
                         }
+                        selControlP.controlBox.style.left = selControlP.x + "px";
+                        selControlP.controlBox.style.top = selControlP.y + "px";
                         const pdfLayer = await PDFDocument.create();
                         pdfLayer.registerFontkit(fontkit);
                         const currentText = selControlP.elementToControl;
@@ -638,14 +644,23 @@ function relocateLayers(selectedLayer) {
                         let pdfCanvases = document.getElementsByClassName("render_context");
                         const pageLayer = pdfLayer.addPage([pdfCanvases[selControlP.page-1].width, pdfCanvases[selControlP.page-1].height]);
                         currentText.pdfDoc = pdfLayer;
-                        currentText.x = selControlP.x;
-                        currentText.y = selControlP.layer.height - selControlP.y;
+                        currentText.x = selControlP.x / pdfState.zoom;
+                        currentText.y = selControlP.layer.height - selControlP.y / pdfState.zoom;
                         currentText.setTextElem();
                         const pdfLayerBytes = await pdfLayer.save();
                         currentText.pdfBytes = pdfLayerBytes;
                         await updateUserLayer(selControlP, pdfLayerBytes);
+                        if (selIndex === boxIndex && selType === boxType) {
+                            selControlP.x = priorX + deltaX / pdfState.zoom;
+                            selControlP.y = priorY + deltaY / pdfState.zoom;
+                        } else {
+                            selControlP.x = otherX  + deltaX / pdfState.zoom;
+                            selControlP.y = otherY  + deltaY / pdfState.zoom;
+                        }
+                        currentText.x = selControlP.x;
+                        currentText.y = selControlP.layer.height - selControlP.y;
                     } else if (selType === "drawing") {
-                        const selControlP = drawLayerStack[selIndex];
+                        selControlP = drawLayerStack[selIndex];
                         otherX = selControlP.x;
                         otherY = selControlP.y;
                         if (selIndex === boxIndex && selType === boxType) {
@@ -685,13 +700,21 @@ function relocateLayers(selectedLayer) {
                         zoomDrawing(selControlP, pdfState.zoom, pdfState.zoom);
                         rotateDrawing(selControlP, selControlP.elementToControl.rotation);  
                     } else if (selType === "shape") {
-                        let selControlP = geometryPointsList[selIndex];
-                        if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
-                            selControlP.controlBox.style.left = (selControlP.x * pdfState.zoom  + deltaX) + "px";
-                            selControlP.controlBox.style.top = (selControlP.y * pdfState.zoom  + deltaY) + "px";
+                        selControlP = geometryPointsList[selIndex];
+                        otherX = selControlP.x;
+                        otherY = selControlP.y;
+                        if (selIndex === boxIndex && selType === boxType) {
+                            selControlP.x = priorX * pdfState.zoom + deltaX;
+                            selControlP.y = priorY * pdfState.zoom + deltaY;
+                        } else {
+                            selControlP.originX = 0;
+                            selControlP.originY = 0;
+                            selControlP.rotateControlPoint();
                             selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
                             selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
                         }
+                        selControlP.controlBox.style.left = selControlP.x + "px";
+                        selControlP.controlBox.style.top = selControlP.y + "px";
                         const currentShape = selControlP.elementToControl;
                         if (currentShape.type === "rectangle" || currentShape.type === "triangle") {
                             currentShape.x = (selControlP.x - (currentShape.width * pdfState.zoom)/2 + 20) / pdfState.zoom;
@@ -701,14 +724,26 @@ function relocateLayers(selectedLayer) {
                             currentShape.y = (selControlP.y + 20)/pdfState.zoom;
                         }
                         updateUserShapeLayer(selControlP);
+                        if (selIndex === boxIndex && selType === boxType) {
+                            selControlP.x = priorX + deltaX / pdfState.zoom;
+                            selControlP.y = priorY + deltaY / pdfState.zoom;
+                        } else {
+                            selControlP.x = otherX  + deltaX / pdfState.zoom;
+                            selControlP.y = otherY  + deltaY / pdfState.zoom;
+                        }
                     } else if (selType === "image") {
-                        let selControlP = userImageList[selIndex];
-                        if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
-                            selControlP.controlBox.style.left = (selControlP.x * pdfState.zoom  + deltaX) + "px";
-                            selControlP.controlBox.style.top = (selControlP.y * pdfState.zoom  + deltaY) + "px";
+                        selControlP = userImageList[selIndex];
+                        otherX = selControlP.x;
+                        otherY = selControlP.y;
+                        if (selIndex === boxIndex && selType === boxType) {
+                            selControlP.x = priorX * pdfState.zoom + deltaX;
+                            selControlP.y = priorY * pdfState.zoom + deltaY;
+                        } else {
                             selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
                             selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
                         }
+                        selControlP.controlBox.style.left = selControlP.x + "px";
+                        selControlP.controlBox.style.top = selControlP.y + "px";
                         const pdfLayer = await PDFDocument.create();
                         const currentImage = selControlP.elementToControl;
                         let imgBytes;
@@ -727,6 +762,15 @@ function relocateLayers(selectedLayer) {
                         const pdfLayerBytes = await pdfLayer.save();
                         currentImage.pdfBytes = pdfLayerBytes;
                         await updateUserLayer(selControlP, pdfLayerBytes);
+                        if (selIndex === boxIndex && selType === boxType) {
+                            selControlP.x = priorX + deltaX / pdfState.zoom;
+                            selControlP.y = priorY + deltaY / pdfState.zoom;
+                        } else {
+                            selControlP.x = otherX  + deltaX / pdfState.zoom;
+                            selControlP.y = otherY  + deltaY / pdfState.zoom;
+                        }
+                        currentImage.x = selControlP.x;
+                        currentImage.y = selControlP.layer.height - selControlP.y;
                     }
                 }
             }

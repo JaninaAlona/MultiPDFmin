@@ -363,7 +363,6 @@ document.getElementById("inputfont").addEventListener("change", function(e) {
     resetAllModes();
     const file = e.target.files[0];
     const reader = new FileReader();
-
     reader.addEventListener(
         "load",
         () => { 
@@ -372,11 +371,9 @@ document.getElementById("inputfont").addEventListener("change", function(e) {
         },
         false,
     );
-
     if (file) {
         reader.readAsArrayBuffer(file);
     }
-    
     const currentFilename = file.name;
     createFileListEntryFont(currentFilename, fontBytes.length);
 }, false);

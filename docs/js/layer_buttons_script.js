@@ -525,6 +525,11 @@ function relocateLayers(selectedLayer) {
     let boxType;
     let boxIndex;
     let rotateOnce = true;
+    let priorX;
+    let priorY;
+    let otherX;
+    let otherY;
+    let rect;
     clicked = false;
     short = false;
 
@@ -565,10 +570,15 @@ function relocateLayers(selectedLayer) {
                 } else if (boxType === "image") {
                     controlP = userImageList[boxIndex];
                 }
+                priorX = controlP.x;
+                priorY = controlP.y;
+                rect = controlP.editImg.getBoundingClientRect();  
+                context = controlP.editImg.getContext('2d');
+                
                 x = controlP.controlBox.offsetLeft - e.clientX;
                 y = controlP.controlBox.offsetTop - e.clientY;
-                startX = controlP.x;
-                startY = controlP.y;
+                startX = e.clientX - rect.left;
+                startY = e.clientY - rect.top;
                 layerBox.onmouseup = stopRelocating;
                 layerBox.onmousemove = relocating;
             }
@@ -579,13 +589,11 @@ function relocateLayers(selectedLayer) {
         e.preventDefault();
         if (relocateLayersMode && mouseIsDown) {  
             short = false;
-            let relocateX = (e.clientX + x);
-            let relocateY = (e.clientY + y);
             if (boxType === "text" || boxType === "drawing"|| boxType === "image") {
-                controlP.controlBox.style.left = relocateX + "px";
-                controlP.controlBox.style.top = relocateY + "px"; 
-                controlP.x = relocateX / pdfState.zoom;
-                controlP.y = relocateY / pdfState.zoom;
+                controlP.controlBox.style.left = (e.clientX + x) + "px";
+                controlP.controlBox.style.top = (e.clientY + y) + "px"; 
+                controlP.x = (e.clientX + x)/pdfState.zoom;
+                controlP.y = (e.clientY + y)/pdfState.zoom;
             } else if (boxType === "shape") {
                 if (rotateOnce) {
                     rotateOnce = false;
@@ -593,11 +601,11 @@ function relocateLayers(selectedLayer) {
                     controlP.originY = 0;
                     controlP.rotateControlPoint();
                 }
-                controlP.controlBox.style.left = relocateX + "px";
-                controlP.controlBox.style.top = relocateY + "px"; 
-                controlP.x = relocateX;
-                controlP.y = relocateY;
-            }    
+                controlP.controlBox.style.left = (e.clientX + x) + "px";
+                controlP.controlBox.style.top = (e.clientY + y) + "px"; 
+                controlP.x = e.clientX + x;
+                controlP.y = e.clientY + y;
+            }  
         }
     }
 
@@ -605,8 +613,8 @@ function relocateLayers(selectedLayer) {
         e.preventDefault();
         if (relocateLayersMode && !clicked && !short) {
             mouseIsDown = false;
-            endX = controlP.x;
-            endY = controlP.y;
+            endX = e.clientX - rect.left;
+            endY = e.clientY - rect.top;
             let deltaX = endX - startX;
             let deltaY = endY - startY;
             const selectedLayers = document.getElementsByClassName("layer_selected");
@@ -620,8 +628,8 @@ function relocateLayers(selectedLayer) {
                         if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
                             selControlP.controlBox.style.left = (selControlP.x * pdfState.zoom  + deltaX) + "px";
                             selControlP.controlBox.style.top = (selControlP.y * pdfState.zoom  + deltaY) + "px";
-                            selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
-                            selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
+                            selControlP.x = selControlP.x * pdfState.zoom + deltaX;
+                            selControlP.y = selControlP.y * pdfState.zoom + deltaY;
                         }
                         const pdfLayer = await PDFDocument.create();
                         pdfLayer.registerFontkit(fontkit);
@@ -630,43 +638,50 @@ function relocateLayers(selectedLayer) {
                         let pdfCanvases = document.getElementsByClassName("render_context");
                         const pageLayer = pdfLayer.addPage([pdfCanvases[selControlP.page-1].width, pdfCanvases[selControlP.page-1].height]);
                         currentText.pdfDoc = pdfLayer;
-                        currentText.x = selControlP.x / pdfState.zoom;
-                        currentText.y = selControlP.layer.height - selControlP.y / pdfState.zoom;
+                        currentText.x = selControlP.x;
+                        currentText.y = selControlP.layer.height - selControlP.y;
                         currentText.setTextElem();
                         const pdfLayerBytes = await pdfLayer.save();
                         currentText.pdfBytes = pdfLayerBytes;
                         await updateUserLayer(selControlP, pdfLayerBytes);
                     } else if (selType === "drawing") {
                         const selControlP = drawLayerStack[selIndex];
-                        if ((selIndex !== boxIndex && selType === boxType) || (selIndex === boxIndex && selType !== boxType)) {
-                            selControlP.controlBox.style.left = (selControlP.x * pdfState.zoom  + deltaX) + "px";
-                            selControlP.controlBox.style.top = (selControlP.y * pdfState.zoom  + deltaY) + "px";
+                        otherX = selControlP.x;
+                        otherY = selControlP.y;
+                        if (selIndex === boxIndex && selType === boxType) {
+                            selControlP.x = priorX * pdfState.zoom + deltaX;
+                            selControlP.y = priorY * pdfState.zoom + deltaY;
+                        } else {
                             selControlP.x = selControlP.x * pdfState.zoom  + deltaX;
                             selControlP.y = selControlP.y * pdfState.zoom  + deltaY;
                         }
-                        let context = selControlP.editImg.getContext("2d");
+                        selControlP.controlBox.style.left = selControlP.x + "px";
+                        selControlP.controlBox.style.top = selControlP.y + "px";
+                        const context = selControlP.editImg.getContext("2d");
                         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-                        for (let h = 0; h < selControlP.elementToControl.paths.length; h++) {
+                        for (let i = 0; i < selControlP.elementToControl.paths.length; i++) {
                             context.beginPath();  
-                            context.lineCap = "round";
                             context.lineJoin = "round";       
-                            context.lineWidth = selControlP.elementToControl.paths[h][0].line;
-                            context.strokeStyle = selControlP.elementToControl.paths[h][0].color;   
-                            context.globalCompositeOperation = selControlP.elementToControl.paths[h][0].compositeOp;
-                            let newPosX = (selControlP.elementToControl.paths[h][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
-                            let newPosY = (selControlP.elementToControl.paths[h][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
-                            context.moveTo(newPosX, newPosY);   
-                            selControlP.elementToControl.paths[h][0].x = newPosX;
-                            selControlP.elementToControl.paths[h][0].y = newPosY;
-                            for (let j = 1; j < selControlP.elementToControl.paths[h].length; j++) {
-                                newPosX = (selControlP.elementToControl.paths[h][j].x * pdfState.zoom + deltaX) / pdfState.zoom;
-                                newPosY = (selControlP.elementToControl.paths[h][j].y * pdfState.zoom + deltaY) / pdfState.zoom;
-                                context.lineTo(newPosX, newPosY);
-                                selControlP.elementToControl.paths[h][j].x = newPosX;
-                                selControlP.elementToControl.paths[h][j].y = newPosY;
+                            context.lineWidth = selControlP.elementToControl.paths[i][0].line;
+                            context.strokeStyle = selControlP.elementToControl.paths[i][0].color;   
+                            context.globalCompositeOperation = selControlP.elementToControl.paths[i][0].compositeOp;
+                            selControlP.elementToControl.paths[i][0].x = (selControlP.elementToControl.paths[i][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
+                            selControlP.elementToControl.paths[i][0].y = (selControlP.elementToControl.paths[i][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
+                            context.moveTo(selControlP.elementToControl.paths[i][0].x, selControlP.elementToControl.paths[i][0].y);                
+                            for (let j = 1; j < selControlP.elementToControl.paths[i].length; j++) {
+                                selControlP.elementToControl.paths[i][j].x = (selControlP.elementToControl.paths[i][j].x * pdfState.zoom + deltaX) / pdfState.zoom;
+                                selControlP.elementToControl.paths[i][j].y = (selControlP.elementToControl.paths[i][j].y * pdfState.zoom + deltaY) / pdfState.zoom;
+                                context.lineTo(selControlP.elementToControl.paths[i][j].x, selControlP.elementToControl.paths[i][j].y);
                             }
                             context.stroke(); 
                         } 
+                        if (selIndex === boxIndex && selType === boxType) {
+                            selControlP.x = priorX + deltaX / pdfState.zoom;
+                            selControlP.y = priorY + deltaY / pdfState.zoom;
+                        } else {
+                            selControlP.x = otherX  + deltaX / pdfState.zoom;
+                            selControlP.y = otherY  + deltaY / pdfState.zoom;
+                        }
                         zoomDrawing(selControlP, pdfState.zoom, pdfState.zoom);
                         rotateDrawing(selControlP, selControlP.elementToControl.rotation);  
                     } else if (selType === "shape") {

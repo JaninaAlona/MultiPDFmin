@@ -509,15 +509,14 @@ function moveDrawing(controlP) {
                 context.lineWidth = controlP.elementToControl.paths[i][0].line;
                 context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
                 context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
-                controlP.elementToControl.paths[i][0].x = (controlP.elementToControl.paths[i][0].x * pdfState.zoom + deltaX) / pdfState.zoom;
-                controlP.elementToControl.paths[i][0].y = (controlP.elementToControl.paths[i][0].y * pdfState.zoom + deltaY) / pdfState.zoom;
+                controlP.elementToControl.paths[i][0].x = controlP.elementToControl.paths[i][0].x + deltaX;
+                controlP.elementToControl.paths[i][0].y = controlP.elementToControl.paths[i][0].y + deltaY;
                 context.moveTo(controlP.elementToControl.paths[i][0].x, controlP.elementToControl.paths[i][0].y);                
                 for (let j = 1; j < controlP.elementToControl.paths[i].length; j++) {
-                    controlP.elementToControl.paths[i][j].x = (controlP.elementToControl.paths[i][j].x * pdfState.zoom + deltaX) / pdfState.zoom;
-                    controlP.elementToControl.paths[i][j].y = (controlP.elementToControl.paths[i][j].y * pdfState.zoom + deltaY) / pdfState.zoom;
+                    controlP.elementToControl.paths[i][j].x = controlP.elementToControl.paths[i][j].x + deltaX;
+                    controlP.elementToControl.paths[i][j].y = controlP.elementToControl.paths[i][j].y + deltaY;
                     context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
                 }
-
                 context.stroke();
             }
             zoomDrawing(controlP, pdfState.zoom, pdfState.zoom);

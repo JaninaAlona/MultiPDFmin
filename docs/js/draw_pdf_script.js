@@ -697,9 +697,12 @@ document.getElementById("applydrawrotation").addEventListener("click", function(
                 let index = parseInt(layercontainer.getAttribute("data-index"));
                 let successValue;
                     if (rotateDrawSelectorTriggered) {
-                        successValue = convertInputToSucess(drawRotationSelector.value, 3, 500, true, false);
+                        successValue = convertInputToSucess(drawRotationSelector.value, -360, 360, true, false);
                     } else if (rotateDrawInputFieldTriggered) {
-                        successValue = convertInputToSucess(drawRotationInput.value, 3, 500, true, false);
+                        successValue = convertInputToSucess(drawRotationInput.value, -360, 360, true, false);
+                    }
+                    if (successValue === 360 || successValue === -360) {
+                        successValue = 0;
                     }
                     if (successValue !== -1000) {
                         zoomDrawing(drawLayerStack[index], pdfState.zoom, pdfState.zoom);

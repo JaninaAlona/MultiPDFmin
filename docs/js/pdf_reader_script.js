@@ -812,8 +812,8 @@ function setCustomFilename() {
 }
 
 const saveButtonsEditor = document.getElementsByClassName('save_pdf_editor');
-for (let i = 0; i < saveButtonsEditor.length; i++) {
-    saveButtonsEditor[i].addEventListener("click", async function(e) {
+for (let h = 0; h < saveButtonsEditor.length; h++) {
+    saveButtonsEditor[h].addEventListener("click", async function() {
         resetAllModes();  
         outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
         for (let i = 0; i < writeLayerStack.length; i++) {

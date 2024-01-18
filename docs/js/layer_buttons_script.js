@@ -326,22 +326,21 @@ async function dublicateElement(thisPage, index, type) {
         const pageLayer = pdfLayer.addPage([pdfCanvases[thisPage-1].width, pdfCanvases[thisPage-1].height]);
         currentUserText.pdfDoc = pdfLayer;
         currentUserText.text = textToDublicate.text;
-        currentUserText.x = elementToDublicate.x;
-        currentUserText.y = elementToDublicate.layer.height - elementToDublicate.y;
+        currentUserText.x = elementToDublicate.elementToControl.x * pdfState.zoom;
+        currentUserText.y = elementToDublicate.elementToControl.y * pdfState.zoom;
         currentUserText.size = textToDublicate.size;
         currentUserText.fontKey = textToDublicate.fontKey;
         currentUserText.font = font;
         currentUserText.lineHeight = textToDublicate.lineHeight;
         currentUserText.color = textToDublicate.color;
         currentUserText.page = textToDublicate.page;
-        currentUserText.renderPage = 0;
         currentUserText.opacity = textToDublicate.opacity;
         currentUserText.rotation = textToDublicate.rotation;
         currentUserText.setTextElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentUserText.pdfBytes = pdfLayerBytes;
-        controlP.x = elementToDublicate.x * pdfState.zoom;
-        controlP.y = elementToDublicate.y * pdfState.zoom;
+        controlP.x = elementToDublicate.elementToControl.x * pdfState.zoom;
+        controlP.y = (elementToDublicate.layer.height - elementToDublicate.elementToControl.y) * pdfState.zoom;
         controlP.elementToControl = currentUserText;
         controlP.type = "text";
         controlP.layer = elementToDublicate.layer;
@@ -368,7 +367,6 @@ async function dublicateElement(thisPage, index, type) {
                 const viewport = page.getViewport({
                     scale: pdfState.zoom
                 });
-
                 const renderContext = { 
                     canvasContext: ctx, 
                     background: 'rgba(0,0,0,0)',

@@ -136,6 +136,9 @@ async function addText(event, writeLayer) {
         const canvasContainer = createUserLayer("text", writePage, controlP, writeLayer, pdfLayerBytes);
         controlP.editImg = canvasContainer;
         userTextList.push(controlP);
+        console.log("created");
+        console.log(currentUserText.x);
+        console.log(currentUserText.y);
     }
 }
 

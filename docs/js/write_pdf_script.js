@@ -9,7 +9,7 @@ let userText = {
     size: 1,
     fontKey: null,
     font: null,
-    lineHeight: 24,
+    lineHeight: 30,
     color: rgb(0, 0, 0),
     page: 1,
     opacity: 1.0,

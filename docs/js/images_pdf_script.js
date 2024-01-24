@@ -400,7 +400,6 @@ async function updateUserLayer(controlP, pdfLayerBytes) {
             const viewport = page.getViewport({
                 scale: pdfState.zoom
             });
-
             const renderContext = { 
                 canvasContext: ctx, 
                 background: 'rgba(0,0,0,0)',

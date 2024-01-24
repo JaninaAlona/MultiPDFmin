@@ -48,8 +48,9 @@ function convertInputToSucess(input, min, max, parseIntOperation, parseFloatOper
     return outputVal;
 }
 
-function convertPageListToSucess(input, numOfPages) {
+function convertPageListToSucess(inputId, numOfPages) {
     let outputPageList = [];
+    let input = document.getElementsByClassName(inputId)[0].value;
     if (input.indexOf(',') > -1) {
         const pages = input.split(",");
         for (let i = 0; i < pages.length; i++) {
@@ -92,6 +93,20 @@ function convertPageListToSucess(input, numOfPages) {
 
         // sort in ascending order
         outputPageList.sort((a,b) => a-b);  
+    }
+    if (outputPageList.length === 0) {
+        document.getElementsByClassName(inputId)[0].value = "";
+    } else {
+        let listString = "";
+        for (let i = 0; i < outputPageList.length; i++) {
+            let outputPageListElem = outputPageList[i];
+            if (i < outputPageList.length - 1) {
+                listString = listString + outputPageListElem + ",";
+            } else {
+                listString = listString + outputPageListElem;
+            }
+        }
+        document.getElementsByClassName(inputId)[0].value = listString;
     }
     return outputPageList;
 }

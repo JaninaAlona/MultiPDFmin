@@ -23,7 +23,6 @@ selAll.addEventListener("click", function() {
 
 async function groupMark(removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU) {
     const layercontainers = document.getElementsByClassName("layercontainer");
-    const pagelist = document.getElementsByClassName("pagelist")[0];
     if (!selectText && !selectShape && !selectDrawing && !selectImage && !selectLocked && !selectUnlocked && pagelist.value.trim() === "") {
         nothingSelected = true;
     } else {
@@ -53,8 +52,7 @@ async function groupMark(removeState, addState, selectStateT, selectStateD, sele
         for (let i = 0; i < layercontainers.length; i++) {
             markOnState(layercontainers[i]);
         }
-        let listInput = pagelist.value;
-        trimmedPages = convertPageListToSucess(listInput, pdfState.lastPage);
+        trimmedPages = convertPageListToSucess("pagelist", pdfState.lastPage);
         for (let i = 0; i < layercontainers.length; i++) {
             filterSelect(layercontainers[i], removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU);
         }
@@ -147,7 +145,6 @@ unselAll.addEventListener("click", function() {
 
 async function groupUnmark(removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU) {
     const layercontainers = document.getElementsByClassName("layercontainer");
-    const unpagelist = document.getElementsByClassName("un_pagelist")[0];
     if (!unselectText && !unselectShape && !unselectDrawing && !unselectImage && !unselectLocked && !unselectUnlocked && unpagelist.value.trim() === "") {
         nothingSelected = true;
     } else {
@@ -166,8 +163,7 @@ async function groupUnmark(removeState, addState, selectStateT, selectStateD, se
             }
         } 
     } else {
-        let listInput = unpagelist.value;
-        untrimmedPages = convertPageListToSucess(listInput, pdfState.lastPage);
+        untrimmedPages = convertPageListToSucess("un_pagelist", pdfState.lastPage);
         for (let i = 0; i < layercontainers.length; i++) {
             if (layercontainers[i].classList.contains("layer_selected")) {
                 filterUnselect(layercontainers[i], removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU);

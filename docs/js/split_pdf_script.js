@@ -68,11 +68,11 @@ const splitter = Vue.createApp({
             splitMethod = regularSplitOpt;
             switch(regularSplitOpt) {
                 case 0:
-                    document.getElementById('splitlist').disabled = true;
+                    document.getElementsByClassName('splitlist')[0].disabled = true;
                     document.getElementById('save_split').disabled = true;
                     break;
                 case 1:
-                    document.getElementById('splitlist').disabled = true;
+                    document.getElementsByClassName('splitlist')[0].disabled = true;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
                     this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
@@ -80,7 +80,7 @@ const splitter = Vue.createApp({
                     document.getElementById("split_filename").value = this.splitPDFfilename;
                     break;
                 case 2:
-                    document.getElementById('splitlist').disabled = true;
+                    document.getElementsByClassName('splitlist')[0].disabled = true;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
                     this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
@@ -88,7 +88,7 @@ const splitter = Vue.createApp({
                     document.getElementById("split_filename").value = this.splitPDFfilename;
                     break;
                 case 3:
-                    document.getElementById('splitlist').disabled = true;
+                    document.getElementsByClassName('splitlist')[0].disabled = true;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
                     this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
@@ -96,7 +96,7 @@ const splitter = Vue.createApp({
                     document.getElementById("split_filename").value = this.splitPDFfilename;
                     break;
                 case 4:
-                    document.getElementById('splitlist').disabled = false;
+                    document.getElementsByClassName('splitlist')[0].disabled = false;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
                     this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
@@ -204,9 +204,8 @@ async function splitAfter(nRest) {
 
 async function splitList() {
     let srcPDFDoc = await PDFDocument.load(selectedPDFBytes);
-    let splitListInput = document.getElementById('splitlist').value;
     let splitListDoc;
-    let trimmedPages = convertPageListToSucess(splitListInput, srcPDFDoc.getPages().length-1);
+    let trimmedPages = convertPageListToSucess('splitlist', srcPDFDoc.getPages().length-1);
     if (trimmedPages.length > 0) {
         let start = 1;
         let end = trimmedPages[0];

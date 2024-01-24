@@ -207,6 +207,7 @@ document.getElementById('movetext').addEventListener("click", function() {
 
 function moveText(textBox) {
     mouseIsDown = false;
+    let controlBoxTouched = false;
     let x = 0;
     let y = 0;
 
@@ -220,6 +221,7 @@ function moveText(textBox) {
             markSingleLayerOnEdit(textBox);
             x = textBox.controlBox.offsetLeft - e.clientX; 
             y = textBox.controlBox.offsetTop - e.clientY; 
+            controlBoxTouched = true;
             e.preventDefault();
         }
     }, true);
@@ -227,19 +229,22 @@ function moveText(textBox) {
     window.addEventListener('mouseup', async function(e) { 
         if (userModes[2]) {
             mouseIsDown = false;
-            const pdfLayer = await PDFDocument.create();
-            pdfLayer.registerFontkit(fontkit);
-            const currentText = textBox.elementToControl;
-            currentText.font = await pdfLayer.embedFont(currentText.fontKey);
-            let pdfCanvases = document.getElementsByClassName("render_context");
-            const pageLayer = pdfLayer.addPage([pdfCanvases[textBox.page-1].width, pdfCanvases[textBox.page-1].height]);
-            currentText.pdfDoc = pdfLayer;
-            currentText.x = textBox.x;
-            currentText.y = textBox.layer.height - textBox.y;
-            currentText.setTextElem();
-            const pdfLayerBytes = await pdfLayer.save();
-            currentText.pdfBytes = pdfLayerBytes;
-            await updateUserLayer(textBox, pdfLayerBytes);
+            if (controlBoxTouched) {
+                const pdfLayer = await PDFDocument.create();
+                pdfLayer.registerFontkit(fontkit);
+                const currentText = textBox.elementToControl;
+                currentText.font = await pdfLayer.embedFont(currentText.fontKey);
+                let pdfCanvases = document.getElementsByClassName("render_context");
+                const pageLayer = pdfLayer.addPage([pdfCanvases[textBox.page-1].width, pdfCanvases[textBox.page-1].height]);
+                currentText.pdfDoc = pdfLayer;
+                currentText.x = textBox.x;
+                currentText.y = textBox.layer.height - textBox.y;
+                currentText.setTextElem();
+                const pdfLayerBytes = await pdfLayer.save();
+                currentText.pdfBytes = pdfLayerBytes;
+                await updateUserLayer(textBox, pdfLayerBytes);
+            }
+            controlBoxTouched = false;
             window.onmouseup = null;
         }
     }, true); 

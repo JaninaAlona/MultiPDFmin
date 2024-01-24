@@ -45,6 +45,7 @@ div.text {
 }
 
 div.shape {
+    position: absolute;
     width: 40px;
     height: 40px;
     border-style: solid;
@@ -54,6 +55,7 @@ div.shape {
 }
 
 div.image {
+    position: absolute;
     width: 40px;
     height: 40px;
     border-style: solid;
@@ -63,6 +65,7 @@ div.image {
 }
 
 div.drawing {
+    position: absolute;
     width: 40px;
     height: 40px;
     border-style: solid;

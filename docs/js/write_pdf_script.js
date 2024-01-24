@@ -231,7 +231,7 @@ function moveText(textBox) {
         }
     }, true);
 
-    textBox.controlBox.parentNode.parentNode.addEventListener('mouseup', async function(e) { 
+    document.addEventListener('mouseup', async function(e) { 
         mouseIsDown = false;
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);

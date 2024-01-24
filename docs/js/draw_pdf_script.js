@@ -481,6 +481,8 @@ function moveDrawing(controlP) {
         if (userModesDrawer[3]) {
             mouseIsDown = false;
             if (controlBoxTouched) {
+                endX = controlP.x;
+                endY = controlP.y;
                 let deltaX = endX - startX;
                 let deltaY = endY - startY;
                 let context = controlP.editImg.getContext('2d');  
@@ -516,8 +518,6 @@ function moveDrawing(controlP) {
             controlP.controlBox.style.top = (e.clientY + y) + "px"; 
             controlP.x = (e.clientX + x) / pdfState.zoom;
             controlP.y = (e.clientY + y) / pdfState.zoom;
-            endX = controlP.x;
-            endY = controlP.y;
         }
     }, true);
 }

@@ -42,6 +42,7 @@ let drawPdfBtn;
 let geometryBtn;
 let imagesBtn;
 let encrypted;
+let userZoom = 1;
 let renderCompleted = false;
 
 
@@ -366,6 +367,8 @@ function debounce(func, delay) {
 const debouncedZoomIn = debounce(zoomIn, 300); 
 const debouncedZoomOut = debounce(zoomOut, 300);
 const debouncedEnterZoomFactor = debounce(enterZoomFactor, 300);
+const debouncedZoomToSave = debounce(zoomToSave, 300);
+const debouncedZoomToUser = debounce(zoomToUser, 300);
   
 async function zoomIn(e) {
     resetAllModes();
@@ -816,15 +819,23 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
     saveButtonsEditor[h].addEventListener("click", async function() {
         resetAllModes();  
         outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
+        const anyEditImgs = document.getElementsByClassName("editimg");
+        if (anyEditImgs.length > 0) {
+            debouncedZoomToSave();
+        }
         for (let i = 0; i < writeLayerStack.length; i++) {
             const writeLayer = writeLayerStack[i];
             const editImgs = writeLayer.getElementsByClassName("editimg");
             if (editImgs.length > 0) {
                 for (let j = 0; j < editImgs.length; j++) {
                     const editImg = editImgs[j];
-                    canvasToImage(editImg);
+                    await canvasToImage(editImg);
                 }
+                
             }
+        }
+        if (anyEditImgs.length > 0) {
+            debouncedZoomToUser();
         }
         pdfState.existingPDFBytes = await outputPDF.save();
         download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
@@ -841,6 +852,32 @@ async function canvasToImage(editImg) {
         y: 0,
         width: pdfState.originalWidths[thisPage-1],
         height: pdfState.originalHeights[thisPage-1]
+    });
+}
+
+// Set Zoom to 500 % to save high quality canvas images
+async function zoomToSave() {
+    userZoom = pdfState.zoom;
+    pdfState.zoom = 5;
+    placeEditorElements();
+    pageCounter = 1;
+    await pdfState.pdf.getPage(1).then(async (page) => {
+        if (this.page) {
+            this.page.destroy();
+        }
+        await renderAllPages(page);
+    });
+}
+
+async function zoomToUser() {
+    pdfState.zoom = userZoom;
+    placeEditorElements();
+    pageCounter = 1;
+    await pdfState.pdf.getPage(1).then(async (page) => {
+        if (this.page) {
+            this.page.destroy();
+        }
+        await renderAllPages(page);
     });
 }
 

@@ -64,8 +64,6 @@ const colorPickerFont = new Alwan('#colorpicker', {
     copy: true
 });
 
-let x = 0;
-let y = 0;
 let textControllerPointCounter = 0;
 let userFontColor;
 let userFontOpacity;
@@ -212,16 +210,11 @@ function moveText(textBox) {
     let x = 0;
     let y = 0;
 
-    function moveTextBox(e) {
-        if (mouseIsDown) { 
-            textBox.controlBox.style.left = (e.clientX + x) + 'px'; 
-            textBox.controlBox.style.top = (e.clientY + y) + 'px'; 
-            textBox.x = (e.clientX + x)/pdfState.zoom;
-            textBox.y = (e.clientY + y)/pdfState.zoom;
-        }
-    }
-
     textBox.controlBox.addEventListener("mousedown", function(e) {
+        let disable = checkForLockStatus(textBox.controlBox);
+        if (disable) {
+            userModes[2] = false;
+        }
         if (userModes[2]) {
             mouseIsDown = true; 
             markSingleLayerOnEdit(textBox);
@@ -231,24 +224,34 @@ function moveText(textBox) {
         }
     }, true);
 
-    document.addEventListener('mouseup', async function(e) { 
-        mouseIsDown = false;
-        const pdfLayer = await PDFDocument.create();
-        pdfLayer.registerFontkit(fontkit);
-        const currentText = textBox.elementToControl;
-        currentText.font = await pdfLayer.embedFont(currentText.fontKey);
-        let pdfCanvases = document.getElementsByClassName("render_context");
-        const pageLayer = pdfLayer.addPage([pdfCanvases[textBox.page-1].width, pdfCanvases[textBox.page-1].height]);
-        currentText.pdfDoc = pdfLayer;
-        currentText.x = textBox.x;
-        currentText.y = textBox.layer.height - textBox.y;
-        currentText.setTextElem();
-        const pdfLayerBytes = await pdfLayer.save();
-        currentText.pdfBytes = pdfLayerBytes;
-        await updateUserLayer(textBox, pdfLayerBytes);
+    window.addEventListener('mouseup', async function(e) { 
+        if (userModes[2]) {
+            mouseIsDown = false;
+            const pdfLayer = await PDFDocument.create();
+            pdfLayer.registerFontkit(fontkit);
+            const currentText = textBox.elementToControl;
+            currentText.font = await pdfLayer.embedFont(currentText.fontKey);
+            let pdfCanvases = document.getElementsByClassName("render_context");
+            const pageLayer = pdfLayer.addPage([pdfCanvases[textBox.page-1].width, pdfCanvases[textBox.page-1].height]);
+            currentText.pdfDoc = pdfLayer;
+            currentText.x = textBox.x;
+            currentText.y = textBox.layer.height - textBox.y;
+            currentText.setTextElem();
+            const pdfLayerBytes = await pdfLayer.save();
+            currentText.pdfBytes = pdfLayerBytes;
+            await updateUserLayer(textBox, pdfLayerBytes);
+            window.onmouseup = null;
+        }
     }, true); 
      
-    textBox.controlBox.addEventListener('mousemove', moveTextBox, true); 
+    textBox.controlBox.addEventListener('mousemove', function(e) {
+        if (userModes[2] && mouseIsDown) { 
+            textBox.controlBox.style.left = (e.clientX + x) + 'px'; 
+            textBox.controlBox.style.top = (e.clientY + y) + 'px'; 
+            textBox.x = (e.clientX + x)/pdfState.zoom;
+            textBox.y = (e.clientY + y)/pdfState.zoom;
+        }
+    }, true); 
 }
 
 

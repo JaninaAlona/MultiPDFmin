@@ -455,78 +455,150 @@ function moveDrawing(controlP) {
     let startY;
     let endX;
     let endY;
-    clicked = false;
-    short = false;
-    controlP.controlBox.onclick = detectClick;
-    controlP.controlBox.onmousedown = startMovingDrawing;  
-    
-    function detectClick() {
-        if (userModesDrawer[3]) {
-            clicked = true;
-            short = true;
-        }
-    }
+    let x = 0;
+    let y = 0;
+    mouseIsDown = false;
+    let controlBoxTouched = false;
 
-    function startMovingDrawing(e) {
+    controlP.controlBox.addEventListener("mousedown", function(e) {
         let disable = checkForLockStatus(controlP.controlBox);
         if (disable) {
             userModesDrawer[3] = false;
         }
-        if (userModesDrawer[3] && !clicked) {
+        if (userModesDrawer[3]) {
             mouseIsDown = true;
             markSingleLayerOnEdit(controlP);
             x = controlP.controlBox.offsetLeft - e.clientX;
             y = controlP.controlBox.offsetTop - e.clientY;
             startX = controlP.x;
             startY = controlP.y;
-            controlP.controlBox.onmouseup = stopMovingDrawing;
-            controlP.controlBox.onmousemove = movingDrawing;
+            controlBoxTouched = true;
+            e.preventDefault();
         }
-    }
+    }, true);
 
-    function movingDrawing(e) {
-        if (userModesDrawer[3] && mouseIsDown && !clicked) { 
+    window.addEventListener('mouseup', function(e) { 
+        if (userModesDrawer[3]) {
+            mouseIsDown = false;
+            if (controlBoxTouched) {
+                let deltaX = endX - startX;
+                let deltaY = endY - startY;
+                let context = controlP.editImg.getContext('2d');  
+                context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+                for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
+                    context.beginPath();  
+                    context.lineCap = "round";
+                    context.lineJoin = "round";       
+                    context.lineWidth = controlP.elementToControl.paths[i][0].line;
+                    context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
+                    context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
+                    controlP.elementToControl.paths[i][0].x = controlP.elementToControl.paths[i][0].x + deltaX;
+                    controlP.elementToControl.paths[i][0].y = controlP.elementToControl.paths[i][0].y + deltaY;
+                    context.moveTo(controlP.elementToControl.paths[i][0].x, controlP.elementToControl.paths[i][0].y);                
+                    for (let j = 1; j < controlP.elementToControl.paths[i].length; j++) {
+                        controlP.elementToControl.paths[i][j].x = controlP.elementToControl.paths[i][j].x + deltaX;
+                        controlP.elementToControl.paths[i][j].y = controlP.elementToControl.paths[i][j].y + deltaY;
+                        context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
+                    }
+                    context.stroke();
+                }
+                zoomDrawing(controlP, pdfState.zoom, pdfState.zoom);
+                rotateDrawing(controlP, controlP.elementToControl.rotation); 
+            }
+            controlBoxTouched = false;
+            window.onmouseup = null;
+        }
+    }, true);
+
+    controlP.controlBox.addEventListener('mousemove', function(e) {
+        if (userModesDrawer[3] && mouseIsDown) { 
             controlP.controlBox.style.left = (e.clientX + x) + "px";
             controlP.controlBox.style.top = (e.clientY + y) + "px"; 
             controlP.x = (e.clientX + x) / pdfState.zoom;
             controlP.y = (e.clientY + y) / pdfState.zoom;
-        }
-    }
-
-    function stopMovingDrawing() {
-        if (userModesDrawer[3] && !clicked && !short) {
-            mouseIsDown = false;
             endX = controlP.x;
             endY = controlP.y;
-            let deltaX = endX - startX;
-            let deltaY = endY - startY;
-            let context = controlP.editImg.getContext('2d');  
-            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-            for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
-                context.beginPath();  
-                context.lineCap = "round";
-                context.lineJoin = "round";       
-                context.lineWidth = controlP.elementToControl.paths[i][0].line;
-                context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
-                context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
-                controlP.elementToControl.paths[i][0].x = controlP.elementToControl.paths[i][0].x + deltaX;
-                controlP.elementToControl.paths[i][0].y = controlP.elementToControl.paths[i][0].y + deltaY;
-                context.moveTo(controlP.elementToControl.paths[i][0].x, controlP.elementToControl.paths[i][0].y);                
-                for (let j = 1; j < controlP.elementToControl.paths[i].length; j++) {
-                    controlP.elementToControl.paths[i][j].x = controlP.elementToControl.paths[i][j].x + deltaX;
-                    controlP.elementToControl.paths[i][j].y = controlP.elementToControl.paths[i][j].y + deltaY;
-                    context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
-                }
-                context.stroke();
-            }
-            zoomDrawing(controlP, pdfState.zoom, pdfState.zoom);
-            rotateDrawing(controlP, controlP.elementToControl.rotation);   
-            controlP.controlBox.onmouseup = null;
-            controlP.controlBox.onmousemove = null;
-            controlP.controlBox.onclick = null;
         }
-    }
+    }, true);
 }
+
+// function moveDrawing(controlP) {
+//     let startX;
+//     let startY;
+//     let endX;
+//     let endY;
+//     clicked = false;
+//     short = false;
+//     controlP.controlBox.onclick = detectClick;
+//     controlP.controlBox.onmousedown = startMovingDrawing;  
+    
+//     function detectClick() {
+//         if (userModesDrawer[3]) {
+//             clicked = true;
+//             short = true;
+//         }
+//     }
+
+//     function startMovingDrawing(e) {
+//         let disable = checkForLockStatus(controlP.controlBox);
+//         if (disable) {
+//             userModesDrawer[3] = false;
+//         }
+//         if (userModesDrawer[3] && !clicked) {
+//             mouseIsDown = true;
+//             markSingleLayerOnEdit(controlP);
+//             x = controlP.controlBox.offsetLeft - e.clientX;
+//             y = controlP.controlBox.offsetTop - e.clientY;
+//             startX = controlP.x;
+//             startY = controlP.y;
+//             controlP.controlBox.onmouseup = stopMovingDrawing;
+//             controlP.controlBox.onmousemove = movingDrawing;
+//         }
+//     }
+
+//     function movingDrawing(e) {
+//         if (userModesDrawer[3] && mouseIsDown && !clicked) { 
+//             controlP.controlBox.style.left = (e.clientX + x) + "px";
+//             controlP.controlBox.style.top = (e.clientY + y) + "px"; 
+//             controlP.x = (e.clientX + x) / pdfState.zoom;
+//             controlP.y = (e.clientY + y) / pdfState.zoom;
+//         }
+//     }
+
+//     function stopMovingDrawing() {
+//         if (userModesDrawer[3] && !clicked && !short) {
+//             mouseIsDown = false;
+//             endX = controlP.x;
+//             endY = controlP.y;
+//             let deltaX = endX - startX;
+//             let deltaY = endY - startY;
+//             let context = controlP.editImg.getContext('2d');  
+//             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+//             for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
+//                 context.beginPath();  
+//                 context.lineCap = "round";
+//                 context.lineJoin = "round";       
+//                 context.lineWidth = controlP.elementToControl.paths[i][0].line;
+//                 context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
+//                 context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
+//                 controlP.elementToControl.paths[i][0].x = controlP.elementToControl.paths[i][0].x + deltaX;
+//                 controlP.elementToControl.paths[i][0].y = controlP.elementToControl.paths[i][0].y + deltaY;
+//                 context.moveTo(controlP.elementToControl.paths[i][0].x, controlP.elementToControl.paths[i][0].y);                
+//                 for (let j = 1; j < controlP.elementToControl.paths[i].length; j++) {
+//                     controlP.elementToControl.paths[i][j].x = controlP.elementToControl.paths[i][j].x + deltaX;
+//                     controlP.elementToControl.paths[i][j].y = controlP.elementToControl.paths[i][j].y + deltaY;
+//                     context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
+//                 }
+//                 context.stroke();
+//             }
+//             zoomDrawing(controlP, pdfState.zoom, pdfState.zoom);
+//             rotateDrawing(controlP, controlP.elementToControl.rotation);   
+//             controlP.controlBox.onmouseup = null;
+//             controlP.controlBox.onmousemove = null;
+//             controlP.controlBox.onclick = null;
+//         }
+//     }
+// }
 
 
 let pencilsizeInput = document.querySelector("#pencilsize");

@@ -340,7 +340,7 @@ function moveImage(controlP) {
             markSingleLayerOnEdit(controlP);
             x = controlP.controlBox.offsetLeft - e.clientX;
             y = controlP.controlBox.offsetTop - e.clientY;
-            controlP.controlBox.onmouseup = stopMovingImage;
+            window.onmouseup = stopMovingImage;
             controlP.controlBox.onmousemove = movingImage;
             controlBoxTouched = true;
             e.preventDefault();

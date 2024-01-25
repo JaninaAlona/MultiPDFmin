@@ -60,7 +60,12 @@ for (let i = 0; i < inputFileButtons.length; i++) {
             pdfState.originalPDFBytes = typedarray;
             const loadingTask = pdfjsLib.getDocument(typedarray);
             loadingTask.promise.then(async (pdf) => {
-                await kickOff(pdf);
+                let pdfDoc;
+                try {
+                    pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
+                } catch(encryptedErr) {
+                    encrypted = true;
+                }
                 if (!encrypted) {
                     if (file.name.endsWith(".pdf")) {
                         for (let i = 0; i < encryptedErrorWidgets.length; i++) {
@@ -87,6 +92,17 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         for(let i = 0; i < scrollwrappers.length; i++) {
                             scrollwrappers[i].scrollTo(0, 0);
                         }
+                        const pdfBytes = await pdfDoc.save();
+                        pdfState.originalPDFBytes = pdfBytes;
+                        pdfState.existingPDFBytes = pdfState.originalPDFBytes;
+                        pdfState.pdf = pdf;
+                        adjustPDFToUserViewport(pdfDoc);
+                        await pdfState.pdf.getPage(1).then(async (page) => {
+                            if (this.page) {
+                                this.page.destroy();
+                            }
+                            await renderAllPages(page);
+                        });
                     }
                 } else {
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
@@ -153,25 +169,7 @@ function resetRendering() {
 }
 
 async function kickOff(pdf) { 
-    let pdfDoc;
-    try {
-        pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
-    } catch(encryptedErr) {
-        encrypted = true;
-    }
-    if (!encrypted) {
-        const pdfBytes = await pdfDoc.save();
-        pdfState.originalPDFBytes = pdfBytes;
-        pdfState.existingPDFBytes = pdfState.originalPDFBytes;
-        pdfState.pdf = pdf;
-        adjustPDFToUserViewport(pdfDoc);
-        await pdfState.pdf.getPage(1).then(async (page) => {
-            if (this.page) {
-                this.page.destroy();
-            }
-            await renderAllPages(page);
-        });
-    }
+    
 }
 
 

@@ -237,7 +237,7 @@ function moveText(textBox) {
         }
     }
 
-    async function stopMovingText(e) {
+    async function stopMovingText() {
         if (userModes[2]) {
             mouseIsDown = false;
             if (controlBoxTouched) {

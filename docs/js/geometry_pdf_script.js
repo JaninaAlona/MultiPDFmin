@@ -356,37 +356,31 @@ document.getElementById('moveshape').addEventListener("click", function() {
 
 function moveShape(shapeBox) {
     let rotateOnce = true;
-    if (userModesGeometry[4]) {
-        clicked = false;
-        short = false;
-        shapeBox.controlBox.onclick = detectClick;
-        shapeBox.controlBox.onmousedown = startMovingShape;
-    }
-
-    function detectClick() {
-        if (userModesGeometry[4]) {
-            clicked = true;
-            short = true;
-        }
-    }
+    let x = 0;
+    let y = 0;
+    mouseIsDown = false;
+    let controlBoxTouched = false;
+    shapeBox.controlBox.onmousedown = startMovingShape;
 
     function startMovingShape(e) {
         let disable = checkForLockStatus(e.currentTarget);
         if (disable) {
             userModesGeometry[4] = false;
         }
-        if (userModesGeometry[4] && !clicked) {
+        if (userModesGeometry[4]) {
             mouseIsDown = true;
             markSingleLayerOnEdit(shapeBox);
             x = shapeBox.controlBox.offsetLeft - e.clientX;
             y = shapeBox.controlBox.offsetTop - e.clientY;
-            shapeBox.controlBox.onmouseup = stopMovingShape;
+            window.onmouseup = stopMovingShape;
             shapeBox.controlBox.onmousemove = movingShape;
+            controlBoxTouched = true;
+            e.preventDefault();
         }
     }
 
     function movingShape(e) {
-        if (userModesGeometry[4] && mouseIsDown && !clicked) {
+        if (userModesGeometry[4] && mouseIsDown) {
             if (rotateOnce) {
                 rotateOnce = false;
                 shapeBox.originX = 0;
@@ -400,21 +394,23 @@ function moveShape(shapeBox) {
         }
     }
 
-    function stopMovingShape(e){
-        if (userModesGeometry[4] && !clicked && !short) {
+    function stopMovingShape() {
+        if (userModesGeometry[4]) {
             mouseIsDown = false;
-            const currentShape = shapeBox.elementToControl;
-            if (currentShape.type === "rectangle" || currentShape.type === "triangle") {
-                currentShape.x = (shapeBox.x - (currentShape.width * pdfState.zoom)/2 + 20) / pdfState.zoom;
-                currentShape.y = (shapeBox.y - (currentShape.height * pdfState.zoom)/2 + 20) / pdfState.zoom;
-            } else if (currentShape.type === "circle") {
-                currentShape.x = (shapeBox.x + 20)/pdfState.zoom;
-                currentShape.y = (shapeBox.y + 20)/pdfState.zoom;
+            if (controlBoxTouched) {
+                const currentShape = shapeBox.elementToControl;
+                if (currentShape.type === "rectangle" || currentShape.type === "triangle") {
+                    currentShape.x = (shapeBox.x - (currentShape.width * pdfState.zoom)/2 + 20) / pdfState.zoom;
+                    currentShape.y = (shapeBox.y - (currentShape.height * pdfState.zoom)/2 + 20) / pdfState.zoom;
+                } else if (currentShape.type === "circle") {
+                    currentShape.x = (shapeBox.x + 20)/pdfState.zoom;
+                    currentShape.y = (shapeBox.y + 20)/pdfState.zoom;
+                }
+                updateUserShapeLayer(shapeBox);
             }
-            updateUserShapeLayer(shapeBox);
-            shapeBox.controlBox.onmouseup = null;
+            controlBoxTouched = false;
+            window.onmouseup = null;
             shapeBox.controlBox.onmousemove = null;
-            shapeBox.controlBox.onclick = null;
         }
     }
 }

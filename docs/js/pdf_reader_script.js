@@ -97,7 +97,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             scrollwrappers[i].scrollTo(0, 0);
                         }
                         adjustPDFToUserViewport(pdfDoc);
-                        renderPage(pageCounter);
+                        renderPage(pageCounter, false);
                     }
                 } else {
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
@@ -249,7 +249,7 @@ function displayPageNum(e) {
     pdfState.currentPage = displayedPage;
 }
 
-function renderPage(num) {
+function renderPage(num, renderSingle) {
     pdfState.pdf.getPage(num).then(function(page) {
         let viewport = page.getViewport({
             scale: pdfState.zoom
@@ -257,8 +257,8 @@ function renderPage(num) {
         let viewportOriginal = page.getViewport({
             scale: 1
         });
-        let div;
         let canvas;
+        let div;
         const pdfViewer = document.getElementsByClassName('pdf_viewer')[0];
         if (viewport.width > parseInt(pdfViewer.style.width, 10)) {
             pdfViewer.style.width = viewport.width + "px";
@@ -285,10 +285,15 @@ function renderPage(num) {
             pdfViewer.appendChild(div);
             writeLayerStack.push(div);
         } else if (writeLayerStack.length == pdfState.pdf._pdfInfo.numPages) {
-            div = writeLayerStack[pageCounter-1];
+            if (!renderSingle) {
+                div = writeLayerStack[pageCounter-1];
+                canvas = writeLayerStack[pageCounter-1].childNodes[0];
+            } else {
+                div = writeLayerStack[num-1];
+                canvas = writeLayerStack[num-1].childNodes[0];
+            }
             div.style.width = viewport.width + "px";
             div.style.height = viewport.height + "px";
-            canvas = writeLayerStack[pageCounter-1].childNodes[0];
             canvas.width = viewport.width;
             canvas.height = viewport.height;
             canvas.style.width = viewport.width + "px";
@@ -299,16 +304,18 @@ function renderPage(num) {
             canvasContext: context,
             viewport: viewport
         });
-        renderTask.promise.then(function() {
-            pageCounter++;
-            if (pdfState.pdf != null && pageCounter > pdfState.pdf._pdfInfo.numPages) {
-                renderCompleted = true;
-            }
-            if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
-                renderCompleted = false;
-                renderPage(pageCounter);
-            }
-        });
+        if (!renderSingle) {
+            renderTask.promise.then(function() {
+                pageCounter++;
+                if (pdfState.pdf != null && pageCounter > pdfState.pdf._pdfInfo.numPages) {
+                    renderCompleted = true;
+                }
+                if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
+                    renderCompleted = false;
+                    renderPage(pageCounter);
+                }
+            });
+        }
     });
 }
 
@@ -355,12 +362,7 @@ async function zoomIn(e) {
                 pdfState.zoom = toFactor(percent);
                 placeEditorElements();
                 pageCounter = 1;
-                await pdfState.pdf.getPage(1).then(async (page) => {
-                    if (this.page) {
-                        this.page.destroy();
-                    }
-                    await renderAllPages(page);
-                });
+                renderPage(pageCounter, false);
             }
         }
     }
@@ -378,12 +380,7 @@ async function zoomOut(e) {
                 pdfState.zoom = toFactor(percent);
                 placeEditorElements();
                 pageCounter = 1;
-                await pdfState.pdf.getPage(1).then(async (page) => {
-                    if (this.page) {
-                        this.page.destroy();
-                    }
-                    await renderAllPages(page);
-                });
+                renderPage(pageCounter, false);
             }
         }
     }
@@ -416,12 +413,7 @@ async function enterZoomFactor(e) {
                 document.getElementById("zoom_factor").value = zoomVal + "%";
                 placeEditorElements();
                 pageCounter = 1;
-                await pdfState.pdf.getPage(1).then(async (page) => {
-                    if (this.page) {
-                        this.page.destroy();
-                    }
-                    await renderAllPages(page);
-                });
+                renderPage(pageCounter, false);
             }
         }
     }
@@ -706,7 +698,9 @@ async function setPageRotation(pdfDoc, currentPage, newRotation) {
     const loadingTask = pdfjsLib.getDocument(pdfState.existingPDFBytes);
     loadingTask.promise.then(pdf => {
         pdfState.pdf = pdf;
-        pdfState.pdf.getPage(currentPage).then(renderPage);
+        pdfState.pdf.getPage(currentPage).then(function() {
+            renderPage(currentPage, true);
+        });
     }); 
     let writeLayers = document.getElementsByClassName("write_layer");
     let renderContextes = document.getElementsByClassName("render_context");

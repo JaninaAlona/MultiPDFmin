@@ -23,6 +23,7 @@ let userModes = [];
 let userModesDrawer = [];
 let userModesGeometry = [];
 let userModesImages = [];
+let hiddenLayerStack = []; 
 let writeLayerStack = [];
 let userTextList = [];
 let userImageList = [];
@@ -44,6 +45,8 @@ let imagesBtn;
 let encrypted;
 let userZoom = 1;
 let renderCompleted = false;
+const saveZoom = 2;
+let originalZoom;
 
 
 let inputFileButtons = document.getElementsByClassName('inputfile');
@@ -97,7 +100,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             scrollwrappers[i].scrollTo(0, 0);
                         }
                         adjustPDFToUserViewport(pdfDoc);
-                        renderPage(pageCounter, false);
+                        renderPage(pageCounter, false, "pdf_viewer", pdfState.zoom);
                     }
                 } else {
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
@@ -249,23 +252,25 @@ function displayPageNum(e) {
     pdfState.currentPage = displayedPage;
 }
 
-function renderPage(num, renderSingle) {
+function renderPage(num, renderSingle, viewerId, zoom) {
     pdfState.pdf.getPage(num).then(function(page) {
         let viewport = page.getViewport({
-            scale: pdfState.zoom
+            scale: zoom
         });
         let viewportOriginal = page.getViewport({
             scale: 1
         });
         let canvas;
         let div;
-        const pdfViewer = document.getElementsByClassName('pdf_viewer')[0];
+        const pdfViewer = document.getElementsByClassName(viewerId)[0];
         if (viewport.width > parseInt(pdfViewer.style.width, 10)) {
             pdfViewer.style.width = viewport.width + "px";
         }
         if (writeLayerStack.length < pdfState.pdf._pdfInfo.numPages) {
             div = document.createElement("div");
             div.style.display = "flex";
+            div.width = viewport.width;
+            div.height = viewport.height;
             div.style.width = viewport.width + "px";
             div.style.height = viewport.height + "px";
             div.style.marginBottom = "20px";
@@ -284,7 +289,7 @@ function renderPage(num, renderSingle) {
             div.appendChild(canvas);
             pdfViewer.appendChild(div);
             writeLayerStack.push(div);
-        } else if (writeLayerStack.length == pdfState.pdf._pdfInfo.numPages) {
+        } else if (writeLayerStack.length === pdfState.pdf._pdfInfo.numPages) {
             if (!renderSingle) {
                 div = writeLayerStack[pageCounter-1];
                 canvas = writeLayerStack[pageCounter-1].childNodes[0];
@@ -292,6 +297,8 @@ function renderPage(num, renderSingle) {
                 div = writeLayerStack[num-1];
                 canvas = writeLayerStack[num-1].childNodes[0];
             }
+            div.width = viewport.width;
+            div.height = viewport.height;
             div.style.width = viewport.width + "px";
             div.style.height = viewport.height + "px";
             canvas.width = viewport.width;
@@ -312,7 +319,7 @@ function renderPage(num, renderSingle) {
                 }
                 if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
                     renderCompleted = false;
-                    renderPage(pageCounter);
+                    renderPage(pageCounter, false, viewerId, zoom);
                 }
             });
         }
@@ -347,8 +354,7 @@ function debounce(func, delay) {
 const debouncedZoomIn = debounce(zoomIn, 300); 
 const debouncedZoomOut = debounce(zoomOut, 300);
 const debouncedEnterZoomFactor = debounce(enterZoomFactor, 300);
-const debouncedZoomToSave = debounce(zoomToSave, 300);
-const debouncedZoomToUser = debounce(zoomToUser, 300);
+const debouncedZoomForSave = debounce(zoomForSave, 1000);
   
 async function zoomIn(e) {
     resetAllModes();
@@ -362,7 +368,7 @@ async function zoomIn(e) {
                 pdfState.zoom = toFactor(percent);
                 placeEditorElements();
                 pageCounter = 1;
-                renderPage(pageCounter, false);
+                renderPage(pageCounter, false, "pdf_viewer", pdfState.zoom);
             }
         }
     }
@@ -380,7 +386,7 @@ async function zoomOut(e) {
                 pdfState.zoom = toFactor(percent);
                 placeEditorElements();
                 pageCounter = 1;
-                renderPage(pageCounter, false);
+                renderPage(pageCounter, false, "pdf_viewer", pdfState.zoom);
             }
         }
     }
@@ -413,7 +419,7 @@ async function enterZoomFactor(e) {
                 document.getElementById("zoom_factor").value = zoomVal + "%";
                 placeEditorElements();
                 pageCounter = 1;
-                renderPage(pageCounter, false);
+                renderPage(pageCounter, false, "pdf_viewer", pdfState.zoom);
             }
         }
     }
@@ -699,7 +705,7 @@ async function setPageRotation(pdfDoc, currentPage, newRotation) {
     loadingTask.promise.then(pdf => {
         pdfState.pdf = pdf;
         pdfState.pdf.getPage(currentPage).then(function() {
-            renderPage(currentPage, true);
+            renderPage(currentPage, true, "pdf_viewer", pdfState.zoom);
         });
     }); 
     let writeLayers = document.getElementsByClassName("write_layer");
@@ -786,65 +792,71 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
     saveButtonsEditor[h].addEventListener("click", async function() {
         resetAllModes();  
         outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
-        const anyEditImgs = document.getElementsByClassName("editimg");
-        if (anyEditImgs.length > 0) {
-            debouncedZoomToSave();
+        const editImgs = document.getElementsByClassName("editimg");
+        if (editImgs.length > 0) {  
+            originalZoom = pdfState.zoom;
+            pdfState.zoom = saveZoom;
+            zoomForSave().then(function(message) {
+                console.log(message);
+                return canvasToImage();
+            }).then(function(message2) {
+                console.log(message2);
+                return restoreZoom();
+            }).then(async function(message3) {
+                console.log(message3);
+                pdfState.existingPDFBytes = await outputPDF.save();
+                download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
+            }) 
         }
-        for (let i = 0; i < writeLayerStack.length; i++) {
-            const writeLayer = writeLayerStack[i];
-            const editImgs = writeLayer.getElementsByClassName("editimg");
-            if (editImgs.length > 0) {
-                for (let j = 0; j < editImgs.length; j++) {
-                    const editImg = editImgs[j];
-                    await canvasToImage(editImg);
-                }
-                
-            }
-        }
-        if (anyEditImgs.length > 0) {
-            debouncedZoomToUser();
-        }
-        pdfState.existingPDFBytes = await outputPDF.save();
-        download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
     }, false);
 }
 
-async function canvasToImage(editImg) {
-    const dataURL = editImg.toDataURL("image/png", 1.0);
-    const splittedDataURL = dataURL.split(",", 2);
-    let pngImage = await outputPDF.embedPng(splittedDataURL[1]);
-    let thisPage = parseInt(editImg.getAttribute("data-page"));
-    outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
-        x: 0,
-        y: 0,
-        width: pdfState.originalWidths[thisPage-1],
-        height: pdfState.originalHeights[thisPage-1]
+async function canvasToImage() {
+    const editImgs = document.getElementsByClassName("editimg");
+    for (let j = 0; j < editImgs.length; j++) {
+        const editImg = editImgs[j];
+        const dataURL = editImg.toDataURL("image/png", 1.0);
+        const splittedDataURL = dataURL.split(",", 2);
+        let pngImage = await outputPDF.embedPng(splittedDataURL[1]);
+        let thisPage = parseInt(editImg.getAttribute("data-page"));
+        outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
+            x: 0,
+            y: 0,
+            width: pdfState.originalWidths[thisPage-1],
+            height: pdfState.originalHeights[thisPage-1]
+        });
+    }
+    return Promise.resolve("images created");
+}
+
+function zoomForSave() {
+    return new Promise((resolve, reject) => {
+        pageCounter = 1;
+        placeEditorElements();
+        renderPage(pageCounter, false, "edit_viewer", pdfState.zoom);
+        if (renderCompleted) {
+            resolve("zoomed for saving");
+        } else {
+            reject(false);
+        }
     });
 }
 
-// Set Zoom to 500 % to save high quality canvas images
-async function zoomToSave() {
-    userZoom = pdfState.zoom;
-    pdfState.zoom = 5;
-    placeEditorElements();
-    pageCounter = 1;
-    await pdfState.pdf.getPage(1).then(async (page) => {
-        if (this.page) {
-            this.page.destroy();
+function restoreZoom() {
+    return new Promise((resolve, reject) => {
+        if (renderCompleted) {
+            setTimeout(() => {
+                pdfState.zoom = originalZoom;
+                pageCounter = 1;
+                placeEditorElements();
+                renderPage(pageCounter, false, "edit_viewer", pdfState.zoom);
+                resolve("finished");
+            }, 300);
+        } else {
+            setTimeout(() => {
+                reject(false);
+            }, 300);
         }
-        await renderAllPages(page);
-    });
-}
-
-async function zoomToUser() {
-    pdfState.zoom = userZoom;
-    placeEditorElements();
-    pageCounter = 1;
-    await pdfState.pdf.getPage(1).then(async (page) => {
-        if (this.page) {
-            this.page.destroy();
-        }
-        await renderAllPages(page);
     });
 }
 
@@ -1044,6 +1056,7 @@ function initEditor() {
         layersVisible = true;
         boxApplyMode = true;
         layerApplyMode = false;
+        hiddenLayerStack = [];
         document.getElementById('show_btns').style.display = "none";
         initLayerVariables();
         initTextEditorControls();

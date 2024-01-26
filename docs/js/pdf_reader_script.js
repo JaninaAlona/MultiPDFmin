@@ -68,6 +68,10 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                 }
                 if (!encrypted) {
                     if (file.name.endsWith(".pdf")) {
+                        const pdfBytes = await pdfDoc.save();
+                        pdfState.originalPDFBytes = pdfBytes;
+                        pdfState.existingPDFBytes = pdfState.originalPDFBytes;
+                        pdfState.pdf = pdf;
                         for (let i = 0; i < encryptedErrorWidgets.length; i++) {
                             encryptedErrorWidgets[i].style.display = "none";
                         }
@@ -92,17 +96,8 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         for(let i = 0; i < scrollwrappers.length; i++) {
                             scrollwrappers[i].scrollTo(0, 0);
                         }
-                        const pdfBytes = await pdfDoc.save();
-                        pdfState.originalPDFBytes = pdfBytes;
-                        pdfState.existingPDFBytes = pdfState.originalPDFBytes;
-                        pdfState.pdf = pdf;
                         adjustPDFToUserViewport(pdfDoc);
-                        await pdfState.pdf.getPage(1).then(async (page) => {
-                            if (this.page) {
-                                this.page.destroy();
-                            }
-                            await renderAllPages(page);
-                        });
+                        renderPage(pageCounter);
                     }
                 } else {
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
@@ -254,22 +249,25 @@ function displayPageNum(e) {
     pdfState.currentPage = displayedPage;
 }
 
-async function renderAllPages(page) {
-    let viewport = page.getViewport({
-        scale: pdfState.zoom
-    });
-    let viewportOriginal = page.getViewport({
-        scale: 1
-    });
-    let canvas;
-    let pdfViewers = document.getElementsByClassName('pdf_viewer');
-    for (let i = 0; i < pdfViewers.length; i++) {
-        pdfViewers[i].width = viewport.width;
+function renderPage(num) {
+    pdfState.pdf.getPage(num).then(function(page) {
+        let viewport = page.getViewport({
+            scale: pdfState.zoom
+        });
+        let viewportOriginal = page.getViewport({
+            scale: 1
+        });
+        let div;
+        let canvas;
+        const pdfViewer = document.getElementsByClassName('pdf_viewer')[0];
+        if (viewport.width > parseInt(pdfViewer.style.width, 10)) {
+            pdfViewer.style.width = viewport.width + "px";
+        }
         if (writeLayerStack.length < pdfState.pdf._pdfInfo.numPages) {
-            let div = document.createElement("div");
+            div = document.createElement("div");
             div.style.display = "flex";
-            div.width = viewport.width;
-            div.height = viewport.height;
+            div.style.width = viewport.width + "px";
+            div.style.height = viewport.height + "px";
             div.style.marginBottom = "20px";
             pdfState.originalWidths.push(viewportOriginal.width);
             pdfState.originalHeights.push(viewportOriginal.height);
@@ -277,65 +275,42 @@ async function renderAllPages(page) {
             div.classList.add("write_layer");
             canvas = document.createElement("canvas");
             canvas.style.display = "flex";
+            canvas.style.width = viewport.width + "px";
+            canvas.style.width = viewport.height + "px";
             canvas.width = viewport.width;
             canvas.height = viewport.height;
             canvas.setAttribute('data-page', pageCounter);
             canvas.classList.add("render_context");
             div.appendChild(canvas);
-            pdfViewers[i].appendChild(div);
+            pdfViewer.appendChild(div);
             writeLayerStack.push(div);
         } else if (writeLayerStack.length == pdfState.pdf._pdfInfo.numPages) {
-            let div = writeLayerStack[pageCounter-1];
-            div.width = viewport.width;
-            div.height = viewport.height;
+            div = writeLayerStack[pageCounter-1];
+            div.style.width = viewport.width + "px";
+            div.style.height = viewport.height + "px";
             canvas = writeLayerStack[pageCounter-1].childNodes[0];
             canvas.width = viewport.width;
             canvas.height = viewport.height;
+            canvas.style.width = viewport.width + "px";
+            canvas.style.height = viewport.height + "px";
         }
-    }
-    
-    const context = canvas.getContext('2d');
-    page.render({
-        canvasContext: context,
-        viewport: viewport
-    });
-    if (this.page) {
-        this.page.destroy();
-    }
-    pageCounter++;
-    if (pdfState.pdf != null && pageCounter > pdfState.pdf._pdfInfo.numPages) {
-        renderCompleted = true;
-    }
-    if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
-        renderCompleted = false;
-        await pdfState.pdf.getPage(pageCounter).then(async (page) => {
-            if (this.page) {
-                this.page.destroy();
-            }
-            await renderAllPages(page);
+        const context = canvas.getContext('2d');
+        let renderTask = page.render({
+            canvasContext: context,
+            viewport: viewport
         });
-    }
-}
-
-async function renderPage(page) {
-    let viewport = page.getViewport({
-        scale: pdfState.zoom
-    });
-    let currentPage = document.getElementById("current_page").value;
-    currentPage = parseInt(currentPage);
-    let div = writeLayerStack[currentPage-1];
-    div.width = viewport.width;
-    div.height = viewport.height;
-    let canvas = writeLayerStack[currentPage-1].childNodes[0];
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    const context = canvas.getContext('2d');
-    page.render({
-        canvasContext: context,
-        viewport: viewport
+        renderTask.promise.then(function() {
+            pageCounter++;
+            if (pdfState.pdf != null && pageCounter > pdfState.pdf._pdfInfo.numPages) {
+                renderCompleted = true;
+            }
+            if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
+                renderCompleted = false;
+                renderPage(pageCounter);
+            }
+        });
     });
 }
-
 
 function adjustPDFToUserViewport(pdfDoc) {
     const vW = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);

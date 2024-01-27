@@ -100,7 +100,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             scrollwrappers[i].scrollTo(0, 0);
                         }
                         adjustPDFToUserViewport(pdfDoc);
-                        renderPage(pageCounter, false, "pdf_viewer", pdfState.zoom);
+                        renderPage(pageCounter, false);
                     }
                 } else {
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
@@ -252,17 +252,17 @@ function displayPageNum(e) {
     pdfState.currentPage = displayedPage;
 }
 
-function renderPage(num, renderSingle, viewerId, zoom) {
+function renderPage(num, renderSingle) {
     pdfState.pdf.getPage(num).then(function(page) {
         let viewport = page.getViewport({
-            scale: zoom
+            scale: pdfState.zoom
         });
         let viewportOriginal = page.getViewport({
             scale: 1
         });
         let canvas;
         let div;
-        const pdfViewer = document.getElementsByClassName(viewerId)[0];
+        const pdfViewer = document.getElementsByClassName("edit_viewer")[0];
         if (viewport.width > parseInt(pdfViewer.style.width, 10)) {
             pdfViewer.style.width = viewport.width + "px";
         }
@@ -319,7 +319,7 @@ function renderPage(num, renderSingle, viewerId, zoom) {
                 }
                 if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
                     renderCompleted = false;
-                    renderPage(pageCounter, false, viewerId, zoom);
+                    renderPage(pageCounter, false);
                 }
             });
         }
@@ -368,7 +368,7 @@ async function zoomIn(e) {
                 pdfState.zoom = toFactor(percent);
                 placeEditorElements();
                 pageCounter = 1;
-                renderPage(pageCounter, false, "pdf_viewer", pdfState.zoom);
+                renderPage(pageCounter, false);
             }
         }
     }
@@ -386,7 +386,7 @@ async function zoomOut(e) {
                 pdfState.zoom = toFactor(percent);
                 placeEditorElements();
                 pageCounter = 1;
-                renderPage(pageCounter, false, "pdf_viewer", pdfState.zoom);
+                renderPage(pageCounter, false);
             }
         }
     }
@@ -419,7 +419,7 @@ async function enterZoomFactor(e) {
                 document.getElementById("zoom_factor").value = zoomVal + "%";
                 placeEditorElements();
                 pageCounter = 1;
-                renderPage(pageCounter, false, "pdf_viewer", pdfState.zoom);
+                renderPage(pageCounter, false);
             }
         }
     }
@@ -705,7 +705,7 @@ async function setPageRotation(pdfDoc, currentPage, newRotation) {
     loadingTask.promise.then(pdf => {
         pdfState.pdf = pdf;
         pdfState.pdf.getPage(currentPage).then(function() {
-            renderPage(currentPage, true, "pdf_viewer", pdfState.zoom);
+            renderPage(currentPage, true);
         });
     }); 
     let writeLayers = document.getElementsByClassName("write_layer");
@@ -839,7 +839,7 @@ function zoomForSave() {
     return new Promise((resolve, reject) => {
         pageCounter = 1;
         placeEditorElements();
-        renderPage(pageCounter, false, "edit_viewer", pdfState.zoom);
+        renderPage(pageCounter, false);
         setTimeout(() => {
             if (renderCompleted) {
                 resolve("zoomed for saving");

@@ -804,9 +804,11 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 return restoreZoom();
             }).then(async function(message3) {
                 console.log(message3);
-                pdfState.existingPDFBytes = await outputPDF.save();
+                return await outputPDF.save();
+            }).then(function(output) {
+                pdfState.existingPDFBytes = output;
                 download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
-            }) 
+            }); 
         }
     }, false);
 }
@@ -817,14 +819,15 @@ async function canvasToImage() {
         const editImg = editImgs[j];
         const dataURL = editImg.toDataURL("image/png", 1.0);
         const splittedDataURL = dataURL.split(",", 2);
-        let pngImage = await outputPDF.embedPng(splittedDataURL[1]);
-        let thisPage = parseInt(editImg.getAttribute("data-page"));
-        outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
-            x: 0,
-            y: 0,
-            width: pdfState.originalWidths[thisPage-1],
-            height: pdfState.originalHeights[thisPage-1]
-        });
+        await outputPDF.embedPng(splittedDataURL[1]).then(function(pngImage) {
+            let thisPage = parseInt(editImg.getAttribute("data-page"));
+            outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
+                x: 0,
+                y: 0,
+                width: pdfState.originalWidths[thisPage-1],
+                height: pdfState.originalHeights[thisPage-1]
+            });
+        })
     }
     return Promise.resolve("images created");
 }

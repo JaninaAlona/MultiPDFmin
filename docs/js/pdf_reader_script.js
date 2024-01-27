@@ -262,7 +262,7 @@ function renderPage(num, renderSingle) {
         });
         let canvas;
         let div;
-        const pdfViewer = document.getElementsByClassName("edit_viewer")[0];
+        const pdfViewer = document.getElementsByClassName("pdf_viewer")[0];
         if (viewport.width > parseInt(pdfViewer.style.width, 10)) {
             pdfViewer.style.width = viewport.width + "px";
         }
@@ -704,9 +704,7 @@ async function setPageRotation(pdfDoc, currentPage, newRotation) {
     const loadingTask = pdfjsLib.getDocument(pdfState.existingPDFBytes);
     loadingTask.promise.then(pdf => {
         pdfState.pdf = pdf;
-        pdfState.pdf.getPage(currentPage).then(function() {
-            renderPage(currentPage, true);
-        });
+        renderPage(currentPage, true);
     }); 
     let writeLayers = document.getElementsByClassName("write_layer");
     let renderContextes = document.getElementsByClassName("render_context");

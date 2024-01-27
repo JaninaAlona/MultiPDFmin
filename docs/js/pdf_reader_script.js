@@ -799,9 +799,9 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
             zoomForSave().then(function(message) {
                 console.log(message);
                 return canvasToImage();
-            }).then(async function(message2) {
+            }).then(function(message2) {
                 console.log(message2);
-                return await outputPDF.save();
+                return outputPDF.save();
             }).then(function(savedPDF) {
                 pdfState.existingPDFBytes = savedPDF;
                 download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
@@ -816,13 +816,13 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
     }, false);
 }
 
-async function canvasToImage() {
+function canvasToImage() {
     const editImgs = document.getElementsByClassName("editimg");
     for (let j = 0; j < editImgs.length; j++) {
         const editImg = editImgs[j];
         const dataURL = editImg.toDataURL("image/png", 1.0);
         const splittedDataURL = dataURL.split(",", 2);
-        await outputPDF.embedPng(splittedDataURL[1]).then(function(pngImage) {
+        outputPDF.embedPng(splittedDataURL[1]).then(function(pngImage) {
             const thisPage = parseInt(editImg.getAttribute("data-page"), 10);
             outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
                 x: 0,

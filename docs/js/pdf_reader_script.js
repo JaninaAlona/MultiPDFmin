@@ -820,7 +820,7 @@ async function canvasToImage() {
         const dataURL = editImg.toDataURL("image/png", 1.0);
         const splittedDataURL = dataURL.split(",", 2);
         await outputPDF.embedPng(splittedDataURL[1]).then(function(pngImage) {
-            let thisPage = parseInt(editImg.getAttribute("data-page"));
+            let thisPage = parseInt(editImg.getAttribute("data-page"), 10);
             outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
                 x: 0,
                 y: 0,

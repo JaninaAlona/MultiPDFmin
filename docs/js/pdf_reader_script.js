@@ -45,7 +45,7 @@ let imagesBtn;
 let encrypted;
 let userZoom = 1;
 let renderCompleted = false;
-const saveZoom = 2;
+const saveZoom = 5;
 let originalZoom;
 
 
@@ -794,29 +794,24 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
         outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
         const editImgs = document.getElementsByClassName("editimg");
         if (editImgs.length > 0) {  
-            canvasToImage().then(async function(message2) {
+            originalZoom = pdfState.zoom;
+            pdfState.zoom = saveZoom;
+            zoomForSave().then(function(message) {
+                console.log(message);
+                return canvasToImage();
+            }).then(async function(message2) {
                 console.log(message2);
                 return await outputPDF.save();
             }).then(function(savedPDF) {
                 pdfState.existingPDFBytes = savedPDF;
                 download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
+            }).then(function() { 
+                pdfState.zoom = originalZoom;
+                return zoomForSave();
+            }).then(function(message3) {
+                console.log(message3);
+                console.log("finished");
             });
-            // originalZoom = pdfState.zoom;
-            // pdfState.zoom = saveZoom;
-            // zoomForSave().then(function(message) {
-            //     console.log(message);
-            //     return canvasToImage();
-            // }).then(async function(message2) {
-            //     console.log(message2);
-            //     return await outputPDF.save();
-            // }).then(function(savedPDF) {
-            //     pdfState.existingPDFBytes = savedPDF;
-            //     download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
-            // }).then(function() { 
-            //     return restoreZoom();
-            // }).then(function(message3) {
-            //     console.log(message3);
-            // });
         }
     }, false);
 }
@@ -845,23 +840,9 @@ function zoomForSave() {
         pageCounter = 1;
         placeEditorElements();
         renderPage(pageCounter, false, "edit_viewer", pdfState.zoom);
-        if (renderCompleted) {
-            resolve("zoomed for saving");
-        } else {
-            reject(false);
-        }
-    });
-}
-
-function restoreZoom() {
-    return new Promise((resolve, reject) => {
-        pdfState.zoom = originalZoom;
-        pageCounter = 1;
-        placeEditorElements();
-        renderPage(pageCounter, false, "edit_viewer", pdfState.zoom);
         setTimeout(() => {
             if (renderCompleted) {
-                resolve("finished");
+                resolve("zoomed for saving");
             } else {
                 reject(false);
             }

@@ -794,21 +794,29 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
         outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
         const editImgs = document.getElementsByClassName("editimg");
         if (editImgs.length > 0) {  
-            originalZoom = pdfState.zoom;
-            pdfState.zoom = saveZoom;
-            zoomForSave().then(function(message) {
-                console.log(message);
-                return canvasToImage();
-            }).then(function(message2) {
+            canvasToImage().then(async function(message2) {
                 console.log(message2);
-                return restoreZoom();
-            }).then(async function(message3) {
-                console.log(message3);
                 return await outputPDF.save();
-            }).then(function(output) {
-                pdfState.existingPDFBytes = output;
+            }).then(function(savedPDF) {
+                pdfState.existingPDFBytes = savedPDF;
                 download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
-            }); 
+            });
+            // originalZoom = pdfState.zoom;
+            // pdfState.zoom = saveZoom;
+            // zoomForSave().then(function(message) {
+            //     console.log(message);
+            //     return canvasToImage();
+            // }).then(async function(message2) {
+            //     console.log(message2);
+            //     return await outputPDF.save();
+            // }).then(function(savedPDF) {
+            //     pdfState.existingPDFBytes = savedPDF;
+            //     download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
+            // }).then(function() { 
+            //     return restoreZoom();
+            // }).then(function(message3) {
+            //     console.log(message3);
+            // });
         }
     }, false);
 }
@@ -820,14 +828,14 @@ async function canvasToImage() {
         const dataURL = editImg.toDataURL("image/png", 1.0);
         const splittedDataURL = dataURL.split(",", 2);
         await outputPDF.embedPng(splittedDataURL[1]).then(function(pngImage) {
-            let thisPage = parseInt(editImg.getAttribute("data-page"), 10);
+            const thisPage = parseInt(editImg.getAttribute("data-page"), 10);
             outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
                 x: 0,
                 y: 0,
                 width: pdfState.originalWidths[thisPage-1],
                 height: pdfState.originalHeights[thisPage-1]
             });
-        })
+        });
     }
     return Promise.resolve("images created");
 }
@@ -847,19 +855,17 @@ function zoomForSave() {
 
 function restoreZoom() {
     return new Promise((resolve, reject) => {
-        if (renderCompleted) {
-            setTimeout(() => {
-                pdfState.zoom = originalZoom;
-                pageCounter = 1;
-                placeEditorElements();
-                renderPage(pageCounter, false, "edit_viewer", pdfState.zoom);
+        pdfState.zoom = originalZoom;
+        pageCounter = 1;
+        placeEditorElements();
+        renderPage(pageCounter, false, "edit_viewer", pdfState.zoom);
+        setTimeout(() => {
+            if (renderCompleted) {
                 resolve("finished");
-            }, 300);
-        } else {
-            setTimeout(() => {
+            } else {
                 reject(false);
-            }, 300);
-        }
+            }
+        }, 300);
     });
 }
 

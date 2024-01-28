@@ -789,11 +789,11 @@ const saveButtonsEditor = document.getElementsByClassName('save_pdf_editor');
 for (let h = 0; h < saveButtonsEditor.length; h++) {
     saveButtonsEditor[h].addEventListener("click", async function() {
         resetAllModes();  
-        outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
         const editImgs = document.getElementsByClassName("editimg");
         if (editImgs.length > 0) {  
             originalZoom = pdfState.zoom;
             pdfState.zoom = saveZoom;
+            outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
             zoomForSave().then(function(message) {
                 console.log(message);
                 return canvasToImage();
@@ -810,6 +810,8 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 console.log(message3);
                 console.log("finished");
             });
+        } else {
+            download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
         }
     }, false);
 }
@@ -833,7 +835,7 @@ function canvasToImage() {
     return Promise.resolve("images created");
 }
 
-function zoomForSave() {
+async function zoomForSave() {
     return new Promise((resolve, reject) => {
         pageCounter = 1;
         placeEditorElements();

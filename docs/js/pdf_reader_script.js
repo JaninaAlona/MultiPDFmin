@@ -43,10 +43,8 @@ let drawPdfBtn;
 let geometryBtn;
 let imagesBtn;
 let encrypted;
-let userZoom = 1;
 let renderCompleted = false;
 const saveZoom = 5;
-let originalZoom;
 
 
 let inputFileButtons = document.getElementsByClassName('inputfile');
@@ -71,9 +69,6 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                 }
                 if (!encrypted) {
                     if (file.name.endsWith(".pdf")) {
-                        const pdfBytes = await pdfDoc.save();
-                        pdfState.originalPDFBytes = pdfBytes;
-                        pdfState.existingPDFBytes = pdfState.originalPDFBytes;
                         pdfState.pdf = pdf;
                         for (let i = 0; i < encryptedErrorWidgets.length; i++) {
                             encryptedErrorWidgets[i].style.display = "none";
@@ -101,6 +96,9 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         }
                         adjustPDFToUserViewport(pdfDoc);
                         renderPage(pageCounter, false);
+                        const pdfBytes = await pdfDoc.save();
+                        pdfState.originalPDFBytes = pdfBytes;
+                        pdfState.existingPDFBytes = pdfState.originalPDFBytes;
                     }
                 } else {
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
@@ -354,7 +352,6 @@ function debounce(func, delay) {
 const debouncedZoomIn = debounce(zoomIn, 300); 
 const debouncedZoomOut = debounce(zoomOut, 300);
 const debouncedEnterZoomFactor = debounce(enterZoomFactor, 300);
-const debouncedZoomForSave = debounce(zoomForSave, 1000);
   
 async function zoomIn(e) {
     resetAllModes();
@@ -791,7 +788,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
         resetAllModes();  
         const editImgs = document.getElementsByClassName("editimg");
         if (editImgs.length > 0) {  
-            originalZoom = pdfState.zoom;
+            let originalZoom = pdfState.zoom;
             pdfState.zoom = saveZoom;
             outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
             zoomForSave().then(function(message) {
@@ -801,6 +798,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 console.log(message2);
                 return outputPDF.save();
             }).then(function(savedPDF) {
+                console.log("saving process finished");
                 pdfState.existingPDFBytes = savedPDF;
                 download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
             }).then(function() { 
@@ -835,17 +833,13 @@ function canvasToImage() {
     return Promise.resolve("images created");
 }
 
-async function zoomForSave() {
+function zoomForSave() {
     return new Promise((resolve, reject) => {
         pageCounter = 1;
         placeEditorElements();
         renderPage(pageCounter, false);
         setTimeout(() => {
-            if (renderCompleted) {
-                resolve("zoomed for saving");
-            } else {
-                reject(false);
-            }
+            resolve("zoomed for saving");
         }, 300);
     });
 }
@@ -903,6 +897,8 @@ if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && doc
                 document.getElementById('images_controls').style.display = "flex";
                 document.getElementById('img_controls').style.display = "flex";
             }
+            document.getElementById("reader_controls").style.display = "flex";
+            document.getElementById("viewer_bg").style.display = "flex";
             const sidemenupos = document.getElementsByClassName("sidemenupos");
             for (let i = 0; i < sidemenupos.length; i++) {
                 sidemenupos[i].scrollTo(0, 0);

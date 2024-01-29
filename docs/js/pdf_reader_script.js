@@ -1,3 +1,5 @@
+const { BlobWriter, Uint8ArrayReader, ZipWriter } = zip
+
 let pdfState = {
     pdf: null,
     currentPage: 1,
@@ -182,10 +184,6 @@ function resetRendering() {
     pdfState.savedPDFBytes = null;
     pdfState.originalWidths = [];
     pdfState.originalHeights = [];
-}
-
-async function kickOff(pdf) { 
-    
 }
 
 
@@ -819,13 +817,17 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
             }).then(function(savedPDF) {
                 console.log("saving process finished");
                 pdfState.existingPDFBytes = savedPDF;
-                download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
-            }).then(function() { 
-                console.log("downloaded");
-                pdfState.zoom = originalZoom;
-                return zoomForSave();
+                // download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
+                return compressToZip();
+            }).then(function(blob) { 
+                console.log("zip compressed");
+                return downloadPDF(blob);
             }).then(function(message3) {
                 console.log(message3);
+                pdfState.zoom = originalZoom;
+                return zoomForSave();
+            }).then(function(message4) {
+                console.log(message4);
                 console.log("finished");
                 for (let i = 0; i < saveWidgetCons.length; i++) {
                     saveWidgetCons[i].style.display = "none";
@@ -844,6 +846,27 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
             }
         }
     }, false);
+}
+
+async function compressToZip() {
+    const zipWriter = new ZipWriter(new BlobWriter("application/zip"));
+    await zipWriter.add(customFilename + ".pdf", new Uint8ArrayReader(pdfState.existingPDFBytes));
+    console.log(zipWriter);
+    return zipWriter.close();
+}
+
+function downloadPDF(blob) {
+    console.log(blob);
+    const pdfObjURL = URL.createObjectURL(blob);
+    console.log(pdfObjURL);
+    const link = document.createElement("a");
+    link.classList.add("ziplink");
+    link.href = pdfObjURL;
+    link.download = customFilename + ".zip";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    return Promise.resolve("PDF downloaded");
 }
 
 function canvasToImage() {

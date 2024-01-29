@@ -2,6 +2,7 @@ let pdfState = {
     pdf: null,
     currentPage: 1,
     lastPage: 1,
+    renderedPage: 0,
     zoom: 1,
     originalPDFBytes: null,
     existingPDFBytes: null,
@@ -68,13 +69,16 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                 }
                 if (!encrypted) {
                     if (file.name.endsWith(".pdf")) {
-                        pdfState.pdf = pdf;
                         for (let i = 0; i < encryptedErrorWidgets.length; i++) {
                             encryptedErrorWidgets[i].style.display = "none";
                         }
                         for (let i = 0; i < noPDFErrorWidgets.length; i++) {
                             noPDFErrorWidgets[i].style.display = "none";
                         }
+                        pdfState.pdf = pdf;
+                        const pdfBytes = await pdfDoc.save();
+                        pdfState.originalPDFBytes = pdfBytes;
+                        pdfState.existingPDFBytes = pdfState.originalPDFBytes;
                         onetimeSetup = true;
                         pdfFileName = file.name;
                         document.getElementById("current_page").value = 1;
@@ -94,10 +98,28 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             scrollwrappers[i].scrollTo(0, 0);
                         }
                         adjustPDFToUserViewport(pdfDoc);
+                        pdfState.renderedPage = 0;
+                        const saveWidgetCons = document.getElementsByClassName("save_widget_con");
+                        for (let i = 0; i < saveWidgetCons.length; i++) {
+                            saveWidgetCons[i].style.display = "none";
+                        }
+                        const saveWidgets = document.getElementsByClassName("save_widget");
+                        for (let i = 0; i < saveWidgets.length; i++) {
+                            saveWidgets[i].style.display = "none";
+                        }
+                        const renderWidgetCons = document.getElementsByClassName("render_widget_con");
+                        for (let i = 0; i < renderWidgetCons.length; i++) {
+                            renderWidgetCons[i].style.display = "flex";
+                        }
+                        const renderWidgets = document.getElementsByClassName("render_widget");
+                        for (let i = 0; i < renderWidgets.length; i++) {
+                            renderWidgets[i].style.display = "flex";
+                        }
+                        const pageProgresses = document.getElementsByClassName("page_progress");
+                        for (let i = 0; i < pageProgresses.length; i++) {
+                            pageProgresses[i].innerText = `${pdfState.renderedPage}`;
+                        }
                         renderPage(pageCounter, false);
-                        const pdfBytes = await pdfDoc.save();
-                        pdfState.originalPDFBytes = pdfBytes;
-                        pdfState.existingPDFBytes = pdfState.originalPDFBytes;
                     }
                 } else {
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
@@ -154,6 +176,7 @@ function resetRendering() {
     pdfState.pdf = null;
     pdfState.currentPage = 1;
     pdfState.lastPage = 1;
+    pdfState.renderedPage = 0;
     pdfState.zoom = 1;
     pdfState.originalPDFBytes = null;
     pdfState.existingPDFBytes = null;
@@ -258,49 +281,52 @@ function renderPage(num, renderSingle) {
         });
         let canvas;
         let div;
-        const pdfViewer = document.getElementsByClassName("pdf_viewer")[0];
-        if (viewport.width > parseInt(pdfViewer.style.width, 10)) {
-            pdfViewer.style.width = viewport.width + "px";
-        }
-        if (writeLayerStack.length < pdfState.pdf._pdfInfo.numPages) {
-            div = document.createElement("div");
-            div.style.display = "flex";
-            div.width = viewport.width;
-            div.height = viewport.height;
-            div.style.width = viewport.width + "px";
-            div.style.height = viewport.height + "px";
-            div.style.marginBottom = "20px";
-            pdfState.originalWidths.push(viewportOriginal.width);
-            pdfState.originalHeights.push(viewportOriginal.height);
-            div.setAttribute('data-write', pageCounter);
-            div.classList.add("write_layer");
-            canvas = document.createElement("canvas");
-            canvas.style.display = "flex";
-            canvas.style.width = viewport.width + "px";
-            canvas.style.width = viewport.height + "px";
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            canvas.setAttribute('data-page', pageCounter);
-            canvas.classList.add("render_context");
-            div.appendChild(canvas);
-            pdfViewer.appendChild(div);
-            writeLayerStack.push(div);
-        } else if (writeLayerStack.length === pdfState.pdf._pdfInfo.numPages) {
-            if (!renderSingle) {
-                div = writeLayerStack[pageCounter-1];
-                canvas = writeLayerStack[pageCounter-1].childNodes[0];
-            } else {
-                div = writeLayerStack[num-1];
-                canvas = writeLayerStack[num-1].childNodes[0];
+        const pdfViewers = document.getElementsByClassName("pdf_viewer");
+        for (let i = 0; i < pdfViewers.length; i++) {
+            const pdfViewer = pdfViewers[i];
+            if (viewport.width > parseInt(pdfViewer.style.width, 10)) {
+                pdfViewer.style.width = viewport.width + "px";
             }
-            div.width = viewport.width;
-            div.height = viewport.height;
-            div.style.width = viewport.width + "px";
-            div.style.height = viewport.height + "px";
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            canvas.style.width = viewport.width + "px";
-            canvas.style.height = viewport.height + "px";
+            if (writeLayerStack.length < pdfState.pdf._pdfInfo.numPages) {
+                div = document.createElement("div");
+                div.style.display = "flex";
+                div.width = viewport.width;
+                div.height = viewport.height;
+                div.style.width = viewport.width + "px";
+                div.style.height = viewport.height + "px";
+                div.style.marginBottom = "20px";
+                pdfState.originalWidths.push(viewportOriginal.width);
+                pdfState.originalHeights.push(viewportOriginal.height);
+                div.setAttribute('data-write', pageCounter);
+                div.classList.add("write_layer");
+                canvas = document.createElement("canvas");
+                canvas.style.display = "flex";
+                canvas.style.width = viewport.width + "px";
+                canvas.style.width = viewport.height + "px";
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                canvas.setAttribute('data-page', pageCounter);
+                canvas.classList.add("render_context");
+                div.appendChild(canvas);
+                pdfViewer.appendChild(div);
+                writeLayerStack.push(div);
+            } else if (writeLayerStack.length === pdfState.pdf._pdfInfo.numPages) {
+                if (!renderSingle) {
+                    div = writeLayerStack[pageCounter-1];
+                    canvas = writeLayerStack[pageCounter-1].childNodes[0];
+                } else {
+                    div = writeLayerStack[num-1];
+                    canvas = writeLayerStack[num-1].childNodes[0];
+                }
+                div.width = viewport.width;
+                div.height = viewport.height;
+                div.style.width = viewport.width + "px";
+                div.style.height = viewport.height + "px";
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                canvas.style.width = viewport.width + "px";
+                canvas.style.height = viewport.height + "px";
+            }
         }
         const context = canvas.getContext('2d');
         let renderTask = page.render({
@@ -309,7 +335,23 @@ function renderPage(num, renderSingle) {
         });
         if (!renderSingle) {
             renderTask.promise.then(function() {
+                pdfState.renderedPage = pageCounter;
+                restrictInputValues('current_page', 1, pdfState.renderedPage, true, false);
+                const pageProgresses = document.getElementsByClassName("page_progress");
+                for (let i = 0; i < pageProgresses.length; i++) {
+                    pageProgresses[i].innerText = `${pdfState.renderedPage}`;
+                }
                 pageCounter++;
+                if (pageCounter > pdfState.lastPage) {
+                    const renderWidgetCons = document.getElementsByClassName("render_widget_con");
+                    for (let i = 0; i < renderWidgetCons.length; i++) {
+                        renderWidgetCons[i].style.display = "none";
+                    }
+                    const renderWidgets = document.getElementsByClassName("render_widget");
+                    for (let i = 0; i < renderWidgets.length; i++) {
+                        renderWidgets[i].style.display = "none";
+                    }
+                } 
                 if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
                     renderPage(pageCounter, false);
                 }
@@ -774,6 +816,14 @@ const saveButtonsEditor = document.getElementsByClassName('save_pdf_editor');
 for (let h = 0; h < saveButtonsEditor.length; h++) {
     saveButtonsEditor[h].addEventListener("click", async function() {
         resetAllModes();  
+        const saveWidgetCons = document.getElementsByClassName("save_widget_con");
+        for (let i = 0; i < saveWidgetCons.length; i++) {
+            saveWidgetCons[i].style.display = "flex";
+        }
+        const saveWidgets = document.getElementsByClassName("save_widget");
+        for (let i = 0; i < saveWidgets.length; i++) {
+            saveWidgets[i].style.display = "flex";
+        }    
         const editImgs = document.getElementsByClassName("editimg");
         if (editImgs.length > 0) {  
             let originalZoom = pdfState.zoom;
@@ -796,9 +846,21 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
             }).then(function(message3) {
                 console.log(message3);
                 console.log("finished");
+                for (let i = 0; i < saveWidgetCons.length; i++) {
+                    saveWidgetCons[i].style.display = "none";
+                }
+                for (let i = 0; i < saveWidgets.length; i++) {
+                    saveWidgets[i].style.display = "none";
+                }
             });
         } else {
             download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
+            for (let i = 0; i < saveWidgetCons.length; i++) {
+                saveWidgetCons[i].style.display = "none";
+            }
+            for (let i = 0; i < saveWidgets.length; i++) {
+                saveWidgets[i].style.display = "none";
+            }
         }
     }, false);
 }
@@ -887,6 +949,26 @@ if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && doc
                 document.getElementById('img_controls').style.display = "flex";
             }
             document.getElementById("reader_controls").style.display = "flex";
+            const saveWidgetCons = document.getElementsByClassName("save_widget_con");
+            for (let i = 0; i < saveWidgetCons.length; i++) {
+                saveWidgetCons[i].style.display = "none";
+            }
+            const saveWidgets = document.getElementsByClassName("save_widget");
+            for (let i = 0; i < saveWidgets.length; i++) {
+                saveWidgets[i].style.display = "none";
+            }
+            const renderWidgetCons = document.getElementsByClassName("render_widget_con");
+            for (let i = 0; i < renderWidgetCons.length; i++) {
+                renderWidgetCons[i].style.display = "flex";
+            }
+            const renderWidgets = document.getElementsByClassName("render_widget");
+            for (let i = 0; i < renderWidgets.length; i++) {
+                renderWidgets[i].style.display = "flex";
+            }
+            const pageProgresses = document.getElementsByClassName("page_progress");
+            for (let i = 0; i < pageProgresses.length; i++) {
+                pageProgresses[i].innerText = `${pdfState.renderedPage}`;
+            }
             document.getElementById("viewer_bg").style.display = "flex";
             const sidemenupos = document.getElementsByClassName("sidemenupos");
             for (let i = 0; i < sidemenupos.length; i++) {

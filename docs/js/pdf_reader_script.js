@@ -43,7 +43,6 @@ let drawPdfBtn;
 let geometryBtn;
 let imagesBtn;
 let encrypted;
-let renderCompleted = false;
 const saveZoom = 5;
 
 
@@ -152,7 +151,6 @@ function resetRendering() {
     pageCounter = 1;
     encrypted = false;
     fileLoaded = false;
-    renderCompleted = false;
     pdfState.pdf = null;
     pdfState.currentPage = 1;
     pdfState.lastPage = 1;
@@ -312,11 +310,7 @@ function renderPage(num, renderSingle) {
         if (!renderSingle) {
             renderTask.promise.then(function() {
                 pageCounter++;
-                if (pdfState.pdf != null && pageCounter > pdfState.pdf._pdfInfo.numPages) {
-                    renderCompleted = true;
-                }
                 if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
-                    renderCompleted = false;
                     renderPage(pageCounter, false);
                 }
             });
@@ -355,69 +349,63 @@ const debouncedEnterZoomFactor = debounce(enterZoomFactor, 300);
   
 async function zoomIn(e) {
     resetAllModes();
-    if (renderCompleted) {
-        e.preventDefault;
-        if (pdfState.zoom <= 8.0) {
-            let percent = toPercent(pdfState.zoom);
-            percent += 20;
-            if (percent <= 800) {
-                document.getElementById('zoom_factor').value = percent + "%";
-                pdfState.zoom = toFactor(percent);
-                placeEditorElements();
-                pageCounter = 1;
-                renderPage(pageCounter, false);
-            }
+    e.preventDefault;
+    if (pdfState.zoom <= 8.0) {
+        let percent = toPercent(pdfState.zoom);
+        percent += 20;
+        if (percent <= 800) {
+            document.getElementById('zoom_factor').value = percent + "%";
+            pdfState.zoom = toFactor(percent);
+            placeEditorElements();
+            pageCounter = 1;
+            renderPage(pageCounter, false);
         }
     }
 }
 
 async function zoomOut(e) {
     resetAllModes();
-    if (renderCompleted) {
-        e.preventDefault;
-        if (pdfState.zoom >= 0.1) {
-            let percent = toPercent(pdfState.zoom);
-            percent -= 20;
-            if (percent >= 10) {
-                document.getElementById('zoom_factor').value = percent + "%";
-                pdfState.zoom = toFactor(percent);
-                placeEditorElements();
-                pageCounter = 1;
-                renderPage(pageCounter, false);
-            }
+    e.preventDefault;
+    if (pdfState.zoom >= 0.1) {
+        let percent = toPercent(pdfState.zoom);
+        percent -= 20;
+        if (percent >= 10) {
+            document.getElementById('zoom_factor').value = percent + "%";
+            pdfState.zoom = toFactor(percent);
+            placeEditorElements();
+            pageCounter = 1;
+            renderPage(pageCounter, false);
         }
     }
 }
 
 async function enterZoomFactor(e) {
     resetAllModes();
-    if (renderCompleted) {
-        e.preventDefault;
-        let triggerZoom = false;
-        if (e.key == 'Enter') {
-            let desiredZoom = document.getElementById('zoom_factor').value;
-            while (desiredZoom.search(" ") > -1) {
-                desiredZoom = desiredZoom.replace(" ", "");
-            }
-            let zoomVal = 0;
-            if (desiredZoom.charAt(desiredZoom.length - 1) === '%') {
-                zoomVal = desiredZoom.substring(0, desiredZoom.length - 1);     
-            } else {
-                zoomVal = desiredZoom;
-            }
-            if (!isNaN(zoomVal)) {
-                zoomVal = parseInt(zoomVal);      
-                triggerZoom = true;   
-            } else {
-                triggerZoom = false;
-            }
-            if (triggerZoom && zoomVal >= 1 && zoomVal <= 800) {
-                pdfState.zoom = toFactor(zoomVal);
-                document.getElementById("zoom_factor").value = zoomVal + "%";
-                placeEditorElements();
-                pageCounter = 1;
-                renderPage(pageCounter, false);
-            }
+    e.preventDefault;
+    let triggerZoom = false;
+    if (e.key == 'Enter') {
+        let desiredZoom = document.getElementById('zoom_factor').value;
+        while (desiredZoom.search(" ") > -1) {
+            desiredZoom = desiredZoom.replace(" ", "");
+        }
+        let zoomVal = 0;
+        if (desiredZoom.charAt(desiredZoom.length - 1) === '%') {
+            zoomVal = desiredZoom.substring(0, desiredZoom.length - 1);     
+        } else {
+            zoomVal = desiredZoom;
+        }
+        if (!isNaN(zoomVal)) {
+            zoomVal = parseInt(zoomVal);      
+            triggerZoom = true;   
+        } else {
+            triggerZoom = false;
+        }
+        if (triggerZoom && zoomVal >= 1 && zoomVal <= 800) {
+            pdfState.zoom = toFactor(zoomVal);
+            document.getElementById("zoom_factor").value = zoomVal + "%";
+            placeEditorElements();
+            pageCounter = 1;
+            renderPage(pageCounter, false);
         }
     }
 }

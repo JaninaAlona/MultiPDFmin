@@ -802,6 +802,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 pdfState.existingPDFBytes = savedPDF;
                 download(pdfState.existingPDFBytes, customFilename + ".pdf", "application/pdf");
             }).then(function() { 
+                console.log("downloaded");
                 pdfState.zoom = originalZoom;
                 return zoomForSave();
             }).then(function(message3) {

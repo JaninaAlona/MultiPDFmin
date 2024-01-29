@@ -90,7 +90,6 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         document.getElementById("viewer_bg").style.display = "flex";
                         document.getElementById('maxPDFPages').innerHTML = pdf._pdfInfo.numPages + " pages";
                         pdfState.lastPage = pdf._pdfInfo.numPages;
-                        restrictInputValues('current_page', 1, pdf._pdfInfo.numPages, true, false);
                         restrictInputValues('zoom_factor', 1, 800, true, false);
                         setCustomFilename();
                         const scrollwrappers = document.getElementsByClassName('scrollwrapper');
@@ -225,9 +224,9 @@ function goPrevPage(e) {
 function goNextPage(e) {
     resetAllModes();
     e.preventDefault;
-    if (pdfState.currentPage >= pdfState.pdf._pdfInfo.numPages) {
-        pdfState.currentPage = pdfState.pdf._pdfInfo.numPages;
-        document.getElementById('current_page').value = pdfState.pdf._pdfInfo.numPages;
+    if (pdfState.currentPage >= pdfState.renderedPage) {
+        pdfState.currentPage = pdfState.renderedPage;
+        document.getElementById('current_page').value = pdfState.renderedPage;
     } else {
         pdfState.currentPage += 1;
         document.getElementById("current_page").value = pdfState.currentPage;
@@ -240,16 +239,11 @@ function enterPageNum(e) {
     e.preventDefault;
     if (e.key == 'Enter') {
         let desiredPage = document.getElementById('current_page').value;
-        while (desiredPage.search(" ") > -1) {
-            desiredPage = desiredPage.replace(" ", "");
-        }
-        if (!isNaN(desiredPage)) {
-            desiredPage = Number(desiredPage);
-            if (Number.isInteger(desiredPage) && desiredPage >= 1 && desiredPage <= pdfState.pdf._pdfInfo.numPages) {
-                pdfState.currentPage = desiredPage;
-                document.getElementById("current_page").value = pdfState.currentPage;
-                jumpTo(desiredPage);
-            }
+        let successValue = convertInputToSucess(desiredPage, 1, pdfState.renderedPage, true, false);
+        if (successValue !== -1000) {
+            pdfState.currentPage = successValue;
+            document.getElementById("current_page").value = pdfState.currentPage;
+            jumpTo(pdfState.currentPage);
         }
     }
 }
@@ -257,18 +251,20 @@ function enterPageNum(e) {
 function displayPageNum(e) {
     let scrollDistance = e.target.scrollTop; 
     let scrolledPageHeight = 0;
-    let displayedPage = 0;
+    let displayedPage = 1;
     let canvasElems = document.getElementsByClassName('render_context');
-    for (let i = 0; i < pdfState.pdf._pdfInfo.numPages; i++) {
+    for (let i = 0; i < pdfState.pdf.renderedPage; i++) {
         if (scrolledPageHeight <= scrollDistance) {
             scrolledPageHeight += canvasElems[i].height;
             displayedPage++; 
+            document.getElementById("current_page").value = displayedPage;
+            pdfState.currentPage = displayedPage;
         } else {
+            document.getElementById("current_page").value = displayedPage;
+            pdfState.currentPage = displayedPage;
             break;
         }
     }
-    document.getElementById("current_page").value = displayedPage;
-    pdfState.currentPage = displayedPage;
 }
 
 function renderPage(num, renderSingle) {
@@ -424,27 +420,12 @@ async function zoomOut(e) {
 async function enterZoomFactor(e) {
     resetAllModes();
     e.preventDefault;
-    let triggerZoom = false;
     if (e.key == 'Enter') {
         let desiredZoom = document.getElementById('zoom_factor').value;
-        while (desiredZoom.search(" ") > -1) {
-            desiredZoom = desiredZoom.replace(" ", "");
-        }
-        let zoomVal = 0;
-        if (desiredZoom.charAt(desiredZoom.length - 1) === '%') {
-            zoomVal = desiredZoom.substring(0, desiredZoom.length - 1);     
-        } else {
-            zoomVal = desiredZoom;
-        }
-        if (!isNaN(zoomVal)) {
-            zoomVal = parseInt(zoomVal);      
-            triggerZoom = true;   
-        } else {
-            triggerZoom = false;
-        }
-        if (triggerZoom && zoomVal >= 1 && zoomVal <= 800) {
-            pdfState.zoom = toFactor(zoomVal);
-            document.getElementById("zoom_factor").value = zoomVal + "%";
+        let successValue = convertZoomInputToSucess(desiredZoom, 1, 800);
+        if (successValue !== -1000) {
+            pdfState.zoom = toFactor(successValue);
+            document.getElementById("zoom_factor").value = successValue + "%";
             placeEditorElements();
             pageCounter = 1;
             renderPage(pageCounter, false);

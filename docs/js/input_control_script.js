@@ -1,7 +1,8 @@
 function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOperation) {
     const inputElem = document.getElementById(inputId);
     let valToRestrict;
-    inputElem.addEventListener('change', function() {
+    inputElem.onchange = null;
+    inputElem.onchange = function() {
         valToRestrict = inputElem.value;
 
         // remove white space
@@ -9,7 +10,7 @@ function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOpe
         document.getElementById(inputId).value = valToRestrict;
         if (valToRestrict.match(/^-?\d+$/) || valToRestrict.match(/^\d+\.\d+$/)) {
             if (parseIntOperation) {
-                valToRestrict = parseInt(valToRestrict);
+                valToRestrict = parseInt(valToRestrict, 10);
                 document.getElementById(inputId).value = valToRestrict;
             } 
             if (parseFloatOperation) {
@@ -25,7 +26,7 @@ function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOpe
                 }
             }
         }
-    }, false);
+    }
 }
 
 function convertInputToSucess(input, min, max, parseIntOperation, parseFloatOperation) {
@@ -34,18 +35,48 @@ function convertInputToSucess(input, min, max, parseIntOperation, parseFloatOper
     // valid positive/negative integer or valid float
     if (outputVal.match(/^-?\d+$/) || outputVal.match(/^\d+\.\d+$/)) {
         if (parseIntOperation) {
-            outputVal = parseInt(outputVal);
+            outputVal = parseInt(outputVal, 10);
         } 
         if (parseFloatOperation) {
             outputVal = parseFloat(outputVal);
         }
-        if (!(outputVal >= min && outputVal <= max)) {
+        if (outputVal < min || outputVal > max) {
             outputVal = -1000;
         } 
     } else {
         outputVal = -1000;
     }
     return outputVal;
+}
+
+function convertZoomInputToSucess(desiredZoom, min, max) {
+    let zoomVal = "";
+    let hasPercent = false;
+    if (desiredZoom.charAt(desiredZoom.length - 1) === '%') {
+        zoomVal = desiredZoom.substring(0, desiredZoom.length - 1);   
+        hasPercent = true;  
+    } else {
+        zoomVal = desiredZoom;
+    }
+    
+    if (zoomVal.match(/^-?\d+$/) || zoomVal.match(/^\d+\.\d+$/)) {
+        zoomVal = parseInt(zoomVal, 10);
+        if (!hasPercent) {
+            if (zoomVal < min || zoomVal > max) {
+                zoomVal = -1000;
+            } 
+        } else {
+            if (zoomVal < min) {
+                zoomVal = min;
+            } 
+            if (zoomVal > max) {
+                zoomVal = max;
+            }
+        }
+    } else {
+        zoomVal = -1000;
+    }
+    return zoomVal;
 }
 
 function convertPageListToSucess(inputId, numOfPages) {
@@ -61,7 +92,7 @@ function convertPageListToSucess(inputId, numOfPages) {
             
             // Check if page is an Integer
             if (singlePage.match(/^-?\d+$/)) {
-                singlePage = parseInt(singlePage);
+                singlePage = parseInt(singlePage, 10);
                 if (singlePage >= 1 && singlePage <= numOfPages) {
                     outputPageList.push(singlePage);
                 } else {
@@ -76,7 +107,7 @@ function convertPageListToSucess(inputId, numOfPages) {
     } else {
         let singlePage = input.replace(/\s+/g,'');
         if (singlePage.match(/^-?\d+$/)) {
-            singlePage = parseInt(singlePage);
+            singlePage = parseInt(singlePage, 10);
             if (singlePage >= 1 && singlePage <= numOfPages) {
                 outputPageList.push(singlePage);
             } else {

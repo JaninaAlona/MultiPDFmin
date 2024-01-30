@@ -51,6 +51,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 return zoomForSave();
             }).then(function(step) {
                 console.log(step);
+                console.log("finished");
                 for (let i = 0; i < saveWidgetCons.length; i++) {
                     saveWidgetCons[i].style.display = "none";
                 }
@@ -59,11 +60,6 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 }
             });
         } else {
-            lastStep = 2; 
-            for (let i = 0; i < lastSaveSteps.length; i++) {
-                lastSaveSteps[i].style.innerText = `${lastStep}`;
-            }
-            elemsAdded = false;
 
             // save step 1
             compressToZip().then(function(blob) {
@@ -73,6 +69,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 return downloadPDF(blob);
             }).then(function(step) {
                 console.log(step);
+                console.log("finished");
                 for (let i = 0; i < saveWidgetCons.length; i++) {
                     saveWidgetCons[i].style.display = "none";
                 }

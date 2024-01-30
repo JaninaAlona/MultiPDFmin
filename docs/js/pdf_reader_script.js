@@ -1,5 +1,3 @@
-const { BlobWriter, Uint8ArrayReader, ZipWriter } = zip
-
 let pdfState = {
     pdf: null,
     currentPage: 1,

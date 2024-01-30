@@ -5,13 +5,9 @@ let blankNumOfPagesCount = 1;
 let blankPageWidth = 210;
 let blankPageHeight = 297;
 let triggerSaveBlank = false;
+let blankFilename = "blank_pdf";
 
 const canceler = Vue.createApp({
-    data() {
-        return {
-            blankPDFfilename: "blank_pdf"
-        }
-    },
     mounted() {
         initBlankEvents();
     },
@@ -29,7 +25,13 @@ const canceler = Vue.createApp({
                     page.setMediaBox(0, 0, pageWFactor, pageHFactor)
                 }
                 const pdfBytes = await pdfDoc.save();
-                download(pdfBytes, this.blankPDFfilename, "application/pdf");
+                compressToZip(pdfBytes, blankFilename).then(function(blob) {
+                    console.log("compressed to ZIP");
+                    return downloadPDF(blob, blankFilename);
+                }).then(function(step) {
+                    console.log(step);
+                    console.log("finished");
+                });
             }
         },
         setFilename() {
@@ -38,7 +40,7 @@ const canceler = Vue.createApp({
                 inputFilename = inputFilename.substring(0, 50);
                 document.getElementById("blank_filename").value = inputFilename;
             }
-            this.blankPDFfilename = inputFilename;
+            blankFilename = inputFilename;
         }
     }
 });

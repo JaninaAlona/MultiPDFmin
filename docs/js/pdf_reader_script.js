@@ -185,6 +185,134 @@ function resetRendering() {
 }
 
 
+const saveButtonsEditor = document.getElementsByClassName('save_pdf_editor');
+for (let h = 0; h < saveButtonsEditor.length; h++) {
+    saveButtonsEditor[h].addEventListener("click", async function() {
+        resetAllModes();  
+        const saveWidgetCons = document.getElementsByClassName("save_widget_con");
+        for (let i = 0; i < saveWidgetCons.length; i++) {
+            saveWidgetCons[i].style.display = "flex";
+        }
+        const saveWidgets = document.getElementsByClassName("save_widget");
+        for (let i = 0; i < saveWidgets.length; i++) {
+            saveWidgets[i].style.display = "flex";
+        }   
+        const editImgs = document.getElementsByClassName("editimg");
+        if (editImgs.length > 0) { 
+            let originalZoom = pdfState.zoom;
+            pdfState.zoom = saveZoom;
+
+            // save step 1
+            outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
+            console.log("PDF loaded");
+
+            // save step 2
+            zoomForSave().then(function(step) {
+                console.log(step);
+
+                // save step 3
+                return canvasToImage();
+            }).then(function(step) {
+                console.log(step); 
+
+                // save step 4
+                return outputPDF.save();
+            }).then(function(savedPDF) {
+                console.log("PDF saved");
+                pdfState.existingPDFBytes = savedPDF;
+
+                // save step 5
+                return compressToZip(pdfState.existingPDFBytes, customFilename);
+            }).then(function(blob) { 
+                console.log("compressed to ZIP");
+                
+                // save step 6
+                return downloadPDF(blob, customFilename);
+            }).then(function(step) {
+                console.log(step); 
+                pdfState.zoom = originalZoom;
+
+                // save step 7
+                return zoomForSave();
+            }).then(function(step) {
+                console.log(step);
+                console.log("finished");
+                for (let i = 0; i < saveWidgetCons.length; i++) {
+                    saveWidgetCons[i].style.display = "none";
+                }
+                for (let i = 0; i < saveWidgets.length; i++) {
+                    saveWidgets[i].style.display = "none";
+                }
+            });
+        } else {
+
+            // save step 1
+            compressToZip(pdfState.existingPDFBytes, customFilename).then(function(blob) {
+                console.log("compressed to ZIP");
+
+                // save step 2
+                return downloadPDF(blob, customFilename);
+            }).then(function(step) {
+                console.log(step);
+                console.log("finished");
+                for (let i = 0; i < saveWidgetCons.length; i++) {
+                    saveWidgetCons[i].style.display = "none";
+                }
+                for (let i = 0; i < saveWidgets.length; i++) {
+                    saveWidgets[i].style.display = "none";
+                }
+            });
+        }
+    }, false);
+}
+
+function canvasToImage() {
+    const editImgs = document.getElementsByClassName("editimg");
+    for (let j = 0; j < editImgs.length; j++) {
+        const editImg = editImgs[j];
+        const dataURL = editImg.toDataURL("image/png", 1.0);
+        const splittedDataURL = dataURL.split(",", 2);
+        outputPDF.embedPng(splittedDataURL[1]).then(function(pngImage) {
+            const thisPage = parseInt(editImg.getAttribute("data-page"), 10);
+            outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
+                x: 0,
+                y: 0,
+                width: pdfState.originalWidths[thisPage-1],
+                height: pdfState.originalHeights[thisPage-1]
+            });
+        });
+    }
+    return Promise.resolve("images created");
+}
+
+function zoomForSave() {
+    return new Promise((resolve, reject) => {
+        pageCounter = 1;
+        placeEditorElements();
+        renderPage(pageCounter, false);
+        setTimeout(() => {
+            resolve("zoom for saving");
+        }, 300);
+    });
+}
+
+function setCustomFilename() {
+    const customFilenames = document.getElementsByClassName("custom_filename");
+    customFilename = pdfFileName.slice(0, pdfFileName.length - 4) + "_edited";
+    for (let i = 0; i < customFilenames.length; i++) {
+        customFilenames[i].value = customFilename;
+        customFilenames[i].addEventListener("input", function() {
+            let inputFilename = customFilenames[i].value;
+            if (inputFilename.length > 50) {
+                inputFilename = inputFilename.substring(0, 50);
+                customFilenames[i].value = inputFilename;
+            }
+            customFilename = inputFilename;
+        }, false);
+    }
+}
+
+
 function jumpTo(pageToJump) {
     let jumpAnchor = 0;
     if (pdfState.currentPage == 1) {
@@ -770,23 +898,6 @@ function resetAllModes() {
     mouseIsDown = false;
     clicked = false;
     short = false;
-}
-
-
-function setCustomFilename() {
-    const customFilenames = document.getElementsByClassName("custom_filename");
-    customFilename = pdfFileName.slice(0, pdfFileName.length - 4) + "_edited";
-    for (let i = 0; i < customFilenames.length; i++) {
-        customFilenames[i].value = customFilename;
-        customFilenames[i].addEventListener("input", function() {
-            let inputFilename = customFilenames[i].value;
-            if (inputFilename.length > 50) {
-                inputFilename = inputFilename.substring(0, 50);
-                customFilenames[i].value = inputFilename;
-            }
-            customFilename = inputFilename;
-        }, false);
-    }
 }
 
 

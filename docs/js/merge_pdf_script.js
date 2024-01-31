@@ -103,7 +103,13 @@ const merger = Vue.createApp({
 
         async saveMergedPDF() {
             await mergePDFs();
-            download(pdfBytes, mergeFilename + ".pdf", "application/pdf");
+            compressToZip(pdfBytes, mergeFilename).then(function(blob) {
+                console.log("compressed to ZIP");
+                return downloadPDF(blob, mergeFilename);
+            }).then(function(step) {
+                console.log(step);
+                console.log("finished");
+            });
         }
     }
 });

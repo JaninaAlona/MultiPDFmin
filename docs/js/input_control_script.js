@@ -7,6 +7,16 @@ async function compressToZip(pdfBytes, filename) {
     return zipWriter.close();
 }
 
+async function compressMultipleToZip(pdfBytesList, filename) {
+    const zipWriter = new ZipWriter(new BlobWriter("application/zip"));
+    let zipWriterPromiseList = [];
+    for (let i = 0; i < pdfBytesList.length; i++) {
+        zipWriterPromiseList.push(zipWriter.add(filename + "_" + i + ".pdf", new Uint8ArrayReader(pdfBytesList[i])));
+    }
+    await Promise.all(zipWriterPromiseList);
+    return zipWriter.close();
+}
+
 function downloadPDF(blob, filename) {
     const pdfObjURL = URL.createObjectURL(blob);
     const link = document.createElement("a");

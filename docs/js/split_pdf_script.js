@@ -4,14 +4,14 @@ let selectedPDFBytes;
 let splittedPDFs = [];
 let splitMethod = 0;
 let pdfToSplit;
-
+let pdfBytesList = [];
+let splitPDFfilename = "";
 
 const splitter = Vue.createApp({
     data() {
         return {
             maxPages: 100,
             outputname: '',
-            splitPDFfilename: '',
             isEncrypted: false
         }
     },
@@ -25,6 +25,7 @@ const splitter = Vue.createApp({
             for (let i = 0; i < noPDFErrorWidgets.length; i++) {
                 noPDFErrorWidgets[i].style.display = "none";
             }
+            pdfBytesList = [];
             const file = e.target.files[0];
             const fileReader = new FileReader();
             fileReader.onload = async function() {
@@ -76,32 +77,32 @@ const splitter = Vue.createApp({
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
                     this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
-                    this.splitPDFfilename = this.outputName +  '_split';
-                    document.getElementById("split_filename").value = this.splitPDFfilename;
+                    splitPDFfilename = this.outputName +  '_split';
+                    document.getElementById("split_filename").value = splitPDFfilename;
                     break;
                 case 2:
                     document.getElementsByClassName('splitlist')[0].disabled = true;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
                     this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
-                    this.splitPDFfilename = this.outputName +  '_split';
-                    document.getElementById("split_filename").value = this.splitPDFfilename;
+                    splitPDFfilename = this.outputName +  '_split';
+                    document.getElementById("split_filename").value = splitPDFfilename;
                     break;
                 case 3:
                     document.getElementsByClassName('splitlist')[0].disabled = true;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
                     this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
-                    this.splitPDFfilename = this.outputName +  '_split';
-                    document.getElementById("split_filename").value = this.splitPDFfilename;
+                    splitPDFfilename = this.outputName +  '_split';
+                    document.getElementById("split_filename").value = splitPDFfilename;
                     break;
                 case 4:
                     document.getElementsByClassName('splitlist')[0].disabled = false;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
                     this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
-                    this.splitPDFfilename = this.outputName +  '_split';
-                    document.getElementById("split_filename").value = this.splitPDFfilename;
+                    splitPDFfilename = this.outputName +  '_split';
+                    document.getElementById("split_filename").value = splitPDFfilename;
                     break;
             }
         },
@@ -111,16 +112,24 @@ const splitter = Vue.createApp({
                 inputFilename = inputFilename.substring(0, 50);
                 document.getElementById("split_filename").value = inputFilename;
             }
-            this.splitPDFfilename = inputFilename;
+            splitPDFfilename = inputFilename;
         },
         async saveSplittedPDFs() {
             await computeSplitOptions();
             if (splittedPDFs.length > 0) {
                 for(let i = 0; i < splittedPDFs.length; i++) {
                     const pdfBytes = await splittedPDFs[i].save();
-                    download(pdfBytes, this.splitPDFfilename + "_" + i + ".pdf", "application/pdf");
+                    pdfBytesList.push(pdfBytes);
                 }
+                compressMultipleToZip(pdfBytesList, splitPDFfilename).then(function(blob) {
+                    console.log("compressed to ZIP");
+                    return downloadPDF(blob, splitPDFfilename);
+                }).then(function(step) {
+                    console.log(step);
+                    console.log("finished");
+                });
                 splittedPDFs = [];
+                pdfBytesList = [];
             }
         }
     }

@@ -45,7 +45,7 @@ function draw(writeLayer) {
         if (userModesDrawer[0] && event.currentTarget === writeLayer) {
             isDrawing = true;
             writeLayer.style.cursor = "crosshair";
-            let page = parseInt(writeLayer.getAttribute("data-write"));
+            let page = parseInt(writeLayer.getAttribute("data-write"), 10);
             if (writeLayer.getElementsByClassName("drawing").length == 0) {
                 addLayer = true;
             }
@@ -57,7 +57,7 @@ function draw(writeLayer) {
                 let selectedLayer;
                 const layerCons = document.getElementsByClassName("layercontainer");
                 for (let i = 0; i < layerCons.length; i++) {
-                    if (parseInt(layerCons[i].getAttribute("data-page")) === parseInt(writeLayer.getAttribute("data-write"))) {
+                    if (parseInt(layerCons[i].getAttribute("data-page"), 10) === parseInt(writeLayer.getAttribute("data-write"), 10)) {
                         if (layerCons[i].classList.contains("layer_selected") && layerCons[i].getAttribute("data-type") === "drawing") {
                             isSelected = true;
                             selectedLayer = layerCons[i];
@@ -80,7 +80,7 @@ function draw(writeLayer) {
                     }
                 }
                 if (isSelected) {
-                    let layerIndex = parseInt(selectedLayer.getAttribute("data-index"));
+                    let layerIndex = parseInt(selectedLayer.getAttribute("data-index"), 10);
                     controlP = drawLayerStack[layerIndex];
                     if (controlP.elementToControl.wasRotated) {
                         controlP = createUserDrawLayer(event, "drawing", page, writeLayer);
@@ -88,7 +88,7 @@ function draw(writeLayer) {
                 } else {
                     const editImgGroup = writeLayer.querySelectorAll("div.editimg_group")[0];
                     let lastDrawCanvas = editImgGroup.getElementsByClassName("drawing")[editImgGroup.getElementsByClassName("drawing").length - 1];
-                    const lastIndex = parseInt(lastDrawCanvas.getAttribute("data-index"));
+                    const lastIndex = parseInt(lastDrawCanvas.getAttribute("data-index"), 10);
                     controlP = drawLayerStack[lastIndex];   
                     for (let i = 0; i < layerCons.length; i++) {
                         if (layerCons[i].classList.contains("layer_selected")) {
@@ -103,7 +103,7 @@ function draw(writeLayer) {
                         }
                     }
                     for (let i = 0; i < layerCons.length; i++) {
-                        if (layerCons[i].getAttribute("data-type") === "drawing" && parseInt(layerCons[i].getAttribute("data-index")) === lastIndex) {
+                        if (layerCons[i].getAttribute("data-type") === "drawing" && parseInt(layerCons[i].getAttribute("data-index"), 10) === lastIndex) {
                             layerCons[i].classList.remove("layer_unselected");
                             layerCons[i].classList.add("layer_selected");
                             layerCons[i].style.backgroundColor = "rgba(218, 189, 182, 0.8)";
@@ -259,7 +259,7 @@ function erase(writeLayer) {
             let selectedLayer;
             const layerCons = document.getElementsByClassName("layercontainer");
             for (let i = 0; i < layerCons.length; i++) {
-                if (parseInt(layerCons[i].getAttribute("data-page")) === parseInt(writeLayer.getAttribute("data-write"))) {
+                if (parseInt(layerCons[i].getAttribute("data-page"), 10) === parseInt(writeLayer.getAttribute("data-write"), 10)) {
                     if (layerCons[i].classList.contains("layer_selected") && layerCons[i].getAttribute("data-type") === "drawing") {
                         isSelected = true;
                         selectedLayer = layerCons[i];
@@ -282,12 +282,12 @@ function erase(writeLayer) {
                 }
             }
             if (isSelected) {
-                let layerIndex = parseInt(selectedLayer.getAttribute("data-index"));
+                let layerIndex = parseInt(selectedLayer.getAttribute("data-index"), 10);
                 controlP = drawLayerStack[layerIndex];
             } else {
                 const editImgGroup = writeLayer.querySelectorAll("div.editimg_group")[0];
                 let lastDrawCanvas = editImgGroup.getElementsByClassName("drawing")[editImgGroup.getElementsByClassName("drawing").length - 1];
-                const lastIndex = parseInt(lastDrawCanvas.getAttribute("data-index"));
+                const lastIndex = parseInt(lastDrawCanvas.getAttribute("data-index"), 10);
                 controlP = drawLayerStack[lastIndex];   
                 for (let i = 0; i < layerCons.length; i++) {
                     if (layerCons[i].classList.contains("layer_selected")) {
@@ -302,7 +302,7 @@ function erase(writeLayer) {
                     } 
                 }
                 for (let i = 0; i < layerCons.length; i++) {
-                    if (layerCons[i].getAttribute("data-type") === "drawing" && parseInt(layerCons[i].getAttribute("data-index")) === lastIndex) {
+                    if (layerCons[i].getAttribute("data-type") === "drawing" && parseInt(layerCons[i].getAttribute("data-index"), 10) === lastIndex) {
                         layerCons[i].classList.remove("layer_unselected");
                         layerCons[i].classList.add("layer_selected");
                         layerCons[i].style.backgroundColor = "rgba(218, 189, 182, 0.8)";
@@ -397,8 +397,8 @@ document.getElementById('delete_draw').addEventListener("click", function() {
                     userModesDrawer[2] = false;
                 }
                 if (userModesDrawer[2]) {
-                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'));
-                    let deletePage = parseInt(deleteBox.getAttribute("data-page"));
+                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'), 10);
+                    let deletePage = parseInt(deleteBox.getAttribute("data-page"), 10);
                     deleteDrawing(deleteBox, deletePage, deleteIndex);
                     deleteLayerByElement(deletePage, deleteIndex, "drawing");
                 }
@@ -581,7 +581,7 @@ document.getElementById("scaleDraw").addEventListener("click", function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "drawing") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 zoomDrawing(drawLayerStack[index], pdfState.zoom, pdfState.zoom);
                 scalingDrawing(drawLayerStack[index]);
                 rotateDrawing(drawLayerStack[index], drawLayerStack[index].elementToControl.rotation);
@@ -693,7 +693,7 @@ document.getElementById("applydrawrotation").addEventListener("click", function(
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "drawing") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 let successValue;
                     if (rotateDrawSelectorTriggered) {
                         successValue = convertInputToSucess(drawRotationSelector.value, -360, 360, true, false);
@@ -754,8 +754,8 @@ document.getElementById('cleardrawing').addEventListener("click", function() {
     for (let i = drawLayerStack.length-1; i >= 0; i--) {
         let disable = checkForLockStatus(drawLayerStack[i].controlBox);
         if (!disable) {
-            let deleteIndex = parseInt(drawLayerStack[i].controlBox.getAttribute('data-index'));
-            let deletePage = parseInt(drawLayerStack[i].controlBox.getAttribute("data-page"));
+            let deleteIndex = parseInt(drawLayerStack[i].controlBox.getAttribute('data-index'), 10);
+            let deletePage = parseInt(drawLayerStack[i].controlBox.getAttribute("data-page"), 10);
             deleteDrawing(drawLayerStack[i].controlBox, deletePage, deleteIndex);
             deleteLayerByElement(deletePage, deleteIndex, "drawing");
         }

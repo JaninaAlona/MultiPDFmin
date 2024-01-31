@@ -19,7 +19,7 @@ function createStackLayer(thisPage, editImgClass, editImgIndex) {
     if (pageLabels.length > 0) {
         for (let i = 0; i < pageLabels.length; i++) {
             let label = pageLabels[i];
-            let labelPage = parseInt(label.getAttribute("data-page"));
+            let labelPage = parseInt(label.getAttribute("data-page"), 10);
             if (labelPage != thisPage) {
                 newPage = true;
             } else {
@@ -36,7 +36,7 @@ function createStackLayer(thisPage, editImgClass, editImgIndex) {
         pageLabel.classList.add("layerlabel");
     } else {
         for (let i = 0; i < pageLabels.length; i++) {
-            if (parseInt(pageLabels[i].getAttribute("data-page")) === thisPage) {
+            if (parseInt(pageLabels[i].getAttribute("data-page"), 10) === thisPage) {
                 pageLabel = pageLabels[i];
             }
         }
@@ -101,7 +101,7 @@ function createStackLayer(thisPage, editImgClass, editImgIndex) {
 
 function hideLayer(layerEye) {
     resetAllModes();
-    const checkedIndex = parseInt(layerEye.getAttribute("data-index"));
+    const checkedIndex = parseInt(layerEye.getAttribute("data-index"), 10);
     const checkedType = layerEye.getAttribute("data-type");
     let layerElem;
     if (checkedType === "shape") {
@@ -177,7 +177,7 @@ function markSingleLayerOnEdit(controlP) {
     let index = controlP.index;
     const layernames = document.getElementsByClassName("layername");
     for (let i = 0; i < layernames.length; i++) {
-        let layerIndex = parseInt(layernames[i].getAttribute("data-index"));
+        let layerIndex = parseInt(layernames[i].getAttribute("data-index"), 10);
         let layerType = layernames[i].getAttribute("data-type");
         if (layerIndex === index && controlP.editImg.classList.contains(layerType)) {
             markSingleLayer(layernames[i]);
@@ -216,7 +216,7 @@ function moveLayer(target) {
                 let canvasToMove;
                 let controlPToMove;
                 let elementToMove;
-                const canvasIndex = parseInt(current.getAttribute('data-index'));
+                const canvasIndex = parseInt(current.getAttribute('data-index'), 10);
                 const canvasType = current.getAttribute('data-type');
                 if (canvasType === "shape") {
                     canvasToMove = geometryPointsList[canvasIndex].editImg;
@@ -236,14 +236,14 @@ function moveLayer(target) {
                     elementToMove = userImageList[canvasIndex].elementToControl;
                 }
                 const writeLayers = document.getElementsByClassName("edit_viewer")[0].getElementsByClassName("write_layer");
-                const srcPage = parseInt(current.getAttribute("data-page"));
+                const srcPage = parseInt(current.getAttribute("data-page"), 10);
                 let destPage;
                 if (currentpos < droppedpos) {   
-                    destPage = parseInt(i.getAttribute("data-page"));
-                    const destIndex = parseInt(i.getAttribute("data-index"));
+                    destPage = parseInt(i.getAttribute("data-page"), 10);
+                    const destIndex = parseInt(i.getAttribute("data-index"), 10);
                     let destWriteLayer;
                     for (let j = 0; j < writeLayers.length; j++) {
-                        if (parseInt(writeLayers[j].getAttribute('data-write')) === destPage) {
+                        if (parseInt(writeLayers[j].getAttribute('data-write'), 10) === destPage) {
                             destWriteLayer = writeLayers[j];
                         }
                     }
@@ -262,14 +262,14 @@ function moveLayer(target) {
                     let destCanvas;
                     const destCanvases = editImgGroup.getElementsByClassName("editimg");
                     for (let j = 0; j < destCanvases.length; j++) {
-                        if (parseInt(destCanvases[j].getAttribute('data-index')) === destIndex) {
+                        if (parseInt(destCanvases[j].getAttribute('data-index'), 10) === destIndex) {
                             destCanvas = destCanvases[j];
                         }
                     }
                     let destControlP;
                     const destControlPs = controlGroup.getElementsByClassName("box");
                     for (let j = 0; j < destControlPs.length; j++) {
-                        if (parseInt(destControlPs[j].getAttribute('data-index')) === destIndex) {
+                        if (parseInt(destControlPs[j].getAttribute('data-index'), 10) === destIndex) {
                             destControlP = destControlPs[j];
                         }
                     }
@@ -284,11 +284,11 @@ function moveLayer(target) {
                         controlGroup.appendChild(controlPToMove);
                     }
                 } else {
-                    destPage = parseInt(i.getAttribute("data-page"));
-                    const destIndex = parseInt(i.getAttribute("data-index"));
+                    destPage = parseInt(i.getAttribute("data-page"), 10);
+                    const destIndex = parseInt(i.getAttribute("data-index"), 10);
                     let destWriteLayer;
                     for (let j = 0; j < writeLayers.length; j++) {
-                        if (parseInt(writeLayers[j].getAttribute('data-write')) === destPage) {
+                        if (parseInt(writeLayers[j].getAttribute('data-write'), 10) === destPage) {
                             destWriteLayer = writeLayers[j];
                         }
                     }
@@ -307,14 +307,14 @@ function moveLayer(target) {
                     let destCanvas;
                     const destCanvases = editImgGroup.getElementsByClassName("editimg");
                     for (let j = 0; j < destCanvases.length; j++) {
-                        if (parseInt(destCanvases[j].getAttribute('data-index')) === destIndex) {
+                        if (parseInt(destCanvases[j].getAttribute('data-index'), 10) === destIndex) {
                             destCanvas = destCanvases[j];
                         }
                     }
                     let destControlP;
                     const destControlPs = controlGroup.getElementsByClassName("box");
                     for (let j = 0; j < destControlPs.length; j++) {
-                        if (parseInt(destControlPs[j].getAttribute('data-index')) === destIndex) {
+                        if (parseInt(destControlPs[j].getAttribute('data-index'), 10) === destIndex) {
                             destControlP = destControlPs[j];
                         }
                     }

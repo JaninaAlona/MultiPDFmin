@@ -70,7 +70,7 @@ pagelist.addEventListener("change", function() {
 
 function filterSelect(layercon, removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU) {
     if (trimmedPages.length > 0) {
-        const layerPage = parseInt(layercon.getAttribute("data-page"));
+        const layerPage = parseInt(layercon.getAttribute("data-page"), 10);
         for (let i = 0; i < trimmedPages.length; i++) {
             let inputPage = trimmedPages[i];
             if (layerPage === inputPage) {
@@ -177,7 +177,7 @@ async function groupUnmark(removeState, addState, selectStateT, selectStateD, se
 
 function filterUnselect(layercon, removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU) {
     if (untrimmedPages.length > 0) {
-        const layerPage = parseInt(layercon.getAttribute("data-page"));
+        const layerPage = parseInt(layercon.getAttribute("data-page"), 10);
         for (let i = 0; i < untrimmedPages.length; i++) {
             let inputPage = untrimmedPages[i];
             if (layerPage === inputPage) {

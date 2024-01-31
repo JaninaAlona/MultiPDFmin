@@ -104,7 +104,7 @@ async function addText(event, writeLayer) {
         const pageLayer = pdfLayer.addPage([writeLayer.width, writeLayer.height]);
         let rect = writeLayer.getBoundingClientRect();
         let mousePos = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-        let writePage = parseInt(writeLayer.getAttribute("data-write"));
+        let writePage = parseInt(writeLayer.getAttribute("data-write"), 10);
         currentUserText.pdfDoc = pdfLayer;
         currentUserText.text = "dummy";
         currentUserText.x = mousePos.x / pdfState.zoom;
@@ -151,8 +151,8 @@ document.getElementById('deletetext').addEventListener("click", function() {
                     userModes[1] = false;
                 }
                 if (userModes[1]) {
-                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'));
-                    let deletePage = parseInt(deleteBox.getAttribute("data-page"));
+                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'), 10);
+                    let deletePage = parseInt(deleteBox.getAttribute("data-page"), 10);
                     deleteText(deleteBox, deletePage, deleteIndex);
                     deleteLayerByElement(deletePage, deleteIndex, "text");
                 }
@@ -285,7 +285,7 @@ document.getElementById('applytext').addEventListener("click", async function() 
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 await applyText(userTextList[index]);
             }
         }
@@ -330,7 +330,7 @@ document.getElementById('applyfont').addEventListener('click', function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 applyFont(userTextList[index]);
             }
         }
@@ -434,7 +434,7 @@ document.getElementById("applycustomfont").addEventListener("click", function() 
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 applyCustomFont(userTextList[index]);
             }
         }
@@ -498,7 +498,7 @@ document.getElementById('applysize').addEventListener('click', function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 applyFontSize(userTextList[index]);
             }
         }
@@ -560,7 +560,7 @@ document.getElementById('applyfontcolor').addEventListener('click', function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 applyFontColor(userTextList[index]);
             }
         }
@@ -616,7 +616,7 @@ document.getElementById('applytextrotation').addEventListener('click', async fun
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 await applyTextRotation(userTextList[index]);
             }
         }
@@ -682,7 +682,7 @@ document.getElementById('applylineheight').addEventListener('click', function() 
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "text") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 applyLineHeight(userTextList[index]);
             }
         }
@@ -718,8 +718,8 @@ document.getElementById("cleartext").addEventListener('click', function() {
     for (let i = userTextList.length-1; i >= 0; i--) {
         let disable = checkForLockStatus(userTextList[i].controlBox);
         if (!disable) {
-            let deleteIndex = parseInt(userTextList[i].controlBox.getAttribute('data-index'));
-            let deletePage = parseInt(userTextList[i].controlBox.getAttribute("data-page"));
+            let deleteIndex = parseInt(userTextList[i].controlBox.getAttribute('data-index'), 10);
+            let deletePage = parseInt(userTextList[i].controlBox.getAttribute("data-page"), 10);
             deleteText(userTextList[i].controlBox, deletePage, deleteIndex);
             deleteLayerByElement(deletePage, deleteIndex, "text");
         }

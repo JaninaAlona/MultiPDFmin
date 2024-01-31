@@ -143,7 +143,7 @@ async function addImage(e, writeLayer) {
         const pdfLayer = await PDFDocument.create();
         let rect = writeLayer.getBoundingClientRect();
         let mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-        let writePage = parseInt(writeLayer.getAttribute("data-write"));
+        let writePage = parseInt(writeLayer.getAttribute("data-write"), 10);
         const listedImages = document.getElementsByClassName("filelisting_img");
         let checkedIndex;
         if (listedImages.length > 0) {
@@ -269,8 +269,8 @@ document.getElementById('deleteimg').addEventListener("click", function() {
                     userModesImages[1] = false;
                 }
                 if (userModesImages[1]) {
-                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'));
-                    let deletePage = parseInt(deleteBox.getAttribute("data-page"));
+                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'), 10);
+                    let deletePage = parseInt(deleteBox.getAttribute("data-page"), 10);
                     deleteImage(deleteBox, deletePage, deleteIndex);
                     deleteLayerByElement(deletePage, deleteIndex, "image");
                 }
@@ -438,7 +438,7 @@ document.getElementById('scaleimg').addEventListener("click", function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "image") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 scaleImage(userImageList[index]);
             }
         }
@@ -495,7 +495,7 @@ document.getElementById('applyscale').addEventListener("click", function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "image") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 scaleImageByFactor(userImageList[index]);
             }
         }
@@ -551,7 +551,7 @@ document.getElementById('applyopacity').addEventListener("click", function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "image") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 applyImgOpacity(userImageList[index]);
             }
         }
@@ -614,7 +614,7 @@ document.getElementById('applyimgrotation').addEventListener("click", function()
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "image") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 applyImgRotation(userImageList[index]);
             }
         }
@@ -658,8 +658,8 @@ document.getElementById("clearimg").addEventListener('click', function() {
     for (let i = userImageList.length-1; i >= 0; i--) {
         let disable = checkForLockStatus(userImageList[i].controlBox);
         if (!disable) {
-            let deleteIndex = parseInt(userImageList[i].controlBox.getAttribute('data-index'));
-            let deletePage = parseInt(userImageList[i].controlBox.getAttribute("data-page"));
+            let deleteIndex = parseInt(userImageList[i].controlBox.getAttribute('data-index'), 10);
+            let deletePage = parseInt(userImageList[i].controlBox.getAttribute("data-page"), 10);
             deleteImage(userImageList[i].controlBox, deletePage, deleteIndex);
             deleteLayerByElement(deletePage, deleteIndex, "image");
         }

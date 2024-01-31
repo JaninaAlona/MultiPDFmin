@@ -680,8 +680,8 @@ function zoomGeometry(controlP) {
 }
 
 function scaleEditImgShapeCanvas(editImg) {
-    editImg.width = pdfState.originalWidths[parseInt(editImg.getAttribute("data-page"))-1] * pdfState.zoom;
-    editImg.height = pdfState.originalHeights[parseInt(editImg.getAttribute("data-page"))-1] * pdfState.zoom;
+    editImg.width = pdfState.originalWidths[parseInt(editImg.getAttribute("data-page"), 10)-1] * pdfState.zoom;
+    editImg.height = pdfState.originalHeights[parseInt(editImg.getAttribute("data-page"), 10)-1] * pdfState.zoom;
     let ctx = editImg.getContext("2d");
     let width = ctx.canvas.width;
     let height = ctx.canvas.height;
@@ -693,7 +693,7 @@ function scaleEditImgShapeCanvas(editImg) {
 function toPercent(factor) {
     let percentString = Number(factor).toLocaleString("en-GB", { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
     let outputPercent = percentString.substring(0, percentString.length-2);
-    let percentInt = parseInt(outputPercent);
+    let percentInt = parseInt(outputPercent, 10);
     return percentInt;
 }
 
@@ -747,7 +747,7 @@ function dragElement(elmnt) {
     if (successValue !== -1000) {
         const writeLayers = document.getElementsByClassName("write_layer");
         for (let i = 0; i < writeLayers.length; i++) {
-            if (parseInt(writeLayers[i].getAttribute("data-write")) === successValue) {
+            if (parseInt(writeLayers[i].getAttribute("data-write"), 10) === successValue) {
                 currentWriteLayer = writeLayers[i];
             }
         }
@@ -1370,7 +1370,7 @@ function updateCursorX() {
             let rect = writeLayers[i].getBoundingClientRect();
             let cursorXs = document.getElementsByClassName("cursor_x");
             for (let i = 0; i < cursorXs.length; i++) {
-                cursorXs[i].innerText = `${parseInt(e.clientX - rect.left)}`;
+                cursorXs[i].innerText = `${parseInt((e.clientX - rect.left), 10)}`;
             }
         }, false);
     }
@@ -1383,7 +1383,7 @@ function updateCursorY() {
             let rect = writeLayers[i].getBoundingClientRect();
             let cursorYs = document.getElementsByClassName("cursor_y");
             for (let i = 0; i < cursorYs.length; i++) {
-                cursorYs[i].innerText = `${parseInt(e.clientY - rect.top)}`;
+                cursorYs[i].innerText = `${parseInt((e.clientY - rect.top), 10)}`;
             }
         }, false);
     }

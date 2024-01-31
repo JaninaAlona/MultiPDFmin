@@ -190,7 +190,7 @@ function addingShape(event, writeLayer, shapeType) {
     if (userModesGeometry[0] || userModesGeometry[1] || userModesGeometry[2]) {
         const currentShape = Object.create(shape);
         const shapeControllerP = Object.create(shapeControllerPoint);
-        let page = parseInt(writeLayer.getAttribute("data-write"));
+        let page = parseInt(writeLayer.getAttribute("data-write"), 10);
         currentShape.type = shapeType;
         if (shapeType === "triangle") {
             currentShape.xp2 = 50;
@@ -300,8 +300,8 @@ document.getElementById('deleteshape').addEventListener("click", function() {
                     userModesGeometry[3] = false;
                 }
                 if (userModesGeometry[3]) {
-                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'));
-                    let deletePage = parseInt(deleteBox.getAttribute("data-page"));
+                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'), 10);
+                    let deletePage = parseInt(deleteBox.getAttribute("data-page"), 10);
                     deleteShape(deleteBox, deletePage, deleteIndex);
                     deleteLayerByElement(deletePage, deleteIndex, "shape");
                 }
@@ -446,7 +446,7 @@ document.getElementById("scaleShape").addEventListener("click", function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 scalingShape(geometryPointsList[index], true);
             }
         }
@@ -536,7 +536,7 @@ document.getElementById("applystrokecolor").addEventListener("click", function()
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 setStrokeColor(geometryPointsList[index]);
             }
         }
@@ -580,7 +580,7 @@ document.getElementById("applystrokewidth").addEventListener("click", function()
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 setStrokeWidth(geometryPointsList[index]);
             }
         }
@@ -635,7 +635,7 @@ document.getElementById("applyfillcolor").addEventListener("click", function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 setFillColor(geometryPointsList[index]);
             }
         }
@@ -687,7 +687,7 @@ document.getElementById("applyshaperotation").addEventListener("click", function
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 setRotation(geometryPointsList[index]);
             }
         }
@@ -740,7 +740,7 @@ document.getElementById('applyscalegeo').addEventListener("click", function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 scalingShape(geometryPointsList[index], false);
             }
         }
@@ -772,7 +772,7 @@ document.getElementById("tripoint").addEventListener("click", function() {
         for (let i = 0; i < layercontainers.length; i++) {
             let layercontainer = layercontainers[i];
             if (layercontainer.classList.contains("unlocked") && layercontainer.classList.contains("layer_selected") && layercontainer.getAttribute("data-type") === "shape") {
-                let index = parseInt(layercontainer.getAttribute("data-index"));
+                let index = parseInt(layercontainer.getAttribute("data-index"), 10);
                 setTrianglePoint(geometryPointsList[index]);
             }
         }
@@ -798,8 +798,8 @@ document.getElementById('cleargeometry').addEventListener("click", function() {
     for (let i = geometryPointsList.length-1; i >= 0; i--) {
         let disable = checkForLockStatus(geometryPointsList[i].controlBox);
         if (!disable) {
-            let deleteIndex = parseInt(geometryPointsList[i].controlBox.getAttribute('data-index'));
-            let deletePage = parseInt(geometryPointsList[i].controlBox.getAttribute("data-page"));
+            let deleteIndex = parseInt(geometryPointsList[i].controlBox.getAttribute('data-index'), 10);
+            let deletePage = parseInt(geometryPointsList[i].controlBox.getAttribute("data-page"), 10);
             deleteShape(geometryPointsList[i].controlBox, deletePage, deleteIndex);
             deleteLayerByElement(deletePage, deleteIndex, "shape");
         }

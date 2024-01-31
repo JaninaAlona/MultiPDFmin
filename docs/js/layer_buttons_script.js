@@ -83,8 +83,8 @@ function deleteLayer() {
     let deletePage;
     for (let i = 0; i < layerconsToDelete.length; i++) {
         if (layerconsToDelete[i].classList.contains("layer_selected") && layerconsToDelete[i].classList.contains("unlocked")) {
-            deletePage = parseInt(layerconsToDelete[i].getAttribute("data-page"));
-            deleteIndex = parseInt(layerconsToDelete[i].getAttribute("data-index"));
+            deletePage = parseInt(layerconsToDelete[i].getAttribute("data-page"), 10);
+            deleteIndex = parseInt(layerconsToDelete[i].getAttribute("data-index"), 10);
             deleteType = layerconsToDelete[i].getAttribute("data-type");
             deleteLayerByElement(deletePage, deleteIndex, deleteType);
             if (deleteType === "shape") {
@@ -104,7 +104,7 @@ function deleteLayerByElement(page, index, type) {
     let layercontainers = document.getElementsByClassName("layercontainer");
     let layerContainerToDelete;
     for (let i = 0; i < layercontainers.length; i++) {
-        if (parseInt(layercontainers[i].getAttribute("data-page")) === page && parseInt(layercontainers[i].getAttribute("data-index")) === index && layercontainers[i].getAttribute("data-type") === type) {
+        if (parseInt(layercontainers[i].getAttribute("data-page"), 10) === page && parseInt(layercontainers[i].getAttribute("data-index"), 10) === index && layercontainers[i].getAttribute("data-type") === type) {
             layerContainerToDelete = layercontainers[i];
         }
     }
@@ -119,7 +119,7 @@ function deleteLayerByElement(page, index, type) {
     let resetDrawingName = true;
     let resetImageName = true;
     for (let i = 0; i < layercontainers.length; i++) {
-        if (parseInt(layercontainers[i].getAttribute("data-index")) > index && layercontainers[i].getAttribute("data-type") === type) {
+        if (parseInt(layercontainers[i].getAttribute("data-index"), 10) > index && layercontainers[i].getAttribute("data-type") === type) {
             layercontainers[i].dataset.index -= 1;
             layercontainers[i].children[0].dataset.index -= 1;
             layercontainers[i].children[0].children[0].dataset.index -= 1;
@@ -172,8 +172,8 @@ async function dublicateLayer() {
     let index;
     for (let i = 0; i < layercontainers.length; i++) {
         if (layercontainers[i].classList.contains("layer_selected")) {
-            dublicatePage = parseInt(layercontainers[i].getAttribute("data-page"));
-            index = parseInt(layercontainers[i].getAttribute("data-index"));
+            dublicatePage = parseInt(layercontainers[i].getAttribute("data-page"), 10);
+            index = parseInt(layercontainers[i].getAttribute("data-index"), 10);
             dublicateType = layercontainers[i].getAttribute("data-type");
             dublicateLayerByElement(dublicatePage, index, dublicateType);
             await dublicateElement(dublicatePage, index, dublicateType);
@@ -185,7 +185,7 @@ function dublicateLayerByElement(page, index, type) {
     let layercontainers = document.getElementsByClassName("layercontainer");
     let layerContainerToDublicate;
     for (let i = 0; i < layercontainers.length; i++) {
-        if (parseInt(layercontainers[i].getAttribute("data-page")) === page && parseInt(layercontainers[i].getAttribute("data-index")) === index && layercontainers[i].getAttribute("data-type") === type) {
+        if (parseInt(layercontainers[i].getAttribute("data-page"), 10) === page && parseInt(layercontainers[i].getAttribute("data-index"), 10) === index && layercontainers[i].getAttribute("data-type") === type) {
             layerContainerToDublicate = layercontainers[i];
         }
     }
@@ -495,12 +495,12 @@ function relocateLayers(selectedLayer) {
     let y = 0;
     mouseIsDown = false;
     let controlBoxTouched = false;
-    let layerIndex = parseInt(selectedLayer.getAttribute("data-index"));
+    let layerIndex = parseInt(selectedLayer.getAttribute("data-index"), 10);
     let layerType = selectedLayer.getAttribute("data-type");
     const boxes = document.getElementsByClassName("box");
     for (let i = 0; i < boxes.length; i++) {
         let currentBoxType = boxes[i].classList[0];
-        let currentBoxIndex = parseInt(boxes[i].getAttribute("data-index"));
+        let currentBoxIndex = parseInt(boxes[i].getAttribute("data-index"), 10);
         if (currentBoxType === layerType && currentBoxIndex === layerIndex) {
             layerBox = boxes[i];
         } 
@@ -512,7 +512,7 @@ function relocateLayers(selectedLayer) {
             mouseIsDown = true;
             let box = e.currentTarget;
             boxType = box.classList[0];
-            boxIndex = parseInt(box.getAttribute("data-index"));
+            boxIndex = parseInt(box.getAttribute("data-index"), 10);
             if (boxIndex === layerIndex && boxType === layerType) {
                 if (boxType === "text") {
                     controlP = userTextList[boxIndex];
@@ -577,7 +577,7 @@ function relocateLayers(selectedLayer) {
                     let selLayer = selectedLayers[i];
                     if (selLayer.classList.contains("unlocked")) {
                         let selType = selLayer.getAttribute("data-type");
-                        let selIndex = parseInt(selLayer.getAttribute("data-index"));
+                        let selIndex = parseInt(selLayer.getAttribute("data-index"), 10);
                         if (selType === "text") {
                             selControlP = userTextList[selIndex];
                             otherX = selControlP.x;
@@ -776,11 +776,11 @@ function unlockLayer(layer) {
 function checkForLockStatus(box) {
     let disable = false;
     let boxType = box.classList[0];
-    let boxIndex = parseInt(box.getAttribute("data-index"));
+    let boxIndex = parseInt(box.getAttribute("data-index"), 10);
     const layercons = document.getElementsByClassName("layercontainer");
     for (let i = 0; i < layercons.length; i++) {
         let layerconType = layercons[i].getAttribute("data-type");
-        let layerconIndex = parseInt(layercons[i].getAttribute("data-index"));
+        let layerconIndex = parseInt(layercons[i].getAttribute("data-index"), 10);
         if (boxType === layerconType && boxIndex === layerconIndex) {
             if (layercons[i].classList.contains("locked")) {
                 disable = true;

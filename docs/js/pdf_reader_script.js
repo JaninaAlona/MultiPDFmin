@@ -58,6 +58,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
         fileReader.onload = function() {
             const typedarray = new Uint8Array(this.result);
             pdfState.originalPDFBytes = typedarray;
+            pdfState.existingPDFBytes = pdfState.originalPDFBytes;
             const loadingTask = pdfjsLib.getDocument(typedarray);
             loadingTask.promise.then(async (pdf) => {
                 let pdfDoc;
@@ -75,9 +76,6 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             noPDFErrorWidgets[i].style.display = "none";
                         }
                         pdfState.pdf = pdf;
-                        const pdfBytes = await pdfDoc.save();
-                        pdfState.originalPDFBytes = pdfBytes;
-                        pdfState.existingPDFBytes = pdfState.originalPDFBytes;
                         onetimeSetup = true;
                         pdfFileName = file.name;
                         document.getElementById("current_page").value = 1;

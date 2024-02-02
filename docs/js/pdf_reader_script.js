@@ -6,7 +6,6 @@ let pdfState = {
     zoom: 1,
     originalPDFBytes: null,
     existingPDFBytes: null,
-    savedPDFBytes: null,
     originalWidths: [],
     originalHeights: []
 }
@@ -179,7 +178,6 @@ function resetRendering() {
     pdfState.zoom = 1;
     pdfState.originalPDFBytes = null;
     pdfState.existingPDFBytes = null;
-    pdfState.savedPDFBytes = null;
     pdfState.originalWidths = [];
     pdfState.originalHeights = [];
 }

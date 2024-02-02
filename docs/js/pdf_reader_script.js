@@ -739,8 +739,6 @@ function dragElement(elmnt) {
     let pos3 = 0;
     let pos4 = 0;
     let currentWriteLayer;
-    clicked = false;
-    short = false;
     let successValue = convertInputToSucess(document.getElementById("current_page").value, 1, pdfState.lastPage, true, false);
     if (successValue !== -1000) {
         const writeLayers = document.getElementsByClassName("write_layer");
@@ -749,19 +747,11 @@ function dragElement(elmnt) {
                 currentWriteLayer = writeLayers[i];
             }
         }
-        currentWriteLayer.onclick = detectClick;
         currentWriteLayer.onmousedown = dragMouseDown;
     }
 
-    function detectClick() {
-        if (draggingMode) {
-            clicked = true;
-            short = true;
-        }
-    }
-
     function dragMouseDown(e) {
-        if (draggingMode && !clicked) {
+        if (draggingMode) {
             mouseIsDown = true;
             currentWriteLayer.style.cursor = "move";
             pos3 = e.clientX;
@@ -772,7 +762,7 @@ function dragElement(elmnt) {
     }
 
     function elementDrag(e) {
-        if (draggingMode && mouseIsDown && !clicked) {
+        if (draggingMode && mouseIsDown) {
             short = false;
             pos1 = pos3 - e.clientX;
             pos2 = pos4 - e.clientY;
@@ -784,12 +774,11 @@ function dragElement(elmnt) {
     }
 
     function closeDragElement(e) {
-        if (draggingMode && !clicked && !short) {
+        if (draggingMode) {
             mouseIsDown = false;
             currentWriteLayer.style.cursor = "default";
             currentWriteLayer.onmouseup = null;
             currentWriteLayer.onmousemove = null;
-            currentWriteLayer.onclick = null;
         }
     }
 }
@@ -894,8 +883,6 @@ function resetAllModes() {
     isDrawing = false;
     isErasing = false;
     mouseIsDown = false;
-    clicked = false;
-    short = false;
 }
 
 

@@ -143,7 +143,6 @@ function cleanUp() {
             pdfState.pdf = null;
         }
     } finally {
-        pdfState.zoom = 1.0;
         resetRendering();
     }
 }

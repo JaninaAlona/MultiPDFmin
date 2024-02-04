@@ -17,6 +17,7 @@
     <script src="libs/pdf-lib.min.js"></script>
     
     <!--PDF-lib dependency-->
+    <!--https://www.npmjs.com/package/@pdf-lib/fontkit-->
     <script src="libs/fontkit.umd.min.js"></script>
 
     <!--filestyle dependency-->
@@ -48,7 +49,10 @@
                 <div class="dir_row">
                     <button id="go_previous" class="btn btn-success button_layout" type="button">Previous</button>
                     <div class="input_layout inner_margin"><input id="current_page" class="button_layout" value="1" type="text"></div>
-                    <div id="maxPDFPages" class="inner_margin"></div>
+                    <div class="dir_col inner_margin">
+                        <div id="maxPDFPages" class="inner_margin"></div>
+                        <div class="text_white">Max: 5000</div>
+                    </div>
                     <button id="go_next" class="btn btn-success button_layout" type="button">Next</button>
                     <button id="zoom_in" class="btn btn-success zoom button_layout" type="button">+</button>
                     <div class="input_layout"><input id="zoom_factor" class="button_layout" value="100%" type="text"></div>

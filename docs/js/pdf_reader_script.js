@@ -68,7 +68,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                     encrypted = true;
                 }
                 if (!encrypted) {
-                    if (file.name.endsWith(".pdf")) {
+                    if (file.name.endsWith(".pdf") && pdf._pdfInfo.numPages <= 5000) {
                         for (let i = 0; i < encryptedErrorWidgets.length; i++) {
                             encryptedErrorWidgets[i].style.display = "none";
                         }

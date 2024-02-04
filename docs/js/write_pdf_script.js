@@ -372,7 +372,7 @@ document.getElementById("inputfont").addEventListener("change", function(e) {
 }, false);
 
 function createFileListEntryFont(filename, index) {
-    if (filename.endsWith(".ttf")) {
+    if (filename.endsWith(".ttf") || filename.endsWith(".otf")) {
         const container = document.getElementById("listpoint_font_con");
         const div = document.createElement("div");
         div.className = "div_files_font";

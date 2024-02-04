@@ -157,6 +157,10 @@ div.drawing {
     color: rgba(0, 0, 0, 1.0);
 }
 
+.white_text {
+    color: white;
+}
+
 #fontsel {
     appearance: none;
     font-size: smaller;

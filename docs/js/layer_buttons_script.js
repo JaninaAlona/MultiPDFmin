@@ -8,19 +8,27 @@ let relocateLayersMode = false;
 
 const btns = document.getElementById("btns");
 btns.addEventListener("click", function() {
+    resetAllModes();
+    const layerStackWrappers = document.getElementsByClassName("layer_stack_wrapper");
     if(document.getElementById("show_btns").style.display === "none") {
+        console.log("here");
         document.getElementById("show_btns").style.flexDirection = "column";
         document.getElementById("show_btns").style.display = "flex";
-        document.getElementById("layer_stack_con").style.top = "260px";
+        for (let i = 0; i < layerStackWrappers.length; i++) {
+            layerStackWrappers[i].style.paddingTop = "260px";
+        }
     } else if (document.getElementById("show_btns").style.display === "flex") {
         document.getElementById("show_btns").style.display = "none";
-        document.getElementById("layer_stack_con").style.top = "50px"; 
+        for (let i = 0; i < layerStackWrappers.length; i++) {
+            layerStackWrappers[i].style.paddingTop = "50px"; 
+        }
     }
 }, false);
 
 const showSidemenuBtns = document.getElementsByClassName("showsidemenu");
 for (let i = 0; i < showSidemenuBtns.length; i++) {
     showSidemenuBtns[i].addEventListener("click", function() {
+        resetAllModes();
         if (sidemenuVisible) {
             sidemenuVisible = false;
             document.getElementById("sidemenu").style.display = "none";
@@ -38,6 +46,7 @@ for (let i = 0; i < showSidemenuBtns.length; i++) {
 const showLayersBtns = document.getElementsByClassName("layers");
 for (let i = 0; i < showLayersBtns.length; i++) {
     showLayersBtns[i].addEventListener("click", function() {
+        resetAllModes();
         if (layersVisible) {
             layersVisible = false;
             document.getElementById("layer_stack").style.display = "none";

@@ -93,7 +93,6 @@ html {
     overflow-y: auto;
     direction: rtl;
     margin-bottom: 175px;
-    z-index: 40;
 }
 
 .drag_con {

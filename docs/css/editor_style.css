@@ -232,7 +232,7 @@ div.drawing {
     top: 174px;
     bottom: 0;
     left: 10px;
-    width: 180px;
+    width: 190px;
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 25;
@@ -246,12 +246,22 @@ div.drawing {
     background-color: rgba(218, 189, 182, 0.8);
 }
 
+.layer_stack_wrapper {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    width: 190px;
+    overflow-y: auto;
+    height: 100%;
+    padding-top: 50px;
+}
+
 #layer_stack_con {
     display: flex;
     flex-direction: column;
     position: relative;
-    top: 50px;
-    width: 180px;
+    top: 0;
+    width: 190px;
     height: 100%;
     z-index: 5;
 }

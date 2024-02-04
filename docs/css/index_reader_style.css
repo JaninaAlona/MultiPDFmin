@@ -86,12 +86,14 @@ html {
 }
 
 .scrollwrapper {
-    top: 0;
+    position: relative;
+    top: 174px;
+    bottom: 0;
     width: 100%;
     overflow-y: auto;
-    scrollbar-gutter: stable both-edges;
     direction: rtl;
-    height: 100%;
+    margin-bottom: 175px;
+    z-index: 40;
 }
 
 .drag_con {
@@ -118,20 +120,12 @@ html {
     flex-direction: column;
 }
 
-.top_reader {
-    position: relative;
-    top: 174px;
-    width: 100%;
-    z-index: 40;
-}
-
 .pdf_viewer_con {
     position: relative;
     top: 0;
     bottom: 0;
     width: 100%;
     direction: ltr;
-    padding-bottom: 180px;
 }
 
 .justify-center {

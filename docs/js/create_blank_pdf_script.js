@@ -49,7 +49,7 @@ canceler.mount('#create_blank_app');
 
 
 function blankSaveInput() {
-    let successNumPages = convertInputToSucess(document.getElementById('blank_pages').value, 1, 3000, true, false);
+    let successNumPages = convertInputToSucess(document.getElementById('blank_pages').value, 1, 5000, true, false);
     if (successNumPages !== -1000) {
         blankNumOfPagesCount = successNumPages;
         document.getElementById('blank_pages').value = blankNumOfPagesCount;
@@ -72,7 +72,7 @@ function blankSaveInput() {
 }
 
 function initBlankEvents() {
-    restrictInputValues('blank_pages', 1, 3000, true, false);
+    restrictInputValues('blank_pages', 1, 5000, true, false);
     restrictInputValues('blank_width', 10, 10000, true, false);
     restrictInputValues('blank_height', 10, 10000, true, false);
     document.getElementById('blank_pages').value = 1;

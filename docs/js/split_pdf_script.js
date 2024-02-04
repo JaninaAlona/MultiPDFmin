@@ -42,7 +42,7 @@ const splitter = Vue.createApp({
                             encryptedErrorWidgets[i].style.display = "flex";
                         }
                     }
-                    if (!this.isEncrypted) {
+                    if (!this.isEncrypted && srcPDFDoc.getPages().length <= 5000) {
                         if (srcPDFDoc.getPages().length === 1) {
                             document.getElementById('split_after').disabled = true;
                         } else {

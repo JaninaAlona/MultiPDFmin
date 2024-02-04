@@ -43,6 +43,10 @@
   margin-right: 10px;
 }
 
+.inner_double_margin {
+  margin-right: 20px;
+}
+
 .pop_up {
     background-color: #dabdb6;
     padding: 20px;
@@ -78,7 +82,7 @@
 
 #merge_pop_up {
   width: 500px;
-  height: 730px
+  height: 800px
 }
 
 #save_split {
@@ -137,6 +141,8 @@
 .merge_btns {
   display: flex;
   flex-direction: row;
+  position: relative;
+  top: -100px;
 }
 
 .slist {

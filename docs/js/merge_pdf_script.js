@@ -102,14 +102,16 @@ const merger = Vue.createApp({
         },
 
         async saveMergedPDF() {
-            await mergePDFs();
-            compressToZip(pdfBytes, mergeFilename).then(function(blob) {
-                console.log("compressed to ZIP");
-                return downloadPDF(blob, mergeFilename);
-            }).then(function(step) {
-                console.log(step);
-                console.log("finished");
-            });
+            const abortMerge = await mergePDFs();
+            if (!abortMerge) {
+                compressToZip(pdfBytes, mergeFilename).then(function(blob) {
+                    console.log("compressed to ZIP");
+                    return downloadPDF(blob, mergeFilename);
+                }).then(function(step) {
+                    console.log(step);
+                    console.log("finished");
+                });
+            }
         }
     }
 });
@@ -169,13 +171,22 @@ function slist(target) {
 }
 
 async function mergePDFs() {
+    let abortMerge = false;
     outputPdf = await PDFDocument.create(); 
     for (let i = 0; i < selectedPDFBytes.length; i++) {
         let srcPDFDoc = await PDFDocument.load(selectedPDFBytes[i]); 
         for (let j = 0; j < srcPDFDoc.getPages().length; j++) {
             const [currentPage] = await outputPdf.copyPages(srcPDFDoc, [j]);
-            outputPdf.addPage(currentPage);
+            if (outputPdf.getPages().length < 5000) {
+                outputPdf.addPage(currentPage);
+            } else {
+                abortMerge = true;
+                break;
+            }
         }
     } 
-    pdfBytes = await outputPdf.save();  
+    if (!abortMerge) 
+        pdfBytes = await outputPdf.save();  
+    
+    return abortMerge;
 }

@@ -10,6 +10,9 @@ let pdfState = {
     originalHeights: []
 }
 
+let startRender;
+let endRender;
+
 let pageCounter = 1;
 let customFilename;
 let file;
@@ -115,7 +118,8 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         for (let i = 0; i < pageProgresses.length; i++) {
                             pageProgresses[i].innerText = `${pdfState.renderedPage}`;
                         }
-                        renderPage(pageCounter, false);
+                        startRender = performance.now();
+                        await renderPage(pageCounter, false);
                     }
                 } else {
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
@@ -183,6 +187,7 @@ function resetRendering() {
 const saveButtonsEditor = document.getElementsByClassName('save_pdf_editor');
 for (let h = 0; h < saveButtonsEditor.length; h++) {
     saveButtonsEditor[h].addEventListener("click", async function() {
+        const startSave = performance.now();
         resetAllModes();  
         const saveWidgetCons = document.getElementsByClassName("save_widget_con");
         for (let i = 0; i < saveWidgetCons.length; i++) {
@@ -238,6 +243,8 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 for (let i = 0; i < saveWidgets.length; i++) {
                     saveWidgets[i].style.display = "none";
                 }
+                const endSave = performance.now();
+                console.log(`Execution time of Merger: ${endSave - startSave} ms`);
             });
         } else {
 
@@ -256,6 +263,8 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 for (let i = 0; i < saveWidgets.length; i++) {
                     saveWidgets[i].style.display = "none";
                 }
+                const endSave = performance.now();
+                console.log(`Execution time of Merger: ${endSave - startSave} ms`);
             });
         }
     }, false);
@@ -386,7 +395,7 @@ function displayPageNum(e) {
     }
 }
 
-function renderPage(num, renderSingle) {
+async function renderPage(num, renderSingle) {
     pdfState.pdf.getPage(num).then(function(page) {
         let viewport = page.getViewport({
             scale: pdfState.zoom
@@ -466,6 +475,8 @@ function renderPage(num, renderSingle) {
                     for (let i = 0; i < renderWidgets.length; i++) {
                         renderWidgets[i].style.display = "none";
                     }
+                    endRender = performance.now();
+                    console.log(`Execution time of Render Operation: ${endRender - startRender} ms`);
                 } 
                 if (pdfState.pdf != null && pageCounter <= pdfState.pdf._pdfInfo.numPages) {
                     renderPage(pageCounter, false);

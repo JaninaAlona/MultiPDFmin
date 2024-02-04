@@ -102,6 +102,7 @@ const merger = Vue.createApp({
         },
 
         async saveMergedPDF() {
+            const startMerge = performance.now();
             const abortMerge = await mergePDFs();
             if (!abortMerge) {
                 compressToZip(pdfBytes, mergeFilename).then(function(blob) {
@@ -110,6 +111,8 @@ const merger = Vue.createApp({
                 }).then(function(step) {
                     console.log(step);
                     console.log("finished");
+                    const endMerge = performance.now();
+                    console.log(`Execution time of Merger: ${endMerge - startMerge} ms`);
                 });
             }
         }

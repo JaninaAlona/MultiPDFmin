@@ -115,6 +115,7 @@ const splitter = Vue.createApp({
             splitPDFfilename = inputFilename;
         },
         async saveSplittedPDFs() {
+            const startSplit = performance.now();
             await computeSplitOptions();
             if (splittedPDFs.length > 0) {
                 for(let i = 0; i < splittedPDFs.length; i++) {
@@ -127,6 +128,8 @@ const splitter = Vue.createApp({
                 }).then(function(step) {
                     console.log(step);
                     console.log("finished");
+                    const endSplit = performance.now();
+                    console.log(`Execution time of Merger: ${endSplit - startSplit} ms`);
                 });
                 splittedPDFs = [];
                 pdfBytesList = [];

@@ -15,6 +15,7 @@ const canceler = Vue.createApp({
         async savePDF() {
             blankSaveInput();
             if (triggerSaveBlank) {
+                const startCreator = performance.now();
                 let pdfDoc = await PDFDocument.create()
                 let page;
                 const pageWFactor = (blankPageWidth * 1000) / 352.8;
@@ -31,6 +32,8 @@ const canceler = Vue.createApp({
                 }).then(function(step) {
                     console.log(step);
                     console.log("finished");
+                    const endCreator = performance.now();
+                    console.log(`Execution time of Creator: ${endCreator - startCreator} ms`);
                 });
             }
         },

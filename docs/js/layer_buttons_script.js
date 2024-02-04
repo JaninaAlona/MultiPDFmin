@@ -31,13 +31,19 @@ for (let i = 0; i < showSidemenuBtns.length; i++) {
         resetAllModes();
         if (sidemenuVisible) {
             sidemenuVisible = false;
-            document.getElementById("sidemenu").style.display = "none";
+            const sidemenus = document.getElementsByClassName("sidemenu");
+            for (let i = 0; i < sidemenus.length; i++) {
+                sidemenus[i].style.display = "none";
+            }
             if (document.getElementById("layer_stack").style.display === "flex") {
                 document.getElementById("layer_stack").style.right = "0";
             }
         } else {
             sidemenuVisible = true;
-            document.getElementById("sidemenu").style.display = "flex";
+            const sidemenus = document.getElementsByClassName("sidemenu");
+            for (let i = 0; i < sidemenus.length; i++) {
+                sidemenus[i].style.display = "flex";
+            }
             document.getElementById("layer_stack").style.right = "40%";
         }
     }, false);

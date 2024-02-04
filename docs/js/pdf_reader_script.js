@@ -887,53 +887,22 @@ if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && doc
     displayEditControls = document.getElementsByClassName("display_edit_ctls")[0];
     displayEditControls.addEventListener("change", function() {
         if (!encrypted && fileLoaded) {
+            document.getElementById('layer_stack').style.display = "flex";
+            const sidemenus = document.getElementsByClassName("sidemenu");
+            for (let i = 0; i < sidemenus.length; i++) {
+                sidemenus[i].style.display = "flex";
+            }
             if (displayEditControls.getAttribute("data-mode") === "edit_text") {
-                document.getElementById('sidemenu').style.display = "flex";
-                document.getElementById('layer_stack').style.display = "flex";
-                document.getElementById('writer_controls').style.display = "flex";
-                document.getElementById('editor_controls').style.display = "flex";
-                document.getElementById('drawer_controls').style.display = "none";
-                document.getElementById('pencil_controls').style.display = "none";
-                document.getElementById('geometry_controls').style.display = "none";
-                document.getElementById('shape_controls').style.display = "none";
-                document.getElementById('images_controls').style.display = "none";
-                document.getElementById('img_controls').style.display = "none";  
+                displayTextTools();
             }
             if (displayEditControls.getAttribute("data-mode") === "edit_draw") {
-                document.getElementById('sidemenu').style.display = "flex";
-                document.getElementById('layer_stack').style.display = "flex";
-                document.getElementById('drawer_controls').style.display = "flex";
-                document.getElementById('pencil_controls').style.display = "flex";
-                document.getElementById('writer_controls').style.display = "none";
-                document.getElementById('editor_controls').style.display = "none";
-                document.getElementById('geometry_controls').style.display = "none";
-                document.getElementById('shape_controls').style.display = "none";
-                document.getElementById('images_controls').style.display = "none";
-                document.getElementById('img_controls').style.display = "none";
+                displayDrawTools();
             }
             if (displayEditControls.getAttribute("data-mode") === "edit_shape") {
-                document.getElementById('sidemenu').style.display = "flex";
-                document.getElementById('layer_stack').style.display = "flex";
-                document.getElementById('writer_controls').style.display = "none";
-                document.getElementById('editor_controls').style.display = "none";
-                document.getElementById('drawer_controls').style.display = "none";
-                document.getElementById('pencil_controls').style.display = "none";
-                document.getElementById('geometry_controls').style.display = "flex";
-                document.getElementById('shape_controls').style.display = "flex";
-                document.getElementById('images_controls').style.display = "none";
-                document.getElementById('img_controls').style.display = "none";
+                displayShapeTools();
             }
             if (displayEditControls.getAttribute("data-mode") === "edit_image") {
-                document.getElementById('sidemenu').style.display = "flex";
-                document.getElementById('layer_stack').style.display = "flex";
-                document.getElementById('writer_controls').style.display = "none";
-                document.getElementById('editor_controls').style.display = "none";
-                document.getElementById('drawer_controls').style.display = "none";
-                document.getElementById('pencil_controls').style.display = "none";
-                document.getElementById('geometry_controls').style.display = "none";
-                document.getElementById('shape_controls').style.display = "none";
-                document.getElementById('images_controls').style.display = "flex";
-                document.getElementById('img_controls').style.display = "flex";
+                displayImgTools();
             }
             document.getElementById("reader_controls").style.display = "flex";
             const saveWidgetCons = document.getElementsByClassName("save_widget_con");
@@ -957,16 +926,127 @@ if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && doc
                 pageProgresses[i].innerText = `${pdfState.renderedPage}`;
             }
             document.getElementById("viewer_bg").style.display = "flex";
-            const sidemenupos = document.getElementsByClassName("sidemenupos");
-            for (let i = 0; i < sidemenupos.length; i++) {
-                sidemenupos[i].scrollTo(0, 0);
+            const sidemenuWrappers = document.getElementsByClassName("sidemenu_wrapper");
+            for (let i = 0; i < sidemenuWrappers.length; i++) {
+                sidemenuWrappers[i].scrollTo(0, 0);
             }
-            const layerstack = document.getElementById("layer_stack");
-            layerstack.scrollTo(0, 0);
+            const layerStackWrappers = document.getElementsByClassName("layer_stack_wrapper");
+            for (let i = 0; i < layerStackWrappers.length; i++) {
+                layerStackWrappers[i].scrollTo(0, 0);
+            }
             setTimeout(initEditor, 300);
         }
     }, false);
 }
+
+function displayTextTools() {
+    const sidemenuTexts = document.getElementsByClassName("sidemenu_text_display");
+    for (let i = 0; i < sidemenuTexts.length; i++) {
+        sidemenuTexts[i].style.display = "flex";
+    }
+    const sidemenuDraws = document.getElementsByClassName("sidemenu_draw_display");
+    for (let i = 0; i < sidemenuDraws.length; i++) {
+        sidemenuDraws[i].style.display = "none";
+    }
+    const sidemenuShapes = document.getElementsByClassName("sidemenu_shape_display");
+    for (let i = 0; i < sidemenuShapes.length; i++) {
+        sidemenuShapes[i].style.display = "none";
+    }
+    const sidemenuImgs = document.getElementsByClassName("sidemenu_img_display");
+    for (let i = 0; i < sidemenuImgs.length; i++) {
+        sidemenuImgs[i].style.display = "none";
+    }
+    document.getElementById('writer_controls').style.display = "flex";
+    document.getElementById('editor_controls').style.display = "flex";
+    document.getElementById('drawer_controls').style.display = "none";
+    document.getElementById('pencil_controls').style.display = "none";
+    document.getElementById('geometry_controls').style.display = "none";
+    document.getElementById('shape_controls').style.display = "none";
+    document.getElementById('images_controls').style.display = "none";
+    document.getElementById('img_controls').style.display = "none";  
+}
+
+function displayDrawTools() {
+    const sidemenuTexts = document.getElementsByClassName("sidemenu_text_display");
+    for (let i = 0; i < sidemenuTexts.length; i++) {
+        sidemenuTexts[i].style.display = "none";
+    }
+    const sidemenuDraws = document.getElementsByClassName("sidemenu_draw_display");
+    for (let i = 0; i < sidemenuDraws.length; i++) {
+        sidemenuDraws[i].style.display = "flex";
+    }
+    const sidemenuShapes = document.getElementsByClassName("sidemenu_shape_display");
+    for (let i = 0; i < sidemenuShapes.length; i++) {
+        sidemenuShapes[i].style.display = "none";
+    }
+    const sidemenuImgs = document.getElementsByClassName("sidemenu_img_display");
+    for (let i = 0; i < sidemenuImgs.length; i++) {
+        sidemenuImgs[i].style.display = "none";
+    }
+    document.getElementById('drawer_controls').style.display = "flex";
+    document.getElementById('pencil_controls').style.display = "flex";
+    document.getElementById('writer_controls').style.display = "none";
+    document.getElementById('editor_controls').style.display = "none";
+    document.getElementById('geometry_controls').style.display = "none";
+    document.getElementById('shape_controls').style.display = "none";
+    document.getElementById('images_controls').style.display = "none";
+    document.getElementById('img_controls').style.display = "none";
+}
+
+function displayShapeTools() {
+    const sidemenuTexts = document.getElementsByClassName("sidemenu_text_display");
+    for (let i = 0; i < sidemenuTexts.length; i++) {
+        sidemenuTexts[i].style.display = "none";
+    }
+    const sidemenuDraws = document.getElementsByClassName("sidemenu_draw_display");
+    for (let i = 0; i < sidemenuDraws.length; i++) {
+        sidemenuDraws[i].style.display = "none";
+    }
+    const sidemenuShapes = document.getElementsByClassName("sidemenu_shape_display");
+    for (let i = 0; i < sidemenuShapes.length; i++) {
+        sidemenuShapes[i].style.display = "flex";
+    }
+    const sidemenuImgs = document.getElementsByClassName("sidemenu_img_display");
+    for (let i = 0; i < sidemenuImgs.length; i++) {
+        sidemenuImgs[i].style.display = "none";
+    }
+    document.getElementById('writer_controls').style.display = "none";
+    document.getElementById('editor_controls').style.display = "none";
+    document.getElementById('drawer_controls').style.display = "none";
+    document.getElementById('pencil_controls').style.display = "none";
+    document.getElementById('geometry_controls').style.display = "flex";
+    document.getElementById('shape_controls').style.display = "flex";
+    document.getElementById('images_controls').style.display = "none";
+    document.getElementById('img_controls').style.display = "none";
+}
+
+function displayImgTools() {
+    const sidemenuTexts = document.getElementsByClassName("sidemenu_text_display");
+    for (let i = 0; i < sidemenuTexts.length; i++) {
+        sidemenuTexts[i].style.display = "none";
+    }
+    const sidemenuDraws = document.getElementsByClassName("sidemenu_draw_display");
+    for (let i = 0; i < sidemenuDraws.length; i++) {
+        sidemenuDraws[i].style.display = "none";
+    }
+    const sidemenuShapes = document.getElementsByClassName("sidemenu_shape_display");
+    for (let i = 0; i < sidemenuShapes.length; i++) {
+        sidemenuShapes[i].style.display = "none";
+    }
+    const sidemenuImgs = document.getElementsByClassName("sidemenu_img_display");
+    for (let i = 0; i < sidemenuImgs.length; i++) {
+        sidemenuImgs[i].style.display = "flex";
+    }
+    document.getElementById('writer_controls').style.display = "none";
+    document.getElementById('editor_controls').style.display = "none";
+    document.getElementById('drawer_controls').style.display = "none";
+    document.getElementById('pencil_controls').style.display = "none";
+    document.getElementById('geometry_controls').style.display = "none";
+    document.getElementById('shape_controls').style.display = "none";
+    document.getElementById('images_controls').style.display = "flex";
+    document.getElementById('img_controls').style.display = "flex";
+}
+
 
 if (document.getElementById("writepdfbtn") !== undefined && document.getElementById("writepdfbtn") !== null) {
     writePdfBtn = document.getElementById("writepdfbtn");
@@ -975,14 +1055,7 @@ if (document.getElementById("writepdfbtn") !== undefined && document.getElementB
         resetAllModes();
         highlightTextButton();
         if (fileLoaded && !encrypted) {
-            document.getElementById('writer_controls').style.display = "flex";
-            document.getElementById('editor_controls').style.display = "flex";
-            document.getElementById('drawer_controls').style.display = "none";
-            document.getElementById('pencil_controls').style.display = "none";
-            document.getElementById('geometry_controls').style.display = "none";
-            document.getElementById('shape_controls').style.display = "none";
-            document.getElementById('images_controls').style.display = "none";
-            document.getElementById('img_controls').style.display = "none";
+            displayTextTools();
         }
     }, false);
 }
@@ -994,14 +1067,7 @@ if (document.getElementById("drawpdfbtn") !== undefined && document.getElementBy
         resetAllModes();
         highlightDrawButton();
         if (fileLoaded && !encrypted) {
-            document.getElementById('drawer_controls').style.display = "flex";
-            document.getElementById('pencil_controls').style.display = "flex";
-            document.getElementById('writer_controls').style.display = "none";
-            document.getElementById('editor_controls').style.display = "none";
-            document.getElementById('geometry_controls').style.display = "none";
-            document.getElementById('shape_controls').style.display = "none";
-            document.getElementById('images_controls').style.display = "none";
-            document.getElementById('img_controls').style.display = "none";
+            displayDrawTools();
         }
     }, false);
 }
@@ -1013,14 +1079,7 @@ if (document.getElementById("geometrybtn") !== undefined && document.getElementB
         resetAllModes();
         highlightShapeButton();
         if (fileLoaded && !encrypted) {
-            document.getElementById('writer_controls').style.display = "none";
-            document.getElementById('editor_controls').style.display = "none";
-            document.getElementById('drawer_controls').style.display = "none";
-            document.getElementById('pencil_controls').style.display = "none";
-            document.getElementById('geometry_controls').style.display = "flex";
-            document.getElementById('shape_controls').style.display = "flex";
-            document.getElementById('images_controls').style.display = "none";
-            document.getElementById('img_controls').style.display = "none";
+            displayShapeTools();
         }
     }, false);
 }
@@ -1032,14 +1091,7 @@ if (document.getElementById("imagesbtn") !== undefined && document.getElementByI
         resetAllModes();
         highlightImageButton();
         if (fileLoaded && !encrypted) {
-            document.getElementById('writer_controls').style.display = "none";
-            document.getElementById('editor_controls').style.display = "none";
-            document.getElementById('drawer_controls').style.display = "none";
-            document.getElementById('pencil_controls').style.display = "none";
-            document.getElementById('geometry_controls').style.display = "none";
-            document.getElementById('shape_controls').style.display = "none";
-            document.getElementById('images_controls').style.display = "flex";
-            document.getElementById('img_controls').style.display = "flex";
+            displayImgTools();
         }
     }, false);
 }

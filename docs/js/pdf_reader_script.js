@@ -65,7 +65,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
         for (let i = 0; i < noPDFErrorWidgets.length; i++) {
             noPDFErrorWidgets[i].style.display = "none";
         }
-        for (let i = 0; i < noPDFErrorWidgets.length; i++) {
+        for (let i = 0; i < pagesErrorWidgets.length; i++) {
             pagesErrorWidgets[i].style.display = "none";
         }
         file = e.target.files[0];

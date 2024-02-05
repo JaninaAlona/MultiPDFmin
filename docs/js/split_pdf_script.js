@@ -17,13 +17,17 @@ const splitter = Vue.createApp({
     },
     methods: {
         selectFile(e) {
-            let encryptedErrorWidgets = document.getElementsByClassName("encrypted_error");
+            const encryptedErrorWidgets = document.getElementsByClassName("encrypted_error");
+            const noPDFErrorWidgets = document.getElementsByClassName("no_pdf_error");
+            const pagesErrorWidgets = document.getElementsByClassName("pages_error");
             for (let i = 0; i < encryptedErrorWidgets.length; i++) {
                 encryptedErrorWidgets[i].style.display = "none";
             }
-            let noPDFErrorWidgets = document.getElementsByClassName("no_pdf_error");
             for (let i = 0; i < noPDFErrorWidgets.length; i++) {
                 noPDFErrorWidgets[i].style.display = "none";
+            }
+            for (let i = 0; i < pagesErrorWidgets.length; i++) {
+                pagesErrorWidgets[i].style.display = "none";
             }
             pdfBytesList = [];
             const file = e.target.files[0];
@@ -37,26 +41,30 @@ const splitter = Vue.createApp({
                         srcPDFDoc = await PDFDocument.load(selectedPDFBytes);
                     } catch(encryptedErr) {
                         this.isEncrypted = true;
-                        encryptedErrorWidgets = document.getElementsByClassName("encrypted_error");
                         for (let i = 0; i < encryptedErrorWidgets.length; i++) {
                             encryptedErrorWidgets[i].style.display = "flex";
                         }
                     }
-                    if (!this.isEncrypted && srcPDFDoc.getPages().length <= 5000) {
-                        if (srcPDFDoc.getPages().length === 1) {
-                            document.getElementById('split_after').disabled = true;
-                        } else {
-                            pdfToSplit = file.name;
-                            if (pdfToSplit.length > 54) {
-                                pdfToSplit = pdfToSplit.substring(0, 50).concat(pdfToSplit.substring(pdfToSplit.length-4, pdfToSplit.length));
+                    if (!this.isEncrypted) {
+                        if (srcPDFDoc.getPages().length <= 5000) {
+                            if (srcPDFDoc.getPages().length === 1) {
+                                document.getElementById('split_after').disabled = true;
+                            } else {
+                                pdfToSplit = file.name;
+                                if (pdfToSplit.length > 54) {
+                                    pdfToSplit = pdfToSplit.substring(0, 50).concat(pdfToSplit.substring(pdfToSplit.length-4, pdfToSplit.length));
+                                }
+                                document.getElementById("fileselected").innerText = pdfToSplit;
+                                document.getElementById("maxSplitP").innerText = srcPDFDoc.getPages().length;
+                                document.getElementById('split_after').disabled = false;
                             }
-                            document.getElementById("fileselected").innerText = pdfToSplit;
-                            document.getElementById("maxSplitP").innerText = srcPDFDoc.getPages().length;
-                            document.getElementById('split_after').disabled = false;
+                        } else {
+                            for (let i = 0; i < noPDFErrorWidgets.length; i++) {
+                                pagesErrorWidgets[i].style.display = "flex";
+                            }
                         }
                     }
                 } else {
-                    noPDFErrorWidgets = document.getElementsByClassName("no_pdf_error");
                     for (let i = 0; i < noPDFErrorWidgets.length; i++) {
                         noPDFErrorWidgets[i].style.display = "flex";
                     }

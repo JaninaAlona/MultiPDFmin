@@ -1,19 +1,22 @@
 .pdf_widget {
-    position: relative;
-    top: 78px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    z-index: 5;
+  position: relative;
+  top: 78px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
 }
 
 .error_widget_con {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .error_widget {
   display: none;
+  justify-content: center;
+  align-items: center;
   z-index: 10;
   background-color: #dabdb6;
   padding: 20px;
@@ -23,11 +26,11 @@
 }
 
 .pop_up legend {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 .space_btw_radio {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .radio_offset {
@@ -48,14 +51,14 @@
 }
 
 .pop_up {
-    background-color: #dabdb6;
-    padding: 20px;
-    border-radius: 2px;
+  background-color: #dabdb6;
+  padding: 20px;
+  border-radius: 2px;
 }
 
 #create_pop_up {
-    width: 500px;
-    height: 370px;
+  width: 500px;
+  height: 370px;
 }
 
 .create_orientation {
@@ -68,7 +71,7 @@
 }
 
 .pop_bottom_pad {
-    padding-bottom: 20px;
+  padding-bottom: 20px;
 }
 
 .split_widget {
@@ -76,8 +79,8 @@
 }
 
 #split_pop_up {
-    width: 500px;
-    height: 330px
+  width: 500px;
+  height: 330px
 }
 
 #merge_pop_up {
@@ -127,10 +130,6 @@
 .filename_hover_split:hover {
   display: flex;
   flex-direction: column;
-}
-
-.merge_widget {
-  height: 700px;
 }
 
 .scrollwrapper {

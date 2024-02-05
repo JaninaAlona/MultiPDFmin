@@ -88,33 +88,21 @@ const splitter = Vue.createApp({
                     document.getElementsByClassName('splitlist')[0].disabled = true;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
-                    this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
-                    splitPDFfilename = this.outputName +  '_split';
-                    document.getElementById("split_filename").value = splitPDFfilename;
                     break;
                 case 2:
                     document.getElementsByClassName('splitlist')[0].disabled = true;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
-                    this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
-                    splitPDFfilename = this.outputName +  '_split';
-                    document.getElementById("split_filename").value = splitPDFfilename;
                     break;
                 case 3:
                     document.getElementsByClassName('splitlist')[0].disabled = true;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
-                    this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
-                    splitPDFfilename = this.outputName +  '_split';
-                    document.getElementById("split_filename").value = splitPDFfilename;
                     break;
                 case 4:
                     document.getElementsByClassName('splitlist')[0].disabled = false;
                     document.getElementById('save_split').disabled = false;
                     document.getElementById('save_split').classList.add("enable_filename");
-                    this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
-                    splitPDFfilename = this.outputName +  '_split';
-                    document.getElementById("split_filename").value = splitPDFfilename;
                     break;
             }
         },

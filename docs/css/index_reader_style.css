@@ -177,12 +177,15 @@ html {
 .error_widget_con {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .error_widget {
     background-color: #dabdb6;
     padding: 20px;
     display: none;
+    justify-content: center;
+    align-items: center;
     position: relative;
     top: 78px;
     width: 500px;

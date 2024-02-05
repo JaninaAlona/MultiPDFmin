@@ -12,7 +12,6 @@ let pdfState = {
 
 let startRender;
 let endRender;
-
 let pageCounter = 1;
 let customFilename;
 let file;
@@ -46,6 +45,9 @@ let drawPdfBtn;
 let geometryBtn;
 let imagesBtn;
 let encrypted;
+let pagesError = false;
+let encryptedError = false;
+let noPDFError = false;
 const saveZoom = 5;
 
 
@@ -56,6 +58,16 @@ for (let i = 0; i < inputFileButtons.length; i++) {
         cleanUp();
         const encryptedErrorWidgets = document.getElementsByClassName("encrypted_error");
         const noPDFErrorWidgets = document.getElementsByClassName("no_pdf_error");
+        const pagesErrorWidgets = document.getElementsByClassName("pages_error");
+        for (let i = 0; i < encryptedErrorWidgets.length; i++) {
+            encryptedErrorWidgets[i].style.display = "none";
+        }
+        for (let i = 0; i < noPDFErrorWidgets.length; i++) {
+            noPDFErrorWidgets[i].style.display = "none";
+        }
+        for (let i = 0; i < noPDFErrorWidgets.length; i++) {
+            pagesErrorWidgets[i].style.display = "none";
+        }
         file = e.target.files[0];
         const fileReader = new FileReader(); 
         fileReader.onload = function() {
@@ -71,62 +83,65 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                     encrypted = true;
                 }
                 if (!encrypted) {
-                    if (file.name.endsWith(".pdf") && pdf._pdfInfo.numPages <= 5000) {
-                        for (let i = 0; i < encryptedErrorWidgets.length; i++) {
-                            encryptedErrorWidgets[i].style.display = "none";
+                    if (pdf._pdfInfo.numPages <= 5000) {
+                        if (file.name.endsWith(".pdf")) {
+                            pdfState.pdf = pdf;
+                            onetimeSetup = true;
+                            pdfFileName = file.name;
+                            document.getElementById("current_page").value = 1;
+                            let pdfViewers = document.getElementsByClassName("pdf_viewer")
+                            for (let i = 0; i < pdfViewers.length; i++) {
+                                pdfViewers[i].style.display = "flex";
+                            }
+                            document.getElementById("reader_controls").style.display = "flex";
+                            document.getElementById("viewer_bg").style.display = "flex";
+                            document.getElementById('maxPDFPages').innerHTML = pdf._pdfInfo.numPages + " pages";
+                            pdfState.lastPage = pdf._pdfInfo.numPages;
+                            restrictInputValues('zoom_factor', 1, 800, true, false);
+                            setCustomFilename();
+                            const scrollwrappers = document.getElementsByClassName('scrollwrapper');
+                            for(let i = 0; i < scrollwrappers.length; i++) {
+                                scrollwrappers[i].scrollTo(0, 0);
+                            }
+                            adjustPDFToUserViewport(pdfDoc);
+                            pdfState.renderedPage = 0;
+                            const saveWidgetCons = document.getElementsByClassName("save_widget_con");
+                            for (let i = 0; i < saveWidgetCons.length; i++) {
+                                saveWidgetCons[i].style.display = "none";
+                            }
+                            const saveWidgets = document.getElementsByClassName("save_widget");
+                            for (let i = 0; i < saveWidgets.length; i++) {
+                                saveWidgets[i].style.display = "none";
+                            }
+                            const renderWidgetCons = document.getElementsByClassName("render_widget_con");
+                            for (let i = 0; i < renderWidgetCons.length; i++) {
+                                renderWidgetCons[i].style.display = "flex";
+                            }
+                            const renderWidgets = document.getElementsByClassName("render_widget");
+                            for (let i = 0; i < renderWidgets.length; i++) {
+                                renderWidgets[i].style.display = "flex";
+                            }
+                            const pageProgresses = document.getElementsByClassName("page_progress");
+                            for (let i = 0; i < pageProgresses.length; i++) {
+                                pageProgresses[i].innerText = `${pdfState.renderedPage}`;
+                            }
+                            startRender = performance.now();
+                            await renderPage(pageCounter, false);
                         }
-                        for (let i = 0; i < noPDFErrorWidgets.length; i++) {
-                            noPDFErrorWidgets[i].style.display = "none";
+                    } else {
+                        pagesError = true;
+                        for (let i = 0; i < pagesErrorWidgets.length; i++) {
+                            pagesErrorWidgets[i].style.display = "flex";
                         }
-                        pdfState.pdf = pdf;
-                        onetimeSetup = true;
-                        pdfFileName = file.name;
-                        document.getElementById("current_page").value = 1;
-                        let pdfViewers = document.getElementsByClassName("pdf_viewer")
-                        for (let i = 0; i < pdfViewers.length; i++) {
-                            pdfViewers[i].style.display = "flex";
-                        }
-                        document.getElementById("reader_controls").style.display = "flex";
-                        document.getElementById("viewer_bg").style.display = "flex";
-                        document.getElementById('maxPDFPages').innerHTML = pdf._pdfInfo.numPages + " pages";
-                        pdfState.lastPage = pdf._pdfInfo.numPages;
-                        restrictInputValues('zoom_factor', 1, 800, true, false);
-                        setCustomFilename();
-                        const scrollwrappers = document.getElementsByClassName('scrollwrapper');
-                        for(let i = 0; i < scrollwrappers.length; i++) {
-                            scrollwrappers[i].scrollTo(0, 0);
-                        }
-                        adjustPDFToUserViewport(pdfDoc);
-                        pdfState.renderedPage = 0;
-                        const saveWidgetCons = document.getElementsByClassName("save_widget_con");
-                        for (let i = 0; i < saveWidgetCons.length; i++) {
-                            saveWidgetCons[i].style.display = "none";
-                        }
-                        const saveWidgets = document.getElementsByClassName("save_widget");
-                        for (let i = 0; i < saveWidgets.length; i++) {
-                            saveWidgets[i].style.display = "none";
-                        }
-                        const renderWidgetCons = document.getElementsByClassName("render_widget_con");
-                        for (let i = 0; i < renderWidgetCons.length; i++) {
-                            renderWidgetCons[i].style.display = "flex";
-                        }
-                        const renderWidgets = document.getElementsByClassName("render_widget");
-                        for (let i = 0; i < renderWidgets.length; i++) {
-                            renderWidgets[i].style.display = "flex";
-                        }
-                        const pageProgresses = document.getElementsByClassName("page_progress");
-                        for (let i = 0; i < pageProgresses.length; i++) {
-                            pageProgresses[i].innerText = `${pdfState.renderedPage}`;
-                        }
-                        startRender = performance.now();
-                        await renderPage(pageCounter, false);
                     }
                 } else {
+                    encryptedError = true;
                     for (let i = 0; i < encryptedErrorWidgets.length; i++) {
                         encryptedErrorWidgets[i].style.display = "flex";
                     }
                 }
             }).catch(unsupportedFileErr => {
+                noPDFError = true;
                 for (let i = 0; i < noPDFErrorWidgets.length; i++) {
                     noPDFErrorWidgets[i].style.display = "flex";
                 }
@@ -181,6 +196,9 @@ function resetRendering() {
     pdfState.existingPDFBytes = null;
     pdfState.originalWidths = [];
     pdfState.originalHeights = [];
+    noPDFError = false;
+    encryptedError = false;
+    pagesError = false;
 }
 
 
@@ -897,56 +915,58 @@ function resetAllModes() {
 if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && document.getElementsByClassName("display_edit_ctls")[0] !== null) {
     displayEditControls = document.getElementsByClassName("display_edit_ctls")[0];
     displayEditControls.addEventListener("change", function() {
-        if (!encrypted && fileLoaded) {
-            document.getElementById('layer_stack').style.display = "flex";
-            const sidemenus = document.getElementsByClassName("sidemenu");
-            for (let i = 0; i < sidemenus.length; i++) {
-                sidemenus[i].style.display = "flex";
+        setTimeout(function() {
+            if (!encryptedError && !pagesError && !noPDFError && fileLoaded) {
+                document.getElementById('layer_stack').style.display = "flex";
+                const sidemenus = document.getElementsByClassName("sidemenu");
+                for (let i = 0; i < sidemenus.length; i++) {
+                    sidemenus[i].style.display = "flex";
+                }
+                if (displayEditControls.getAttribute("data-mode") === "edit_text") {
+                    displayTextTools();
+                }
+                if (displayEditControls.getAttribute("data-mode") === "edit_draw") {
+                    displayDrawTools();
+                }
+                if (displayEditControls.getAttribute("data-mode") === "edit_shape") {
+                    displayShapeTools();
+                }
+                if (displayEditControls.getAttribute("data-mode") === "edit_image") {
+                    displayImgTools();
+                }
+                document.getElementById("reader_controls").style.display = "flex";
+                const saveWidgetCons = document.getElementsByClassName("save_widget_con");
+                for (let i = 0; i < saveWidgetCons.length; i++) {
+                    saveWidgetCons[i].style.display = "none";
+                }
+                const saveWidgets = document.getElementsByClassName("save_widget");
+                for (let i = 0; i < saveWidgets.length; i++) {
+                    saveWidgets[i].style.display = "none";
+                }
+                const renderWidgetCons = document.getElementsByClassName("render_widget_con");
+                for (let i = 0; i < renderWidgetCons.length; i++) {
+                    renderWidgetCons[i].style.display = "flex";
+                }
+                const renderWidgets = document.getElementsByClassName("render_widget");
+                for (let i = 0; i < renderWidgets.length; i++) {
+                    renderWidgets[i].style.display = "flex";
+                }
+                const pageProgresses = document.getElementsByClassName("page_progress");
+                for (let i = 0; i < pageProgresses.length; i++) {
+                    pageProgresses[i].innerText = `${pdfState.renderedPage}`;
+                }
+                document.getElementById("viewer_bg").style.display = "flex";
+                const sidemenuWrappers = document.getElementsByClassName("sidemenu_wrapper");
+                for (let i = 0; i < sidemenuWrappers.length; i++) {
+                    sidemenuWrappers[i].scrollTo(0, 0);
+                }
+                const layerStackWrappers = document.getElementsByClassName("layer_stack_wrapper");
+                for (let i = 0; i < layerStackWrappers.length; i++) {
+                    layerStackWrappers[i].scrollTo(0, 0);
+                }
+                setTimeout(initEditor, 300);
             }
-            if (displayEditControls.getAttribute("data-mode") === "edit_text") {
-                displayTextTools();
-            }
-            if (displayEditControls.getAttribute("data-mode") === "edit_draw") {
-                displayDrawTools();
-            }
-            if (displayEditControls.getAttribute("data-mode") === "edit_shape") {
-                displayShapeTools();
-            }
-            if (displayEditControls.getAttribute("data-mode") === "edit_image") {
-                displayImgTools();
-            }
-            document.getElementById("reader_controls").style.display = "flex";
-            const saveWidgetCons = document.getElementsByClassName("save_widget_con");
-            for (let i = 0; i < saveWidgetCons.length; i++) {
-                saveWidgetCons[i].style.display = "none";
-            }
-            const saveWidgets = document.getElementsByClassName("save_widget");
-            for (let i = 0; i < saveWidgets.length; i++) {
-                saveWidgets[i].style.display = "none";
-            }
-            const renderWidgetCons = document.getElementsByClassName("render_widget_con");
-            for (let i = 0; i < renderWidgetCons.length; i++) {
-                renderWidgetCons[i].style.display = "flex";
-            }
-            const renderWidgets = document.getElementsByClassName("render_widget");
-            for (let i = 0; i < renderWidgets.length; i++) {
-                renderWidgets[i].style.display = "flex";
-            }
-            const pageProgresses = document.getElementsByClassName("page_progress");
-            for (let i = 0; i < pageProgresses.length; i++) {
-                pageProgresses[i].innerText = `${pdfState.renderedPage}`;
-            }
-            document.getElementById("viewer_bg").style.display = "flex";
-            const sidemenuWrappers = document.getElementsByClassName("sidemenu_wrapper");
-            for (let i = 0; i < sidemenuWrappers.length; i++) {
-                sidemenuWrappers[i].scrollTo(0, 0);
-            }
-            const layerStackWrappers = document.getElementsByClassName("layer_stack_wrapper");
-            for (let i = 0; i < layerStackWrappers.length; i++) {
-                layerStackWrappers[i].scrollTo(0, 0);
-            }
-            setTimeout(initEditor, 300);
-        }
+        }, 1300);
     }, false);
 }
 

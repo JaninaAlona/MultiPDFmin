@@ -262,7 +262,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                     saveWidgets[i].style.display = "none";
                 }
                 const endSave = performance.now();
-                console.log(`Execution time of Merger: ${endSave - startSave} ms`);
+                console.log(`Execution time of Editor: ${endSave - startSave} ms`);
             });
         } else {
 
@@ -282,7 +282,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                     saveWidgets[i].style.display = "none";
                 }
                 const endSave = performance.now();
-                console.log(`Execution time of Merger: ${endSave - startSave} ms`);
+                console.log(`Execution time: ${endSave - startSave} ms`);
             });
         }
     }, false);

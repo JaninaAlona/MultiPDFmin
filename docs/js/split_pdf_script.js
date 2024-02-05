@@ -129,7 +129,7 @@ const splitter = Vue.createApp({
                     console.log(step);
                     console.log("finished");
                     const endSplit = performance.now();
-                    console.log(`Execution time of Merger: ${endSplit - startSplit} ms`);
+                    console.log(`Execution time of Splitter: ${endSplit - startSplit} ms`);
                 });
                 splittedPDFs = [];
                 pdfBytesList = [];

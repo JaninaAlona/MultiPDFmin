@@ -76,15 +76,15 @@ for (let i = 0; i < inputFileButtons.length; i++) {
             pdfState.existingPDFBytes = pdfState.originalPDFBytes;
             const loadingTask = pdfjsLib.getDocument(typedarray);
             loadingTask.promise.then(async (pdf) => {
-                let pdfDoc;
-                try {
-                    pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
-                } catch(encryptedErr) {
-                    encrypted = true;
-                }
-                if (!encrypted) {
-                    if (pdf._pdfInfo.numPages <= 5000) {
-                        if (file.name.endsWith(".pdf")) {
+                if (file.name.endsWith(".pdf")) {
+                    let pdfDoc;
+                    try {
+                        pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
+                    } catch(encryptedErr) {
+                        encrypted = true;
+                    }
+                    if (!encrypted) {
+                        if (pdf._pdfInfo.numPages <= 5000) {
                             pdfState.pdf = pdf;
                             onetimeSetup = true;
                             pdfFileName = file.name;
@@ -127,17 +127,17 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             }
                             startRender = performance.now();
                             await renderPage(pageCounter, false);
+                        } else {
+                            pagesError = true;
+                            for (let i = 0; i < pagesErrorWidgets.length; i++) {
+                                pagesErrorWidgets[i].style.display = "flex";
+                            }
                         }
                     } else {
-                        pagesError = true;
-                        for (let i = 0; i < pagesErrorWidgets.length; i++) {
-                            pagesErrorWidgets[i].style.display = "flex";
+                        encryptedError = true;
+                        for (let i = 0; i < encryptedErrorWidgets.length; i++) {
+                            encryptedErrorWidgets[i].style.display = "flex";
                         }
-                    }
-                } else {
-                    encryptedError = true;
-                    for (let i = 0; i < encryptedErrorWidgets.length; i++) {
-                        encryptedErrorWidgets[i].style.display = "flex";
                     }
                 }
             }).catch(unsupportedFileErr => {

@@ -54,7 +54,11 @@ const splitter = Vue.createApp({
                                 if (pdfToSplit.length > 54) {
                                     pdfToSplit = pdfToSplit.substring(0, 50).concat(pdfToSplit.substring(pdfToSplit.length-4, pdfToSplit.length));
                                 }
+                                this.outputName = pdfToSplit.substring(0, pdfToSplit.length - 4);
+                                splitPDFfilename = this.outputName +  '_split';
+                                document.getElementById("split_filename").value = splitPDFfilename;
                                 document.getElementById("fileselected").innerText = pdfToSplit;
+                                document.getElementById("split_filename").value;
                                 document.getElementById("maxSplitP").innerText = srcPDFDoc.getPages().length;
                                 document.getElementById('split_after').disabled = false;
                             }

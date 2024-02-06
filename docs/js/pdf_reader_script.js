@@ -72,20 +72,22 @@ for (let i = 0; i < inputFileButtons.length; i++) {
         const fileReader = new FileReader(); 
         fileReader.onload = function() {
             const typedarray = new Uint8Array(this.result);
-            pdfState.originalPDFBytes = typedarray;
-            pdfState.existingPDFBytes = pdfState.originalPDFBytes;
+            const pdfBytes = typedarray;
             const loadingTask = pdfjsLib.getDocument(typedarray);
             loadingTask.promise.then(async (pdf) => {
                 if (file.name.endsWith(".pdf")) {
                     let pdfDoc;
                     try {
-                        pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
+                        pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
                     } catch(encryptedErr) {
                         encrypted = true;
                     }
                     if (!encrypted) {
                         if (pdf._pdfInfo.numPages <= 5000) {
                             pdfState.pdf = pdf;
+                            const savedBytes = await pdfDoc.save();
+                            pdfState.originalPDFBytes = savedBytes;
+                            pdfState.existingPDFBytes = pdfState.originalPDFBytes;
                             onetimeSetup = true;
                             pdfFileName = file.name;
                             document.getElementById("current_page").value = 1;

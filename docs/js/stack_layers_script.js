@@ -213,6 +213,7 @@ function moveLayer(target) {
                         droppedpos = it; 
                     }
                 }
+                const srcPage = parseInt(current.getAttribute("data-page"), 10);
                 let canvasToMove;
                 let controlPToMove;
                 let elementToMove;
@@ -235,108 +236,38 @@ function moveLayer(target) {
                     controlPToMove = userImageList[canvasIndex].controlBox;
                     elementToMove = userImageList[canvasIndex].elementToControl;
                 }
-                const writeLayers = document.getElementsByClassName("edit_viewer")[0].getElementsByClassName("write_layer");
-                const srcPage = parseInt(current.getAttribute("data-page"), 10);
-                let destPage = 1;
-                if (currentpos < droppedpos) {   
-                    destPage = parseInt(i.getAttribute("data-page"), 10);
-                    console.log(destPage + "<");
-                    const destIndex = parseInt(i.getAttribute("data-index"), 10);
-                    let destWriteLayer;
-                    for (let j = 0; j < writeLayers.length; j++) {
-                        if (parseInt(writeLayers[j].getAttribute('data-write'), 10) === destPage) {
-                            destWriteLayer = writeLayers[j];
-                        }
-                    }
-                    let controlGroup;
-                    if (destWriteLayer.getElementsByClassName("control_group").length === 0) {
-                        controlGroup = document.createElement("div");
-                        controlGroup.style.position = "absolute";
-                        controlGroup.style.top = 0;
-                        controlGroup.setAttribute('data-page', destWriteLayer.getAttribute("data-write"));
-                        controlGroup.classList.add("control_group");
-                        destWriteLayer.appendChild(controlGroup);
-                    } else {
-                        controlGroup = destWriteLayer.getElementsByClassName("control_group")[0];
-                    }
-                    const editImgGroup = destWriteLayer.getElementsByClassName("editimg_group")[0];
-                    let destCanvas;
-                    const destCanvases = editImgGroup.getElementsByClassName("editimg");
-                    for (let j = 0; j < destCanvases.length; j++) {
-                        if (parseInt(destCanvases[j].getAttribute('data-index'), 10) === destIndex) {
-                            destCanvas = destCanvases[j];
-                        }
-                    }
-                    let destControlP;
-                    const destControlPs = controlGroup.getElementsByClassName("box");
-                    for (let j = 0; j < destControlPs.length; j++) {
-                        if (parseInt(destControlPs[j].getAttribute('data-index'), 10) === destIndex) {
-                            destControlP = destControlPs[j];
-                        }
-                    }
-                    i.parentNode.insertBefore(current, i.nextSibling);
-                    if (((controlGroup.getElementsByClassName("box").length > 1) || (controlGroup.getElementsByClassName("box").length === 1) && srcPage !== destPage)) {
-                        destCanvas.parentNode.insertBefore(canvasToMove, destCanvas.nextSibling);
-                        destControlP.parentNode.insertBefore(controlPToMove, destControlP.nextSibling);
-                    } else if (controlGroup.getElementsByClassName("box").length === 1 && srcPage === destPage) {
-                        destCanvas.parentNode.insertBefore(canvasToMove, destCanvas.nextSibling);
-                    } else if (controlGroup.getElementsByClassName("box").length === 0) {
-                        destCanvas.parentNode.insertBefore(canvasToMove, destCanvas.nextSibling);
-                        controlGroup.appendChild(controlPToMove);
-                    }
-                } else {
-                    destPage = parseInt(i.getAttribute("data-page"), 10);
-                    console.log(destPage + ">=");
-                    const destIndex = parseInt(i.getAttribute("data-index"), 10);
-                    let destWriteLayer;
-                    for (let j = 0; j < writeLayers.length; j++) {
-                        if (parseInt(writeLayers[j].getAttribute('data-write'), 10) === destPage) {
-                            destWriteLayer = writeLayers[j];
-                        }
-                    }
-                    let controlGroup;
-                    if (destWriteLayer.getElementsByClassName("control_group").length === 0) {
-                        controlGroup = document.createElement("div");
-                        controlGroup.style.position = "absolute";
-                        controlGroup.style.top = 0;
-                        controlGroup.setAttribute('data-page', destWriteLayer.getAttribute("data-write"));
-                        controlGroup.classList.add("control_group");
-                        destWriteLayer.appendChild(controlGroup);
-                    } else {
-                        controlGroup = destWriteLayer.getElementsByClassName("control_group")[0];
-                    }
-                    const editImgGroup = destWriteLayer.getElementsByClassName("editimg_group")[0];
-                    let destCanvas;
-                    const destCanvases = editImgGroup.getElementsByClassName("editimg");
-                    for (let j = 0; j < destCanvases.length; j++) {
-                        if (parseInt(destCanvases[j].getAttribute('data-index'), 10) === destIndex) {
-                            destCanvas = destCanvases[j];
-                        }
-                    }
-                    let destControlP;
-                    const destControlPs = controlGroup.getElementsByClassName("box");
-                    for (let j = 0; j < destControlPs.length; j++) {
-                        if (parseInt(destControlPs[j].getAttribute('data-index'), 10) === destIndex) {
-                            destControlP = destControlPs[j];
-                        }
-                    }
-                    i.parentNode.insertBefore(current, i);
-                    if (((controlGroup.getElementsByClassName("box").length > 1) || (controlGroup.getElementsByClassName("box").length === 1) && srcPage !== destPage)) {
-                        destCanvas.parentNode.insertBefore(canvasToMove, destCanvas);
-                        destControlP.parentNode.insertBefore(controlPToMove, destControlP);
-                    } else if (controlGroup.getElementsByClassName("box").length === 1 && srcPage === destPage) {
-                        destCanvas.parentNode.insertBefore(canvasToMove, destCanvas);
-                    } else if (controlGroup.getElementsByClassName("box").length === 0) {
-                        destCanvas.parentNode.insertBefore(canvasToMove, destCanvas);
-                        controlGroup.appendChild(controlPToMove);
-                    }
+                let destPage = parseInt(i.getAttribute("data-page"), 10);
+                let destCanvas;
+                let destControlP;
+                const destCanvasIndex = parseInt(i.getAttribute('data-index'), 10);
+                const destCanvasType = i.getAttribute('data-type');
+                if (destCanvasType === "shape") {
+                    destCanvas = geometryPointsList[destCanvasIndex].editImg;
+                    destControlP = geometryPointsList[destCanvasIndex].controlBox;
+                } else if (destCanvasType === "text") {
+                    destCanvas = userTextList[destCanvasIndex].editImg;
+                    destControlP = userTextList[destCanvasIndex].controlBox;
+                } else if (destCanvasType === "drawing") {
+                    destCanvas = drawLayerStack[destCanvasIndex].editImg;
+                    destControlP = drawLayerStack[destCanvasIndex].controlBox;
+                } else if (destCanvasType === "image") {
+                    destCanvas = userImageList[destCanvasIndex].editImg;
+                    destControlP = userImageList[destCanvasIndex].controlBox;
                 }
-                controlPToMove.elementToControl = elementToMove;
+                if (currentpos < droppedpos) {   
+                    i.parentNode.insertBefore(current, i.nextSibling);
+                    destCanvas.parentNode.insertBefore(canvasToMove, destCanvas.nextSibling);
+                    destControlP.parentNode.insertBefore(controlPToMove, destControlP.nextSibling);
+                } else {
+                    i.parentNode.insertBefore(current, i);
+                    destCanvas.parentNode.insertBefore(canvasToMove, destCanvas);
+                    destControlP.parentNode.insertBefore(controlPToMove, destControlP);
+                }
                 if (srcPage !== destPage) {
                     canvasToMove.setAttribute("data-page", destPage);
                     controlPToMove.setAttribute("data-page", destPage);
                     controlPToMove.page = destPage;
-                    controlPToMove.elementToControl.page = destPage;
+                    elementToMove.page = destPage;
                     current.setAttribute("data-page", destPage);
                     let eyeLabel = current.children[0];
                     eyeLabel.setAttribute("data-page", destPage);

@@ -937,26 +937,6 @@ if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && doc
                     displayImgTools();
                 }
                 document.getElementById("reader_controls").style.display = "flex";
-                const saveWidgetCons = document.getElementsByClassName("save_widget_con");
-                for (let i = 0; i < saveWidgetCons.length; i++) {
-                    saveWidgetCons[i].style.display = "none";
-                }
-                const saveWidgets = document.getElementsByClassName("save_widget");
-                for (let i = 0; i < saveWidgets.length; i++) {
-                    saveWidgets[i].style.display = "none";
-                }
-                const renderWidgetCons = document.getElementsByClassName("render_widget_con");
-                for (let i = 0; i < renderWidgetCons.length; i++) {
-                    renderWidgetCons[i].style.display = "flex";
-                }
-                const renderWidgets = document.getElementsByClassName("render_widget");
-                for (let i = 0; i < renderWidgets.length; i++) {
-                    renderWidgets[i].style.display = "flex";
-                }
-                const pageProgresses = document.getElementsByClassName("page_progress");
-                for (let i = 0; i < pageProgresses.length; i++) {
-                    pageProgresses[i].innerText = `${pdfState.renderedPage}`;
-                }
                 document.getElementById("viewer_bg").style.display = "flex";
                 const sidemenuWrappers = document.getElementsByClassName("sidemenu_wrapper");
                 for (let i = 0; i < sidemenuWrappers.length; i++) {

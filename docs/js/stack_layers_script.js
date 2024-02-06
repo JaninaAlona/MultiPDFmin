@@ -237,9 +237,8 @@ function moveLayer(target) {
                 }
                 const writeLayers = document.getElementsByClassName("edit_viewer")[0].getElementsByClassName("write_layer");
                 const srcPage = parseInt(current.getAttribute("data-page"), 10);
-                let destPage;
                 if (currentpos < droppedpos) {   
-                    destPage = parseInt(i.getAttribute("data-page"), 10);
+                    const destPage = parseInt(i.getAttribute("data-page"), 10);
                     const destIndex = parseInt(i.getAttribute("data-index"), 10);
                     let destWriteLayer;
                     for (let j = 0; j < writeLayers.length; j++) {
@@ -274,7 +273,7 @@ function moveLayer(target) {
                         }
                     }
                     i.parentNode.insertBefore(current, i.nextSibling);
-                    if ((controlGroup.getElementsByClassName("box").length > 1) || (controlGroup.getElementsByClassName("box").length === 1 && srcPage !== destPage)) {
+                    if (((controlGroup.getElementsByClassName("box").length > 1) || (controlGroup.getElementsByClassName("box").length === 1) && srcPage !== destPage)) {
                         destCanvas.parentNode.insertBefore(canvasToMove, destCanvas.nextSibling);
                         destControlP.parentNode.insertBefore(controlPToMove, destControlP.nextSibling);
                     } else if (controlGroup.getElementsByClassName("box").length === 1 && srcPage === destPage) {
@@ -284,7 +283,7 @@ function moveLayer(target) {
                         controlGroup.appendChild(controlPToMove);
                     }
                 } else {
-                    destPage = parseInt(i.getAttribute("data-page"), 10);
+                    const destPage = parseInt(i.getAttribute("data-page"), 10);
                     const destIndex = parseInt(i.getAttribute("data-index"), 10);
                     let destWriteLayer;
                     for (let j = 0; j < writeLayers.length; j++) {
@@ -319,7 +318,7 @@ function moveLayer(target) {
                         }
                     }
                     i.parentNode.insertBefore(current, i);
-                    if ((controlGroup.getElementsByClassName("box").length > 1) || (controlGroup.getElementsByClassName("box").length === 1 && srcPage !== destPage)) {
+                    if (((controlGroup.getElementsByClassName("box").length > 1) || (controlGroup.getElementsByClassName("box").length === 1) && srcPage !== destPage)) {
                         destCanvas.parentNode.insertBefore(canvasToMove, destCanvas);
                         destControlP.parentNode.insertBefore(controlPToMove, destControlP);
                     } else if (controlGroup.getElementsByClassName("box").length === 1 && srcPage === destPage) {

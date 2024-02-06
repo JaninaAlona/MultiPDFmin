@@ -36,15 +36,17 @@ function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOpe
     inputElem.onchange = null;
     inputElem.onchange = function() {
         valToRestrict = inputElem.value;
-
+        
         // remove white space
         valToRestrict = valToRestrict.replace(/\s+/g,'');
         document.getElementById(inputId).value = valToRestrict;
 
         // valid positive/negative integer or valid float
-        if (valToRestrict.match(/^-?\d+$/) || valToRestrict.match(/^\d+\.\d+$/)) {
+        if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
+            console.log("here");
             if (parseIntOperation) {
                 valToRestrict = parseInt(valToRestrict, 10);
+                console.log(valToRestrict);
                 document.getElementById(inputId).value = valToRestrict;
             } 
             if (parseFloatOperation) {
@@ -74,7 +76,7 @@ function restrictInputZoom(inputId, min, max) {
         if (valToRestrict.charAt(valToRestrict.length - 1) === '%') {
             valToRestrict = valToRestrict.substring(0, valToRestrict.length - 1);   
         }
-        if (valToRestrict.match(/^-?\d+$/) || valToRestrict.match(/^\d+\.\d+$/)) {
+        if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
             valToRestrict = parseInt(valToRestrict, 10);
             if (valToRestrict >= min && valToRestrict <= max) {
                 document.getElementById(inputId).value = valToRestrict + "%";
@@ -92,7 +94,7 @@ function restrictInputZoom(inputId, min, max) {
 
 function convertInputToSucess(input, min, max, parseIntOperation, parseFloatOperation) {
     let outputVal = input;
-    if (outputVal.match(/^-?\d+$/) || outputVal.match(/^\d+\.\d+$/)) {
+    if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
         if (parseIntOperation) {
             outputVal = parseInt(outputVal, 10);
         } 
@@ -117,7 +119,7 @@ function convertZoomInputToSucess(desiredZoom, min, max) {
     } else {
         zoomVal = desiredZoom;
     }
-    if (zoomVal.match(/^-?\d+$/) || zoomVal.match(/^\d+\.\d+$/)) {
+    if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
         zoomVal = parseInt(zoomVal, 10);
         if (!hasPercent) {
             if (zoomVal < min || zoomVal > max) {

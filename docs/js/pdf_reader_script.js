@@ -85,11 +85,12 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                     if (!encrypted) {
                         if (pdf._pdfInfo.numPages <= 5000) {
                             pdfState.pdf = pdf;
-                            
-                            // compression 
-                            const savedBytes = await pdfDoc.save();
-                            pdfState.originalPDFBytes = savedBytes;
+                            pdfState.originalPDFBytes = pdfBytes;
                             pdfState.existingPDFBytes = pdfState.originalPDFBytes;
+                            // compression 
+                            // const savedBytes = await pdfDoc.save();
+                            // pdfState.originalPDFBytes = savedBytes;
+                            // pdfState.existingPDFBytes = pdfState.originalPDFBytes;
                             pdfFileName = file.name;
                             document.getElementById("current_page").value = 1;
                             let pdfViewers = document.getElementsByClassName("pdf_viewer")
@@ -495,10 +496,10 @@ async function renderPage(num, renderSingle) {
                 div.classList.add("write_layer");
                 canvas = document.createElement("canvas");
                 canvas.style.display = "flex";
-                canvas.style.width = viewport.width + "px";
-                canvas.style.width = viewport.height + "px";
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
+                canvas.style.width = viewport.width + "px";
+                canvas.style.height = viewport.height + "px";
                 canvas.setAttribute('data-page', pageCounter);
                 canvas.classList.add("render_context");
                 div.appendChild(canvas);

@@ -11,7 +11,6 @@ btns.addEventListener("click", function() {
     resetAllModes();
     const layerStackWrappers = document.getElementsByClassName("layer_stack_wrapper");
     if(document.getElementById("show_btns").style.display === "none") {
-        console.log("here");
         document.getElementById("show_btns").style.flexDirection = "column";
         document.getElementById("show_btns").style.display = "flex";
         for (let i = 0; i < layerStackWrappers.length; i++) {

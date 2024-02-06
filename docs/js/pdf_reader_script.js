@@ -85,9 +85,31 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                     if (!encrypted) {
                         if (pdf._pdfInfo.numPages <= 5000) {
                             pdfState.pdf = pdf;
+                            
+                            // compression 
                             const savedBytes = await pdfDoc.save();
                             pdfState.originalPDFBytes = savedBytes;
                             pdfState.existingPDFBytes = pdfState.originalPDFBytes;
+                            let readerMode = true;
+                            let editorMode = false;
+                            const openPDFs = document.getElementsByClassName("open_pdf");
+                            for (let i = 0; i < openPDFs.length; i++) {
+                                if (openPDFs[i].classList.contains("btn-outline-success")) {
+                                    readerMode = true;
+                                    break;
+                                } else if (openPDFs[i].classList.contains("btn-success")) {
+                                    readerMode = false;
+                                }
+                            }
+                            const editorBtns = document.getElementsByClassName("editor_btn");
+                            for (let i = 0; i < editorBtns.length; i++) {
+                                if (editorBtns[i].classList.contains("btn-outline-success")) {
+                                    editorMode = true;
+                                    break;
+                                } else if (editorBtns[i].classList.contains("btn-success")) {
+                                    editorMode = false;
+                                }
+                            }
                             onetimeSetup = true;
                             pdfFileName = file.name;
                             document.getElementById("current_page").value = 1;

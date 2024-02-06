@@ -90,27 +90,6 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             const savedBytes = await pdfDoc.save();
                             pdfState.originalPDFBytes = savedBytes;
                             pdfState.existingPDFBytes = pdfState.originalPDFBytes;
-                            let readerMode = true;
-                            let editorMode = false;
-                            const openPDFs = document.getElementsByClassName("open_pdf");
-                            for (let i = 0; i < openPDFs.length; i++) {
-                                if (openPDFs[i].classList.contains("btn-outline-success")) {
-                                    readerMode = true;
-                                    break;
-                                } else if (openPDFs[i].classList.contains("btn-success")) {
-                                    readerMode = false;
-                                }
-                            }
-                            const editorBtns = document.getElementsByClassName("editor_btn");
-                            for (let i = 0; i < editorBtns.length; i++) {
-                                if (editorBtns[i].classList.contains("btn-outline-success")) {
-                                    editorMode = true;
-                                    break;
-                                } else if (editorBtns[i].classList.contains("btn-success")) {
-                                    editorMode = false;
-                                }
-                            }
-                            onetimeSetup = true;
                             pdfFileName = file.name;
                             document.getElementById("current_page").value = 1;
                             let pdfViewers = document.getElementsByClassName("pdf_viewer")
@@ -148,6 +127,55 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             const pageProgresses = document.getElementsByClassName("page_progress");
                             for (let i = 0; i < pageProgresses.length; i++) {
                                 pageProgresses[i].innerText = `${pdfState.renderedPage}`;
+                            }
+                            let readerMode = true;
+                            let editorMode = false;
+                            const openPDFs = document.getElementsByClassName("open_pdf");
+                            for (let i = 0; i < openPDFs.length; i++) {
+                                if (openPDFs[i].classList.contains("btn-outline-success")) {
+                                    readerMode = true;
+                                    break;
+                                } else if (openPDFs[i].classList.contains("btn-success")) {
+                                    readerMode = false;
+                                }
+                            }
+                            const editorBtns = document.getElementsByClassName("editor_btn");
+                            for (let i = 0; i < editorBtns.length; i++) {
+                                if (editorBtns[i].classList.contains("btn-outline-success")) {
+                                    editorMode = true;
+                                    break;
+                                } else if (editorBtns[i].classList.contains("btn-success")) {
+                                    editorMode = false;
+                                }
+                            }
+                            if (!readerMode && editorMode) {
+                                onetimeSetup = true;
+                                document.getElementById('layer_stack').style.display = "flex";
+                                const sidemenus = document.getElementsByClassName("sidemenu");
+                                for (let i = 0; i < sidemenus.length; i++) {
+                                    sidemenus[i].style.display = "flex";
+                                }
+                                if (displayEditControls.getAttribute("data-mode") === "edit_text") {
+                                    displayTextTools();
+                                }
+                                if (displayEditControls.getAttribute("data-mode") === "edit_draw") {
+                                    displayDrawTools();
+                                }
+                                if (displayEditControls.getAttribute("data-mode") === "edit_shape") {
+                                    displayShapeTools();
+                                }
+                                if (displayEditControls.getAttribute("data-mode") === "edit_image") {
+                                    displayImgTools();
+                                }
+                                const sidemenuWrappers = document.getElementsByClassName("sidemenu_wrapper");
+                                for (let i = 0; i < sidemenuWrappers.length; i++) {
+                                    sidemenuWrappers[i].scrollTo(0, 0);
+                                }
+                                const layerStackWrappers = document.getElementsByClassName("layer_stack_wrapper");
+                                for (let i = 0; i < layerStackWrappers.length; i++) {
+                                    layerStackWrappers[i].scrollTo(0, 0);
+                                }
+                                setTimeout(initEditor, 300);
                             }
                             startRender = performance.now();
                             await renderPage(pageCounter, false);
@@ -938,40 +966,6 @@ function resetAllModes() {
 
 if (document.getElementsByClassName("display_edit_ctls")[0] !== undefined && document.getElementsByClassName("display_edit_ctls")[0] !== null) {
     displayEditControls = document.getElementsByClassName("display_edit_ctls")[0];
-    displayEditControls.addEventListener("change", function() {
-        setTimeout(function() {
-            if (!encryptedError && !pagesError && !noPDFError && fileLoaded) {
-                document.getElementById('layer_stack').style.display = "flex";
-                const sidemenus = document.getElementsByClassName("sidemenu");
-                for (let i = 0; i < sidemenus.length; i++) {
-                    sidemenus[i].style.display = "flex";
-                }
-                if (displayEditControls.getAttribute("data-mode") === "edit_text") {
-                    displayTextTools();
-                }
-                if (displayEditControls.getAttribute("data-mode") === "edit_draw") {
-                    displayDrawTools();
-                }
-                if (displayEditControls.getAttribute("data-mode") === "edit_shape") {
-                    displayShapeTools();
-                }
-                if (displayEditControls.getAttribute("data-mode") === "edit_image") {
-                    displayImgTools();
-                }
-                document.getElementById("reader_controls").style.display = "flex";
-                document.getElementById("viewer_bg").style.display = "flex";
-                const sidemenuWrappers = document.getElementsByClassName("sidemenu_wrapper");
-                for (let i = 0; i < sidemenuWrappers.length; i++) {
-                    sidemenuWrappers[i].scrollTo(0, 0);
-                }
-                const layerStackWrappers = document.getElementsByClassName("layer_stack_wrapper");
-                for (let i = 0; i < layerStackWrappers.length; i++) {
-                    layerStackWrappers[i].scrollTo(0, 0);
-                }
-                setTimeout(initEditor, 300);
-            }
-        }, 1300);
-    }, false);
 }
 
 function displayTextTools() {

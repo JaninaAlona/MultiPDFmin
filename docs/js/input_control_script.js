@@ -43,10 +43,8 @@ function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOpe
 
         // valid positive/negative integer or valid float
         if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
-            console.log("here");
             if (parseIntOperation) {
                 valToRestrict = parseInt(valToRestrict, 10);
-                console.log(valToRestrict);
                 document.getElementById(inputId).value = valToRestrict;
             } 
             if (parseFloatOperation) {

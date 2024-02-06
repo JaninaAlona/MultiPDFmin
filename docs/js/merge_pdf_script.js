@@ -52,7 +52,14 @@ const merger = Vue.createApp({
                             node.style.backgroundColor = "rgba(255, 255, 255, 1.0)";
                             node.classList.add("fileselector");
                             node.classList.add("file_unselected");
-                            node.innerText = file.name;
+                            let tempFilename = file.name;
+                            let displayFilename = "";
+                            if (tempFilename.length >= 54) {
+                                displayFilename = displayFilename + tempFilename.substring(0, 50);     
+                            } else {
+                                displayFilename = displayFilename + tempFilename.substring(0, tempFilename.length - 4);
+                            }
+                            node.innerHTML = displayFilename;
                             node.addEventListener("click", function() {
                                 markFile(node);
                             }, false);
@@ -75,6 +82,7 @@ const merger = Vue.createApp({
                     for (let i = 0; i < noPDFErrorWidgets.length; i++) {
                         noPDFErrorWidgets[i].style.display = "flex";
                     }
+                    document.getElementById('save_merge').disabled = false;
                 }
             }
             if (file) 

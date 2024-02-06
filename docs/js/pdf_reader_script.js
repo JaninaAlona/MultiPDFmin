@@ -97,7 +97,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             document.getElementById("viewer_bg").style.display = "flex";
                             document.getElementById('maxPDFPages').innerHTML = pdf._pdfInfo.numPages + " pages";
                             pdfState.lastPage = pdf._pdfInfo.numPages;
-                            restrictInputValues('zoom_factor', 1, 800, true, false);
+                            restrictInputZoom('zoom_factor', 1, 800);
                             setCustomFilename();
                             const scrollwrappers = document.getElementsByClassName('scrollwrapper');
                             for(let i = 0; i < scrollwrappers.length; i++) {

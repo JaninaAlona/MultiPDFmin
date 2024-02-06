@@ -399,9 +399,9 @@ function enterPageNum(e) {
 function displayPageNum(e) {
     let scrollDistance = e.target.scrollTop; 
     let scrolledPageHeight = 0;
-    let displayedPage = 1;
+    let displayedPage = 0;
     let canvasElems = document.getElementsByClassName('render_context');
-    for (let i = 0; i < pdfState.pdf.renderedPage; i++) {
+    for (let i = 0; i < pdfState.renderedPage; i++) {
         if (scrolledPageHeight <= scrollDistance) {
             scrolledPageHeight += canvasElems[i].height;
             displayedPage++; 

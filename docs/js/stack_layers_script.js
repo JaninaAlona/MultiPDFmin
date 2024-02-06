@@ -237,8 +237,10 @@ function moveLayer(target) {
                 }
                 const writeLayers = document.getElementsByClassName("edit_viewer")[0].getElementsByClassName("write_layer");
                 const srcPage = parseInt(current.getAttribute("data-page"), 10);
+                let destPage = 1;
                 if (currentpos < droppedpos) {   
-                    const destPage = parseInt(i.getAttribute("data-page"), 10);
+                    destPage = parseInt(i.getAttribute("data-page"), 10);
+                    console.log(destPage + "<");
                     const destIndex = parseInt(i.getAttribute("data-index"), 10);
                     let destWriteLayer;
                     for (let j = 0; j < writeLayers.length; j++) {
@@ -283,7 +285,8 @@ function moveLayer(target) {
                         controlGroup.appendChild(controlPToMove);
                     }
                 } else {
-                    const destPage = parseInt(i.getAttribute("data-page"), 10);
+                    destPage = parseInt(i.getAttribute("data-page"), 10);
+                    console.log(destPage + ">=");
                     const destIndex = parseInt(i.getAttribute("data-index"), 10);
                     let destWriteLayer;
                     for (let j = 0; j < writeLayers.length; j++) {

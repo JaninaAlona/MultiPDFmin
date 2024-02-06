@@ -87,10 +87,6 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             pdfState.pdf = pdf;
                             pdfState.originalPDFBytes = pdfBytes;
                             pdfState.existingPDFBytes = pdfState.originalPDFBytes;
-                            // compression 
-                            // const savedBytes = await pdfDoc.save();
-                            // pdfState.originalPDFBytes = savedBytes;
-                            // pdfState.existingPDFBytes = pdfState.originalPDFBytes;
                             pdfFileName = file.name;
                             document.getElementById("current_page").value = 1;
                             let pdfViewers = document.getElementsByClassName("pdf_viewer")
@@ -267,73 +263,67 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
         const saveWidgets = document.getElementsByClassName("save_widget");
         for (let i = 0; i < saveWidgets.length; i++) {
             saveWidgets[i].style.display = "flex";
-        }   
+        }
         const editImgs = document.getElementsByClassName("editimg");
         if (editImgs.length > 0) { 
             let originalZoom = pdfState.zoom;
             pdfState.zoom = saveZoom;
-
-            // save step 1
             outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
-            console.log("PDF loaded");
-
-            // save step 2
             zoomForSave().then(function(step) {
                 console.log(step);
-
-                // save step 3
                 return canvasToImage();
-            }).then(function(step) {
+            }).then(async function(step) {
                 console.log(step); 
-
-                // save step 4
-                return outputPDF.save();
-            }).then(function(savedPDF) {
+                return await outputPDF.save();
+            }).then(async function(savedPDF) {
                 console.log("PDF saved");
                 pdfState.existingPDFBytes = savedPDF;
-
-                // save step 5
+                const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
+                const compressedBytes = await pdfDoc.save();
+                pdfState.originalPDFBytes = compressedBytes;
+                pdfState.existingPDFBytes = compressedBytes;
+            }).then(function() {
+                console.log("PDF compressed")
                 return compressToZip(pdfState.existingPDFBytes, customFilename);
             }).then(function(blob) { 
-                console.log("compressed to ZIP");
-                
-                // save step 6
+                console.log("Archived to ZIP");
                 return downloadPDF(blob, customFilename);
             }).then(function(step) {
                 console.log(step); 
                 pdfState.zoom = originalZoom;
-
-                // save step 7
                 return zoomForSave();
             }).then(function(step) {
                 console.log(step);
-                console.log("finished");
                 for (let i = 0; i < saveWidgetCons.length; i++) {
                     saveWidgetCons[i].style.display = "none";
                 }
                 for (let i = 0; i < saveWidgets.length; i++) {
                     saveWidgets[i].style.display = "none";
                 }
+                console.log("Finished");
                 const endSave = performance.now();
                 console.log(`Execution time of Editor: ${endSave - startSave} ms`);
             });
         } else {
 
-            // save step 1
+            // compression
+            const pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
+            const compressedBytes = await pdfDoc.save();
+            pdfState.originalPDFBytes = compressedBytes;
+            pdfState.existingPDFBytes = compressedBytes;
+            console.log("PDF compressed");
             compressToZip(pdfState.existingPDFBytes, customFilename).then(function(blob) {
-                console.log("compressed to ZIP");
-
-                // save step 2
+                console.log("Archived to ZIP");
                 return downloadPDF(blob, customFilename);
             }).then(function(step) {
                 console.log(step);
-                console.log("finished");
                 for (let i = 0; i < saveWidgetCons.length; i++) {
                     saveWidgetCons[i].style.display = "none";
                 }
                 for (let i = 0; i < saveWidgets.length; i++) {
                     saveWidgets[i].style.display = "none";
                 }
+                console.log("Finished");
                 const endSave = performance.now();
                 console.log(`Execution time: ${endSave - startSave} ms`);
             });
@@ -341,23 +331,22 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
     }, false);
 }
 
-function canvasToImage() {
+async function canvasToImage() {
     const editImgs = document.getElementsByClassName("editimg");
     for (let j = 0; j < editImgs.length; j++) {
         const editImg = editImgs[j];
         const dataURL = editImg.toDataURL("image/png", 1.0);
         const splittedDataURL = dataURL.split(",", 2);
-        outputPDF.embedPng(splittedDataURL[1]).then(function(pngImage) {
-            const thisPage = parseInt(editImg.getAttribute("data-page"), 10);
-            outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
-                x: 0,
-                y: 0,
-                width: pdfState.originalWidths[thisPage-1],
-                height: pdfState.originalHeights[thisPage-1]
-            });
+        const pngImage = await outputPDF.embedPng(splittedDataURL[1]);
+        const thisPage = parseInt(editImg.getAttribute("data-page"), 10);
+        outputPDF.getPages()[thisPage-1].drawImage(pngImage, {
+            x: 0,
+            y: 0,
+            width: pdfState.originalWidths[thisPage-1],
+            height: pdfState.originalHeights[thisPage-1]
         });
     }
-    return Promise.resolve("images created");
+    return "images created";
 }
 
 function zoomForSave() {

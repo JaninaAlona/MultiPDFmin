@@ -92,7 +92,7 @@ function restrictInputZoom(inputId, min, max) {
 
 function convertInputToSucess(input, min, max, parseIntOperation, parseFloatOperation) {
     let outputVal = input;
-    if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
+    if (outputVal.match(/^-?\d*[.]?\d*$/)) {
         if (parseIntOperation) {
             outputVal = parseInt(outputVal, 10);
         } 
@@ -117,7 +117,7 @@ function convertZoomInputToSucess(desiredZoom, min, max) {
     } else {
         zoomVal = desiredZoom;
     }
-    if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
+    if (zoomVal.match(/^-?\d*[.]?\d*$/)) {
         zoomVal = parseInt(zoomVal, 10);
         if (!hasPercent) {
             if (zoomVal < min || zoomVal > max) {

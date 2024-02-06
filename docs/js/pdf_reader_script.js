@@ -614,11 +614,15 @@ async function enterZoomFactor(e) {
         let desiredZoom = document.getElementById('zoom_factor').value;
         let successValue = convertZoomInputToSucess(desiredZoom, 1, 800);
         if (successValue !== -1000) {
-            pdfState.zoom = toFactor(successValue);
-            document.getElementById("zoom_factor").value = successValue + "%";
-            placeEditorElements();
-            pageCounter = 1;
-            renderPage(pageCounter, false);
+            const oldZoom = pdfState.zoom;
+            let percent = toPercent(oldZoom);
+            if (percent !== successValue) {
+                pdfState.zoom = toFactor(successValue);
+                document.getElementById("zoom_factor").value = successValue + "%";
+                placeEditorElements();
+                pageCounter = 1;
+                renderPage(pageCounter, false);
+            }
         }
     }
 }

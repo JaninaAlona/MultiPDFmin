@@ -44,7 +44,7 @@ function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOpe
         // valid positive/negative integer or valid float
         if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
             if (parseIntOperation) {
-                if (valToRestrict.startsWith(".")) {
+                if (valToRestrict.startsWith(".") || valToRestrict.startsWith("-.")) {
                     valToRestrict = parseInt("0", 10);
                 } else {
                     valToRestrict = parseInt(valToRestrict, 10);
@@ -78,7 +78,7 @@ function restrictInputZoom(inputId, min, max) {
             valToRestrict = valToRestrict.substring(0, valToRestrict.length - 1);   
         }
         if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
-            if (valToRestrict.startsWith(".")) {
+            if (valToRestrict.startsWith(".") || valToRestrict.startsWith("-.")) {
                 valToRestrict = parseInt("0", 10);
             } else {
                 valToRestrict = parseInt(valToRestrict, 10);

@@ -44,8 +44,11 @@ function restrictInputValues(inputId, min, max, parseIntOperation, parseFloatOpe
         // valid positive/negative integer or valid float
         if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
             if (parseIntOperation) {
-                valToRestrict = parseInt(valToRestrict, 10);
-                document.getElementById(inputId).value = valToRestrict;
+                if (valToRestrict.startsWith(".")) {
+                    valToRestrict = parseInt("0", 10);
+                } else {
+                    valToRestrict = parseInt(valToRestrict, 10);
+                }
             } 
             if (parseFloatOperation) {
                 valToRestrict = parseFloat(valToRestrict);
@@ -75,7 +78,11 @@ function restrictInputZoom(inputId, min, max) {
             valToRestrict = valToRestrict.substring(0, valToRestrict.length - 1);   
         }
         if (valToRestrict.match(/^-?\d*[.]?\d*$/)) {
-            valToRestrict = parseInt(valToRestrict, 10);
+            if (valToRestrict.startsWith(".")) {
+                valToRestrict = parseInt("0", 10);
+            } else {
+                valToRestrict = parseInt(valToRestrict, 10);
+            }
             if (valToRestrict >= min && valToRestrict <= max) {
                 document.getElementById(inputId).value = valToRestrict + "%";
             } else {

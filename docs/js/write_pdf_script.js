@@ -385,7 +385,7 @@ function createFileListEntryFont(filename, index) {
         const fileListing = document.createElement("input");
         fileListing.type = 'radio';
         fileListing.id = index + "filelist_font";
-        fileListing.name = index + "filelist_font";
+        fileListing.name = "filelist_font_radio_group";
         fileListing.value = filename;
         fileListing.className = 'filelisting_font';
         fileListing.classList.add("inner_margin");
@@ -411,6 +411,13 @@ document.getElementById("clearlist_text").addEventListener("click", function(e) 
     clearFileList(document.getElementById("listpoint_font_con"));
     fontBytes = [];
 }, false);
+
+function clearFileList(container) {
+    while(container.children.length > 0) {
+        container.removeChild(container.firstChild);
+    }
+}
+
 
 document.getElementById("applycustomfont").addEventListener("click", function() {
     resetAllModes();

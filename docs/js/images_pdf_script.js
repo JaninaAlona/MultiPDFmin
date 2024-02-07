@@ -67,7 +67,7 @@ function createFileListEntryImage(filename, index) {
         const fileListing = document.createElement("input");
         fileListing.type = 'radio';
         fileListing.id = index + "filelist_img";
-        fileListing.name = index + "filelist_img";
+        fileListing.name = "filelist_img_radio_group";
         fileListing.value = filename;
         fileListing.className = 'filelisting_img';
         fileListing.classList.add("inner_margin");
@@ -118,12 +118,6 @@ document.getElementById("clearlist_img").addEventListener("click", function(e) {
     clearFileList(document.getElementById("listpoint_img_con"));
     imagesBase64Strings = [];
 }, false);
-
-function clearFileList(container) {
-    while(container.children.length > 0) {
-        container.removeChild(container.firstChild);
-    }
-}
 
 
 document.getElementById('addimg').addEventListener("click", function(e) {

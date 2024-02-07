@@ -91,10 +91,15 @@ function createStackLayer(thisPage, editImgClass, editImgIndex) {
     }, false);
     eyeLabel.appendChild(layerEye);
     layerCon.appendChild(eyeLabel);
-    layerCon.appendChild(layerName);
+    layerCon.appendChild(layerName);  
     pageLabel.appendChild(layerCon);
-    layerStack.insertBefore(pageLabel, layerStack.children[thisPage-1]);
-    markSingleLayer(layerName);
+    
+    if (newPage) {
+        layerStack.insertBefore(pageLabel, layerStack.children[thisPage-1]);
+
+    }
+    
+        markSingleLayer(layerName);
     moveLayer(layerStack);
 }
 

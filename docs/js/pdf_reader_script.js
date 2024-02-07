@@ -352,7 +352,9 @@ async function canvasToImage() {
 function zoomForSave() {
     return new Promise((resolve, reject) => {
         pageCounter = 1;
-        placeEditorElements();
+        setTimeout(() => {
+            placeEditorElements();
+        }, 300);
         renderPage(pageCounter, false);
         setTimeout(() => {
             resolve("zoom for saving");

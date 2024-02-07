@@ -93,13 +93,37 @@ function createStackLayer(thisPage, editImgClass, editImgIndex) {
     layerCon.appendChild(eyeLabel);
     layerCon.appendChild(layerName);  
     pageLabel.appendChild(layerCon);
-    
     if (newPage) {
-        layerStack.insertBefore(pageLabel, layerStack.children[thisPage-1]);
-
+        let newPageGroupIndex = thisPage - 1;
+        if (layerStack.children.length === 0) {
+            layerStack.appendChild(pageLabel);
+        } else if (layerStack.children.length === 1) {
+            let pageGroupIndex = parseInt(layerStack.children[0].getAttribute("data-page"), 10) - 1;
+            if (newPageGroupIndex < pageGroupIndex) {
+                layerStack.insertBefore(pageLabel, layerStack.children[0]);
+            } else if (newPageGroupIndex > pageGroupIndex) {
+                layerStack.appendChild(pageLabel);
+            }
+        } else if (layerStack.children.length > 1) {
+            for (let i = 0; i < layerStack.children.length - 1; i++) {
+                let lowerPageGroup = layerStack.children[i];
+                let upperPageGroup = layerStack.children[i+1];
+                let lowerPageGroupIndex = parseInt(lowerPageGroup.getAttribute("data-page"), 10) - 1;
+                let upperPageGroupIndex = parseInt(upperPageGroup.getAttribute("data-page"), 10) - 1;
+                if (newPageGroupIndex < lowerPageGroupIndex) {
+                    layerStack.insertBefore(pageLabel, layerStack.children[0]);
+                    break;
+                } else if (newPageGroupIndex > lowerPageGroupIndex && newPageGroupIndex < upperPageGroupIndex) {
+                    let positionIndex = Array.prototype.indexOf.call(layerStack.children, upperPageGroup);
+                    layerStack.insertBefore(pageLabel, layerStack.children[positionIndex]);
+                    break
+                } else if (newPageGroupIndex > upperPageGroupIndex) {
+                    layerStack.appendChild(pageLabel);
+                }
+            }
+        }
     }
-    
-        markSingleLayer(layerName);
+    markSingleLayer(layerName);
     moveLayer(layerStack);
 }
 

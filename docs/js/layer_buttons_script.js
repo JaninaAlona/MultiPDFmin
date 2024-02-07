@@ -128,10 +128,6 @@ function deleteLayerByElement(page, index, type) {
         layerLabel.parentNode.removeChild(layerLabel);
     }
     layercontainers = document.getElementsByClassName("layercontainer");
-    let resetTextName = true;
-    let resetShapeName = true;
-    let resetDrawingName = true;
-    let resetImageName = true;
     for (let i = 0; i < layercontainers.length; i++) {
         if (parseInt(layercontainers[i].getAttribute("data-index"), 10) > index && layercontainers[i].getAttribute("data-type") === type) {
             layercontainers[i].dataset.index -= 1;
@@ -139,29 +135,17 @@ function deleteLayerByElement(page, index, type) {
             layercontainers[i].children[0].children[0].dataset.index -= 1;
             layercontainers[i].children[1].dataset.inde -= 1;
         }
-        if (layercontainers[i].getAttribute("data-type") === "text") {
-            resetTextName = false;
-        }
-        if (layercontainers[i].getAttribute("data-type") === "image") {
-            resetImageName = false;
-        }
-        if (layercontainers[i].getAttribute("data-type") === "shape") {
-            resetShapeName = false;
-        }
-        if (layercontainers[i].getAttribute("data-type") === "drawing") {
-            resetDrawingName = false;
-        }
     } 
-    if (resetTextName) {
+    if (userTextList.length === 0) {
         layerNameCounterText = 1;
     }
-    if (resetShapeName) {
-        layerNameCounterShape = 1;
-    }
-    if (resetDrawingName) {
+    if (drawLayerStack.length === 0) {
         layerNameCounterDrawing = 1;
     }
-    if (resetImageName) {
+    if (geometryPointsList.length === 0) {
+        layerNameCounterShape = 1;
+    }
+    if (userImageList.length === 0) {
         layerNameCounterImage = 1;
     }
     const layerstack = document.getElementById("layer_stack_con");

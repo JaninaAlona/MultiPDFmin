@@ -268,16 +268,11 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
         if (editImgs.length > 0) { 
             let originalZoom = pdfState.zoom;
             pdfState.zoom = saveZoom;
-            outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
             zoomForSave().then(function(step) {
                 console.log(step);
                 return canvasToImage();
             }).then(async function(step) {
                 console.log(step); 
-                return await outputPDF.save();
-            }).then(async function(savedPDFBytes) {
-                console.log("PDF saved");
-                pdfState.existingPDFBytes = savedPDFBytes;
                 outputPDF = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
                 const compressedBytes = await outputPDF.save();
                 pdfState.existingPDFBytes = compressedBytes;
@@ -330,6 +325,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
 }
 
 async function canvasToImage() {
+    outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
     const editImgs = document.getElementsByClassName("editimg");
     for (let j = 0; j < editImgs.length; j++) {
         const editImg = editImgs[j];
@@ -343,8 +339,9 @@ async function canvasToImage() {
             width: pdfState.originalWidths[thisPage-1],
             height: pdfState.originalHeights[thisPage-1]
         });
+        pdfState.existingPDFBytes = await outputPDF.save();
     }
-    return "images created";
+    return "PDF saved";
 }
 
 function zoomForSave() {

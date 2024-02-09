@@ -327,8 +327,8 @@ async function canvasToImage() {
             width: pdfState.originalWidths[thisPage-1],
             height: pdfState.originalHeights[thisPage-1]
         });
-        pdfState.existingPDFBytes = await outputPDF.save();
     }
+    pdfState.existingPDFBytes = await outputPDF.save();
     return "PDF saved";
 }
 

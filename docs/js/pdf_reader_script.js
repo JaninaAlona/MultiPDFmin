@@ -86,7 +86,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                         if (pdf._pdfInfo.numPages <= 5000) {
                             pdfState.pdf = pdf;
                             pdfState.originalPDFBytes = pdfBytes;
-                            pdfState.existingPDFBytes = pdfState.originalPDFBytes;
+                            pdfState.existingPDFBytes = pdfBytes;
                             pdfFileName = file.name;
                             document.getElementById("current_page").value = 1;
                             let pdfViewers = document.getElementsByClassName("pdf_viewer")
@@ -275,12 +275,11 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
             }).then(async function(step) {
                 console.log(step); 
                 return await outputPDF.save();
-            }).then(async function(savedPDF) {
+            }).then(async function(savedPDFBytes) {
                 console.log("PDF saved");
-                pdfState.existingPDFBytes = savedPDF;
-                const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
-                const compressedBytes = await pdfDoc.save();
-                pdfState.originalPDFBytes = compressedBytes;
+                pdfState.existingPDFBytes = savedPDFBytes;
+                outputPDF = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
+                const compressedBytes = await outputPDF.save();
                 pdfState.existingPDFBytes = compressedBytes;
             }).then(function() {
                 console.log("PDF compressed")
@@ -307,9 +306,8 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
         } else {
 
             // compression
-            const pdfDoc = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
-            const compressedBytes = await pdfDoc.save();
-            pdfState.originalPDFBytes = compressedBytes;
+            outputPDF = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
+            const compressedBytes = await outputPDF.save();
             pdfState.existingPDFBytes = compressedBytes;
             console.log("PDF compressed");
             compressToZip(pdfState.existingPDFBytes, customFilename).then(function(blob) {
@@ -893,7 +891,6 @@ if (document.getElementById('spin_left') !== undefined && document.getElementByI
 async function setPageRotation(pdfDoc, currentPage, newRotation) {
     pdfDoc.getPages()[currentPage-1].setRotation(PDFLib.degrees(newRotation));
     pdfState.existingPDFBytes = await pdfDoc.save();
-    pdfState.originalPDFBytes = pdfState.existingPDFBytes;
     const loadingTask = pdfjsLib.getDocument(pdfState.existingPDFBytes);
     loadingTask.promise.then(pdf => {
         pdfState.pdf = pdf;

@@ -76,9 +76,8 @@ for (let i = 0; i < inputFileButtons.length; i++) {
             const loadingTask = pdfjsLib.getDocument(typedarray);
             loadingTask.promise.then(async (pdf) => {
                 if (file.name.endsWith(".pdf")) {
-                    let pdfDoc;
                     try {
-                        pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
+                        outputPDF = await PDFLib.PDFDocument.load(pdfBytes);
                     } catch(encryptedErr) {
                         encrypted = true;
                     }
@@ -103,7 +102,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             for(let i = 0; i < scrollwrappers.length; i++) {
                                 scrollwrappers[i].scrollTo(0, 0);
                             }
-                            adjustPDFToUserViewport(pdfDoc);
+                            adjustPDFToUserViewport(outputPDF);
                             pdfState.renderedPage = 0;
                             const saveWidgetCons = document.getElementsByClassName("save_widget_con");
                             for (let i = 0; i < saveWidgetCons.length; i++) {
@@ -858,8 +857,7 @@ if (document.getElementById('spin_right') !== undefined && document.getElementBy
         resetAllModes();
         let currentPage = convertInputToSucess(document.getElementById("current_page").value, 1, pdfState.lastPage, true, false);
         if (currentPage !== -1000) {
-            const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
-            let currentRotation = pdfDoc.getPages()[currentPage-1].getRotation().angle;
+            let currentRotation = outputPDF.getPages()[currentPage-1].getRotation().angle;
             let newRotation = currentRotation + 90;
             if (newRotation === 360) {
                 newRotation = 0;
@@ -874,8 +872,7 @@ if (document.getElementById('spin_left') !== undefined && document.getElementByI
         resetAllModes();
         let currentPage = convertInputToSucess(document.getElementById("current_page").value, 1, pdfState.lastPage, true, false);
         if (currentPage !== -1000) {
-            const pdfDoc = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
-            let currentRotation = pdfDoc.getPages()[currentPage-1].getRotation().angle;
+            let currentRotation = outputPDF.getPages()[currentPage-1].getRotation().angle;
             let newRotation = currentRotation - 90;
             if (newRotation === -360) {
                 newRotation = 0;

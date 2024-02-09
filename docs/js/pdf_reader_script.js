@@ -102,7 +102,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             for(let i = 0; i < scrollwrappers.length; i++) {
                                 scrollwrappers[i].scrollTo(0, 0);
                             }
-                            adjustPDFToUserViewport(outputPDF);
+                            adjustPDFToUserViewport();
                             pdfState.renderedPage = 0;
                             const saveWidgetCons = document.getElementsByClassName("save_widget_con");
                             for (let i = 0; i < saveWidgetCons.length; i++) {
@@ -272,11 +272,6 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 return canvasToImage();
             }).then(async function(step) {
                 console.log(step); 
-                outputPDF = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
-                const compressedBytes = await outputPDF.save();
-                pdfState.existingPDFBytes = compressedBytes;
-            }).then(function() {
-                console.log("PDF optimized")
                 return compressToZip(pdfState.existingPDFBytes, customFilename);
             }).then(function(blob) { 
                 console.log("Archived to ZIP");
@@ -298,10 +293,6 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 console.log(`Execution time of Editor: ${endSave - startSave} ms`);
             });
         } else {
-            outputPDF = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
-            const compressedBytes = await outputPDF.save();
-            pdfState.existingPDFBytes = compressedBytes;
-            console.log("PDF optimized");
             compressToZip(pdfState.existingPDFBytes, customFilename).then(function(blob) {
                 console.log("Archived to ZIP");
                 return downloadPDF(blob, customFilename);
@@ -540,9 +531,9 @@ async function renderPage(num, renderSingle) {
     });
 }
 
-function adjustPDFToUserViewport(pdfDoc) {
+function adjustPDFToUserViewport() {
     const vW = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    const firstPage = pdfDoc.getPages()[0];
+    const firstPage = outputPDF.getPages()[0];
     let width = firstPage.getWidth();
     let newVWidth = vW - 200;
     if (width > newVWidth) {

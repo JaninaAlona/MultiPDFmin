@@ -276,7 +276,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 const compressedBytes = await outputPDF.save();
                 pdfState.existingPDFBytes = compressedBytes;
             }).then(function() {
-                console.log("PDF compressed")
+                console.log("PDF optimized")
                 return compressToZip(pdfState.existingPDFBytes, customFilename);
             }).then(function(blob) { 
                 console.log("Archived to ZIP");
@@ -298,12 +298,10 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
                 console.log(`Execution time of Editor: ${endSave - startSave} ms`);
             });
         } else {
-
-            // compression
             outputPDF = await PDFLib.PDFDocument.load(pdfState.existingPDFBytes);
             const compressedBytes = await outputPDF.save();
             pdfState.existingPDFBytes = compressedBytes;
-            console.log("PDF compressed");
+            console.log("PDF optimized");
             compressToZip(pdfState.existingPDFBytes, customFilename).then(function(blob) {
                 console.log("Archived to ZIP");
                 return downloadPDF(blob, customFilename);
@@ -862,7 +860,7 @@ if (document.getElementById('spin_right') !== undefined && document.getElementBy
             if (newRotation === 360) {
                 newRotation = 0;
             }
-            await setPageRotation(pdfDoc, currentPage, newRotation);
+            await setPageRotation(currentPage, newRotation);
         }
     }, false);
 }
@@ -877,14 +875,14 @@ if (document.getElementById('spin_left') !== undefined && document.getElementByI
             if (newRotation === -360) {
                 newRotation = 0;
             }
-            await setPageRotation(pdfDoc, currentPage, newRotation);
+            await setPageRotation(currentPage, newRotation);
         }
     }, false);
 }
 
-async function setPageRotation(pdfDoc, currentPage, newRotation) {
-    pdfDoc.getPages()[currentPage-1].setRotation(PDFLib.degrees(newRotation));
-    pdfState.existingPDFBytes = await pdfDoc.save();
+async function setPageRotation(currentPage, newRotation) {
+    outputPDF.getPages()[currentPage-1].setRotation(PDFLib.degrees(newRotation));
+    pdfState.existingPDFBytes = await outputPDF.save();
     const loadingTask = pdfjsLib.getDocument(pdfState.existingPDFBytes);
     loadingTask.promise.then(pdf => {
         pdfState.pdf = pdf;

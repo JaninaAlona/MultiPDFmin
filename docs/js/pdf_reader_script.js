@@ -314,7 +314,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
 
 async function canvasToImage() {
     outputPDF = await PDFLib.PDFDocument.load(pdfState.originalPDFBytes);
-    const editImgs = document.getElementsByClassName("editimg");
+    const editImgs = document.getElementsByClassName("visible");
     for (let j = 0; j < editImgs.length; j++) {
         const editImg = editImgs[j];
         const dataURL = editImg.toDataURL("image/png", 1.0);

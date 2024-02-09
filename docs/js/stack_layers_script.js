@@ -145,9 +145,13 @@ function hideLayer(layerEye) {
     if (!layerEye.checked) {
         layerElem.controlBox.style.display = "none";
         layerElem.editImg.style.display = "none";
+        layerElem.editImg.classList.add("hidden");
+        layerElem.editImg.classList.remove("visible");
     } else {
         layerElem.controlBox.style.display = "flex";
         layerElem.editImg.style.display = "flex";
+        layerElem.editImg.classList.add("visible");
+        layerElem.editImg.classList.remove("hidden");
     }
 }
 

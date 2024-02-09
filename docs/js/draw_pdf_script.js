@@ -205,6 +205,7 @@ function createUserDrawLayer(e, editImgClass, thisPage, writeLayer) {
     canvasContainer.setAttribute('data-page', thisPage);
     canvasContainer.setAttribute('data-index', drawControllerPointCounter);
     canvasContainer.classList.add("editimg");
+    canvasContainer.classList.add("visible");
     canvasContainer.classList.add(editImgClass);
     controlP.editImg = canvasContainer;
     

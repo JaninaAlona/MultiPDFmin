@@ -216,6 +216,7 @@ function createUserLayer(editImgClass, thisPage, controlP, writeLayer, pdfLayerB
     canvasContainer.setAttribute('data-page', thisPage);
     canvasContainer.setAttribute('data-index', controlP.index);
     canvasContainer.classList.add("editimg");
+    canvasContainer.classList.add("visible");
     canvasContainer.classList.add(editImgClass);
     const ctx = canvasContainer.getContext('2d');
 

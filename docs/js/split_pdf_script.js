@@ -7,6 +7,7 @@ let pdfToSplit;
 let pdfBytesList = [];
 let splitPDFfilename = "";
 
+
 const splitter = Vue.createApp({
     data() {
         return {
@@ -77,6 +78,7 @@ const splitter = Vue.createApp({
             if (file)
                 fileReader.readAsArrayBuffer(file);
         },
+
         selectRegularSplit(regularSplitOpt) {
             splitMethod = regularSplitOpt;
             switch(regularSplitOpt) {
@@ -106,6 +108,7 @@ const splitter = Vue.createApp({
                     break;
             }
         },
+
         setFilename() {
             let inputFilename = document.getElementById("split_filename").value;
             if (inputFilename.length > 50) {
@@ -114,6 +117,7 @@ const splitter = Vue.createApp({
             }
             splitPDFfilename = inputFilename;
         },
+
         async saveSplittedPDFs() {
             const startSplit = performance.now();
             await computeSplitOptions();
@@ -157,7 +161,6 @@ async function computeSplitOptions() {
             break;
     }
 }
-
 
 async function applySplitAfterEvery() {
     let srcPDFDoc = await PDFDocument.load(selectedPDFBytes);

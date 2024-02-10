@@ -7,6 +7,7 @@ let blankPageHeight = 297;
 let triggerSaveBlank = false;
 let blankFilename = "blank_pdf";
 
+
 const canceler = Vue.createApp({
     mounted() {
         initBlankEvents();
@@ -20,10 +21,9 @@ const canceler = Vue.createApp({
                 let page;
                 const pageWFactor = (blankPageWidth * 1000) / 352.8;
                 const pageHFactor = (blankPageHeight * 1000) / 352.8;
-    
                 for (let i = 0; i < blankNumOfPagesCount; i++) {
-                    page = pdfDoc.addPage()
-                    page.setMediaBox(0, 0, pageWFactor, pageHFactor)
+                    page = pdfDoc.addPage();
+                    page.setMediaBox(0, 0, pageWFactor, pageHFactor);
                 }
                 const pdfBytes = await pdfDoc.save();
                 compressToZip(pdfBytes, blankFilename).then(function(blob) {

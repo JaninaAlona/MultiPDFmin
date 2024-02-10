@@ -137,6 +137,7 @@ const merger = Vue.createApp({
 
 merger.mount('#merge_app');
 
+
 function markFile(node) {
     let fileSelectors = document.getElementsByClassName("fileselector");
     for (let i = 0; i < fileSelectors.length; i++) {

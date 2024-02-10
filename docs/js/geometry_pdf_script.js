@@ -204,8 +204,7 @@ function addingShape(event, writeLayer, shapeType) {
         currentShape.useFill = false;
         currentShape.useStroke = true;
         currentShape.rotation = 0;
-        currentShape.page = page;
-    
+        currentShape.page = page;   
         shapeControllerP.elementToControl = currentShape;
         shapeControllerP.layer = writeLayer;
         shapeControllerP.page = page;

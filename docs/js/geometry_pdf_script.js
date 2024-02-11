@@ -170,22 +170,6 @@ function addShape(event, shapeType) {
     }
 }
 
-function createShapeLayer(writeLayer) {
-    let shapeCanvas;
-    let needNewLayer = true;
-    let canvases = writeLayer.getElementsByTagName('canvas');
-    for (let i = 0; i < canvases.length; i++) {
-        if (canvases[i].hasAttribute("data-shape")) {
-            needNewLayer = false;
-            shapeCanvas = canvases[i];
-        }
-    }
-    if (needNewLayer) {
-        shapeCanvas = initShapeLayer(writeLayer, null);
-    }
-    return shapeCanvas;
-}
-
 function addingShape(event, writeLayer, shapeType) {
     if (userModesGeometry[0] || userModesGeometry[1] || userModesGeometry[2]) {
         const currentShape = Object.create(shape);

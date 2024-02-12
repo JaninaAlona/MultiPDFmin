@@ -196,7 +196,6 @@ function dublicateLayerByElement(page, index, type) {
     } else if (dublicateLayercontainer.classList.contains("locked")) {
         dublicateLayercontainer.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
     }
-
     let layerlabel = dublicateLayercontainer.children[0];
     let layerEye = dublicateLayercontainer.children[0].children[0];
     let layername = dublicateLayercontainer.children[1];

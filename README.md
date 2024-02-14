@@ -4,7 +4,7 @@
 <https://janinaalona.github.io/MultiPDFmin/>
 
 ## Description
-This is an open source desktop web application for editing PDF files on Windows, macOS and Linux. It was developed using Firefox browser and is not tested in Opera, Chrome, Edge and Safari browers. So it works best in Firefox. Likewise accessing the web app on a tablet or mobile device lacks operations, since the layout is not optimized for these kind of environments. Encrypted PDFs are not supported. You can also use MultiPDFmin offline. Just clone the repo and open the index.html file in Firefox. The web app ships a PDF reader, merger, splitter, creator and editor of text, drawings, geometry and images. You cannot modify existing PDF content. Instead you can just add content.
+This is an open source JavaScript desktop web application for editing PDF files on Windows, macOS and Linux. It was developed using Firefox browser and is not tested in Opera, Chrome, Edge and Safari browers. So it works best in Firefox. Likewise accessing the web app on a tablet or mobile device lacks operations, since the layout is not optimized for these kind of environments. Encrypted PDFs are not supported. You can also use MultiPDFmin offline. Just clone the repo and open the index.html file in Firefox. The web app ships a PDF reader, merger, splitter, creator and editor of text, drawings, geometry and images. You cannot modify existing PDF content. Instead you can just add content.
 
 ## Features
 - Read PDF

@@ -43,6 +43,7 @@ This is an open source JavaScript desktop web application for editing PDF files 
 - Text, Drawings, Shapes and Images on layers
 - Lock/unlock layers
 - Hide/show layers
+- Rename layers
 - Copy layers
 - Delete layers
 - Change layer order

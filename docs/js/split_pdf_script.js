@@ -36,7 +36,7 @@ const splitter = Vue.createApp({
             fileReader.onload = async function() {
                 selectedPDFBytes = new Uint8Array(this.result);
                 this.isEncrypted = false;
-                if (file.name.endsWith(".pdf")) {
+                if (file.name.endsWith(".pdf") || file.name.endsWith(".PDF")) {
                     let srcPDFDoc;
                     try {
                         srcPDFDoc = await PDFDocument.load(selectedPDFBytes);

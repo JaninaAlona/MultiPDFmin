@@ -1,3 +1,15 @@
+/**
+ * MultiPDFmin
+ * github: https://github.com/JaninaAlona/MultiPDFmin
+ * Website: https://janinaalona.github.io/MultiPDFmin/
+ * @author Janina Schroeder
+ * @version 1.0.0
+ * @description Writer Functions
+ * Licensed under GNU GENERAL PUBLIC LICENSE Version 3 (https://github.com/JaninaAlona/MultiPDFmin/blob/main/LICENSE)
+ */
+
+
+
 const { PDFDocument, rgb, degrees, StandardFonts } = PDFLib
 
 let userText = {
@@ -74,7 +86,6 @@ let rotateTextSelectorTriggered = false;
 let rotateTextInputFieldTriggered = false;
 let lineheightSelectorTriggered = false;
 let lineheightInputFieldTriggered = false;
-
 const textarea = document.getElementById('applytextarea');
 const fontSelector = document.querySelector('#fontsel');
 const fontSizeSelector = document.querySelector('#fontsizesel');

@@ -1,3 +1,15 @@
+/**
+ * MultiPDFmin
+ * github: https://github.com/JaninaAlona/MultiPDFmin
+ * Website: https://janinaalona.github.io/MultiPDFmin/
+ * @author Janina Schroeder
+ * @version 1.0.0
+ * @description Shaper functions
+ * Licensed under GNU GENERAL PUBLIC LICENSE Version 3 (https://github.com/JaninaAlona/MultiPDFmin/blob/main/LICENSE)
+ */
+
+
+
 let shape = {
     context: null,
     type: "",

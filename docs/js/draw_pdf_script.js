@@ -1,3 +1,14 @@
+/**
+ * MultiPDFmin
+ * github: https://github.com/JaninaAlona/MultiPDFmin
+ * Website: https://janinaalona.github.io/MultiPDFmin/
+ * @author Janina Schroeder
+ * @version 1.0.0
+ * @description Drawer functions
+ * Licensed under GNU GENERAL PUBLIC LICENSE Version 3 (https://github.com/JaninaAlona/MultiPDFmin/blob/main/LICENSE)
+ */
+
+
 let drawLayer = {
     paths: [],
     currentPathIndex: 0, 
@@ -208,7 +219,6 @@ function createUserDrawLayer(e, editImgClass, thisPage, writeLayer) {
     canvasContainer.classList.add("visible");
     canvasContainer.classList.add(editImgClass);
     controlP.editImg = canvasContainer;
-    
     let rect = writeLayer.getBoundingClientRect();
     let mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     controlP.x = mousePos.x;
@@ -222,7 +232,6 @@ function createUserDrawLayer(e, editImgClass, thisPage, writeLayer) {
     controlP.y = mousePos.y/pdfState.zoom;
     drawLayerStack.push(controlP);
     writeLayer.querySelectorAll("div.control_group")[0].appendChild(controlP.controlBox);
-
     let editimgGroupDiv;
     if (writeLayer.querySelectorAll("div.editimg_group").length == 0) {
         editimgGroupDiv = document.createElement("div");

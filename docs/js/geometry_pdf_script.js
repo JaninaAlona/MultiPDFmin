@@ -168,13 +168,13 @@ const shapeRotationSelector = document.querySelector('#rotateshapesel');
 const shapeRotationInput = document.querySelector('#shaperotation_input');
 
 
-document.getElementById('addRect').addEventListener("click", function(e) {
+document.getElementById('addRect').addEventListener("click", function() {
     resetAllModes();
     userModesGeometry[0] = true;
-    addShape(e, "rectangle");      
+    addShape("rectangle");      
 }, false);
 
-function addShape(event, shapeType) {
+function addShape(shapeType) {
     for(let i = 0; i < writeLayerStack.length; i++) {
         writeLayerStack[i].onclick = function(e) {
             addingShape(e, writeLayerStack[i], shapeType);
@@ -269,17 +269,17 @@ function createUserShapeLayer(event, editImgClass, thisPage, controlP, writeLaye
     createStackLayer(thisPage, editImgClass, controlP.index);
 }
 
-document.getElementById('addTriangle').addEventListener("click", function(e) {
+document.getElementById('addTriangle').addEventListener("click", function() {
     resetAllModes();
     userModesGeometry[1] = true;
-    addShape(e, "triangle");    
+    addShape("triangle");    
 }, false);
 
 
-document.getElementById('addCircle').addEventListener("click", function(e) {
+document.getElementById('addCircle').addEventListener("click", function() {
     resetAllModes();
     userModesGeometry[2] = true;
-    addShape(e, "circle");    
+    addShape("circle");    
 }, false);
 
 

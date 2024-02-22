@@ -1348,8 +1348,8 @@ function initSidemenuControlsGeometry() {
 
 function initUserModesGeometry() {
     userModesGeometry = [];
-    let adedRectMode = false;
-    userModesGeometry.push(adedRectMode);
+    let addRectMode = false;
+    userModesGeometry.push(addRectMode);
     let addTriangleMode = false;
     userModesGeometry.push(addTriangleMode);
     let addCircleMode = false;

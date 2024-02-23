@@ -79,7 +79,6 @@ const colorPickerFont = new Alwan('#colorpicker', {
 let textControllerPointCounter = 0;
 let userFontColor;
 let userFontOpacity;
-let userTextField;
 let fontSizeSelectorTriggered = false;
 let fontSizeInputFieldTriggered = false;
 let rotateTextSelectorTriggered = false;

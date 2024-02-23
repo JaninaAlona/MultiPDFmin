@@ -197,7 +197,7 @@ function convertPageListToSucess(inputId, numOfPages) {
     }
     if (outputPageList.length > 0) {
             
-        // remove dublicates in list
+        // remove duplicates in list
         outputPageList = outputPageList.filter((value, index) => outputPageList.indexOf(value) === index);
 
         // sort in ascending order

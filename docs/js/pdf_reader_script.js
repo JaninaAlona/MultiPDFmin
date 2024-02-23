@@ -832,7 +832,6 @@ function dragElement(elmnt) {
 
     function elementDrag(e) {
         if (draggingMode && mouseIsDown) {
-            short = false;
             pos1 = pos3 - e.clientX;
             pos2 = pos4 - e.clientY;
             pos3 = e.clientX;

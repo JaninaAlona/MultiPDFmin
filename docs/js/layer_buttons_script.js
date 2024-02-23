@@ -12,8 +12,6 @@
 
 let layerApplyMode = false;
 let boxApplyMode = true;
-let clicked = false;
-let short = false;
 let copyCounter = 1;
 let relocateLayersMode = false;
 
@@ -145,7 +143,7 @@ function deleteLayerByElement(page, index, type) {
             layercontainers[i].dataset.index -= 1;
             layercontainers[i].children[0].dataset.index -= 1;
             layercontainers[i].children[0].children[0].dataset.index -= 1;
-            layercontainers[i].children[1].dataset.inde -= 1;
+            layercontainers[i].children[1].dataset.index -= 1;
         }
     } 
     if (userTextList.length === 0) {
@@ -517,7 +515,7 @@ function relocateLayers(selectedLayer) {
     layerBox.onmousedown = startRelocating;
 
     function startRelocating(e) {
-        if (relocateLayersMode && !clicked) {
+        if (relocateLayersMode) {
             mouseIsDown = true;
             let box = e.currentTarget;
             boxType = box.classList[0];

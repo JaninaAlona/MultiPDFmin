@@ -15,7 +15,6 @@ const { PDFDocument } = PDFLib
 let selectedPDFBytes = [];
 let outputPdf = null;
 let pdfBytes;
-let file;
 let mergeFilename = "merged_pdf";
 
 

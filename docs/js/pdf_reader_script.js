@@ -28,7 +28,6 @@ let pageCounter = 1;
 let customFilename;
 let file;
 let pdfFileName;
-let pdfPath;
 let isDrawing = false;
 let isErasing = false;
 let draggingMode = false;
@@ -51,16 +50,11 @@ let sidemenuVisible = true;
 let layersVisible = true;
 let onetimeSetup = true;
 let displayEditControls;
-let displayReadCtls;
 let writePdfBtn;
 let drawPdfBtn;
 let geometryBtn;
 let imagesBtn;
 let encrypted;
-let pagesError = false;
-let encryptedError = false;
-let noPDFError = false;
-const saveZoom = 5;
 
 
 let inputFileButtons = document.getElementsByClassName('inputfile');
@@ -188,20 +182,17 @@ for (let i = 0; i < inputFileButtons.length; i++) {
                             startRender = performance.now();
                             await renderPage(pageCounter, false);
                         } else {
-                            pagesError = true;
                             for (let i = 0; i < pagesErrorWidgets.length; i++) {
                                 pagesErrorWidgets[i].style.display = "flex";
                             }
                         }
                     } else {
-                        encryptedError = true;
                         for (let i = 0; i < encryptedErrorWidgets.length; i++) {
                             encryptedErrorWidgets[i].style.display = "flex";
                         }
                     }
                 }
             }).catch(unsupportedFileErr => {
-                noPDFError = true;
                 for (let i = 0; i < noPDFErrorWidgets.length; i++) {
                     noPDFErrorWidgets[i].style.display = "flex";
                 }
@@ -256,9 +247,6 @@ function resetRendering() {
     pdfState.existingPDFBytes = null;
     pdfState.originalWidths = [];
     pdfState.originalHeights = [];
-    noPDFError = false;
-    encryptedError = false;
-    pagesError = false;
 }
 
 
@@ -278,7 +266,7 @@ for (let h = 0; h < saveButtonsEditor.length; h++) {
         const editImgs = document.getElementsByClassName("editimg");
         if (editImgs.length > 0) { 
             let originalZoom = pdfState.zoom;
-            pdfState.zoom = saveZoom;
+            pdfState.zoom = 5;
             zoomForSave().then(function(step) {
                 console.log(step);
                 return canvasToImage();

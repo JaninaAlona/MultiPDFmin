@@ -79,7 +79,6 @@ pagelist.addEventListener("change", function() {
     trimmedPages = [];
 }, false);
 
-
 function filterSelect(layercon, removeState, addState, selectStateT, selectStateD, selectStateI, selectStateS, selectStateL, selectStateU) {
     if (trimmedPages.length > 0) {
         const layerPage = parseInt(layercon.getAttribute("data-page"), 10);
@@ -311,7 +310,6 @@ unimageType.addEventListener("click", function() {
         unimageType.classList.add("btn-light");
     }
 }, false);
-
 
 const lockedBtn = document.getElementsByClassName("lockedBTN")[0];
 lockedBtn.addEventListener("click", function() {

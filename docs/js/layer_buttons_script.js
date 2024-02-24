@@ -534,7 +534,6 @@ function relocateLayers(selectedLayer) {
                 priorY = controlP.y;
                 rect = controlP.editImg.getBoundingClientRect();  
                 context = controlP.editImg.getContext('2d');
-                
                 x = controlP.controlBox.offsetLeft - e.clientX;
                 y = controlP.controlBox.offsetTop - e.clientY;
                 startX = e.clientX - rect.left;

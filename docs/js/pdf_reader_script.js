@@ -35,7 +35,6 @@ let userModes = [];
 let userModesDrawer = [];
 let userModesGeometry = [];
 let userModesImages = [];
-let hiddenLayerStack = []; 
 let writeLayerStack = [];
 let userTextList = [];
 let userImageList = [];
@@ -828,7 +827,7 @@ function dragElement(elmnt) {
         }
     }
 
-    function closeDragElement(e) {
+    function closeDragElement() {
         if (draggingMode) {
             mouseIsDown = false;
             currentWriteLayer.style.cursor = "default";
@@ -890,7 +889,6 @@ async function setPageRotation(currentPage, newRotation) {
     renderContextes[currentPage-1].width = newWidth;
     renderContextes[currentPage-1].height = newHeight;
 }
-
 
 
 function resetUserModes() {
@@ -1155,7 +1153,6 @@ function initEditor() {
         layersVisible = true;
         boxApplyMode = true;
         layerApplyMode = false;
-        hiddenLayerStack = [];
         document.getElementById('show_btns').style.display = "none";
         initLayerVariables();
         initTextEditorControls();
@@ -1185,7 +1182,6 @@ function initEditor() {
         updateCursorY();
     }
 }
-
 
 function initLayerVariables() {
     layerNameCounterText = 1;
@@ -1217,7 +1213,6 @@ function initLayerVariables() {
     let unpagelist = document.getElementsByClassName("un_pagelist")[0];
     unpagelist.value = "";
 }
-
 
 function initTextEditorControls() {
     x = 0;

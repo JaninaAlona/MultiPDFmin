@@ -26,7 +26,6 @@ let startRender;
 let endRender;
 let pageCounter = 1;
 let customFilename;
-let file;
 let pdfFileName;
 let isDrawing = false;
 let isErasing = false;
@@ -74,7 +73,7 @@ for (let i = 0; i < inputFileButtons.length; i++) {
         for (let i = 0; i < pagesErrorWidgets.length; i++) {
             pagesErrorWidgets[i].style.display = "none";
         }
-        file = e.target.files[0];
+        const file = e.target.files[0];
         const fileReader = new FileReader(); 
         fileReader.onload = function() {
             const typedarray = new Uint8Array(this.result);

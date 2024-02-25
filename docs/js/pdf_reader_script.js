@@ -762,7 +762,6 @@ document.getElementById('go_previous').addEventListener('click', goPrevPage, fal
 document.getElementById('go_next').addEventListener('click', goNextPage, false);
 document.getElementById('current_page').addEventListener('keyup', enterPageNum, false);
 
-
 let scrollwrappers = document.getElementsByClassName("scrollwrapper");
 for (let i = 0; i < scrollwrappers.length; i++) {
     scrollwrappers[i].onscroll = displayPageNum;

@@ -236,7 +236,6 @@ function createUserShapeLayer(event, editImgClass, thisPage, controlP, writeLaye
     canvasContainer.classList.add("visible");
     canvasContainer.classList.add(editImgClass);
     controlP.editImg = canvasContainer;
-
     let editimgGroupDiv;
     if (writeLayer.querySelectorAll("div.editimg_group").length == 0) {
         editimgGroupDiv = document.createElement("div");
@@ -249,7 +248,6 @@ function createUserShapeLayer(event, editImgClass, thisPage, controlP, writeLaye
     writeLayer.querySelectorAll("div.editimg_group")[0].appendChild(canvasContainer);
     let rect = canvasContainer.getBoundingClientRect();
     let mousePos = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-    
     const ctx = canvasContainer.getContext("2d");
     const currentShape = controlP.elementToControl;
     currentShape.context = ctx;

@@ -44,7 +44,8 @@ const merger = Vue.createApp({
             fileReader.onload = async function() {
                 let selectedPDFByte = new Uint8Array(this.result);
                 this.isEncrypted = false;
-                if (file.name.endsWith(".pdf") || file.name.endsWith(".PDF")) {
+                let originalFilename = file.name;
+                if (originalFilename.toLowerCase().endsWith(".pdf")) {
                     let srcPDFDoc;
                     try {
                         srcPDFDoc = await PDFDocument.load(selectedPDFByte);

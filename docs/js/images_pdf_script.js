@@ -66,7 +66,8 @@ document.getElementById("inputimg").addEventListener("change", function(e) {
 }, false);
 
 function createFileListEntryImage(filename, index) {
-    if (filename.endsWith(".jpg") || filename.endsWith(".jpeg") || filename.endsWith(".png")) {
+    let originalFilename = filename;
+    if (originalFilename.toLowerCase().endsWith(".jpg") || originalFilename.toLowerCase().endsWith(".jpeg") || originalFilename.toLowerCase().endsWith(".png")) {
         const container = document.getElementById("listpoint_img_con");
         const div = document.createElement("div");
         div.className = "div_files_img";
@@ -164,10 +165,11 @@ async function addImage(e, writeLayer) {
             while (labelName.search("<br>") > -1) {
                 labelName = labelName.replace("<br>", "");
             }
-            if (labelName.endsWith(".png")) {
+            let checkLabelname = labelName;
+            if (checkLabelname.toLowerCase().endsWith(".png")) {
                 currentUserImage.type = 'png';
                 imgBytes = await pdfLayer.embedPng(imagesBase64Strings[checkedIndex]);
-            } else if (labelName.endsWith(".jpg") || labelName.endsWith(".jpeg")) {
+            } else if (checkLabelname.toLowerCase().endsWith(".jpg") || checkLabelname.toLowerCase().endsWith(".jpeg")) {
                 currentUserImage.type = 'jpg';
                 imgBytes = await pdfLayer.embedJpg(imagesBase64Strings[checkedIndex]);
             }

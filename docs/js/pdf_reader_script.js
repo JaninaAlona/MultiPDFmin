@@ -79,7 +79,8 @@ for (let i = 0; i < inputFileButtons.length; i++) {
             const pdfBytes = typedarray;
             const loadingTask = pdfjsLib.getDocument(typedarray);
             loadingTask.promise.then(async (pdf) => {
-                if (file.name.endsWith(".pdf") || file.name.endsWith(".PDF")) {
+                let originalFilename = file.name;
+                if (originalFilename.toLowerCase().endsWith(".pdf")) {
                     try {
                         outputPDF = await PDFLib.PDFDocument.load(pdfBytes);
                     } catch(encryptedErr) {

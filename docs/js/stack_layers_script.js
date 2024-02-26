@@ -314,50 +314,17 @@ function moveLayer(target) {
                     destControlP.parentNode.insertBefore(controlPToMove, destControlP);
                 }
                 if (srcPage !== destPage) {
-                    // const srcCanvas = canvasToMove;
-                    // const srcImgData = srcCanvas.toDataURL("image/png", 1.0);
-                    canvasToMove.width = destCanvas.width;
-                    canvasToMove.height = destCanvas.height;
-                    canvasToMove.style.width = destCanvas.width + "px";
-                    canvasToMove.style.height = destCanvas.height + "px";
-                    // const destCtx = canvasToMove.getContext('2d');
-                    // const destImg = new Image;
-                    // destImg.onload = function(){
-                    //     destCtx.drawImage(destImg, 0, 0);
-                    // };
-                    // destImg.src = srcImgData;
+                    if (canvasToMove.width !== destCanvas.width || canvasToMove.height !== destCanvas.height) {
+                        canvasToMove.width = destCanvas.width;
+                        canvasToMove.height = destCanvas.height;
+                        canvasToMove.style.width = destCanvas.width + "px";
+                        canvasToMove.style.height = destCanvas.height + "px";
+                        await redraw(elementControlP);
+                    }
                     canvasToMove.setAttribute("data-page", destPage);
                     controlPToMove.setAttribute("data-page", destPage);
                     elementControlP.page = destPage;
                     elementToMove.page = destPage;
-                    if (canvasType === "image" || canvasType === "text") {
-                        await updateUserLayer(elementControlP, elementToMove.pdfBytes);
-                    } else if (canvasType === "drawing") {
-                        let context = canvasToMove.getContext("2d");
-                        context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
-                        context.save();
-                        for (let i = 0; i < elementToMove.paths.length; i++) {
-                            context.beginPath();  
-                            context.lineCap = "round";
-                            context.lineJoin = "round";       
-                            context.lineWidth = elementToMove.paths[i][0].line;
-                            context.strokeStyle = elementToMove.paths[i][0].color;   
-                            context.globalCompositeOperation = elementToMove.paths[i][0].compositeOp;
-                            context.moveTo(elementToMove.paths[i][0].x, elementToMove.paths[i][0].y); 
-                            
-                            for (let j = 1; j < elementToMove.paths[i].length; j++)
-                                context.lineTo(elementToMove.paths[i][j].x, elementToMove.paths[i][j].y);
-                            
-                            context.stroke();
-                        }
-                        context.restore();
-                    } else if (canvasType === "shape") {
-                        let context = canvasToMove.getContext("2d");
-                        context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
-                        context.save();
-                        elementToMove.drawShape();
-                        context.restore();
-                    }
                     current.setAttribute("data-page", destPage);
                     let eyeLabel = current.children[0];
                     eyeLabel.setAttribute("data-page", destPage);
@@ -376,5 +343,36 @@ function moveLayer(target) {
                 }
             }
         };
+    }
+}
+
+async function redraw(controlP) {
+    if (controlP.editImg.classList.item(1) === "text" || controlP.editImg.classList.item(1) === "image") {
+        await updateUserLayer(controlP, controlP.elementToControl.pdfBytes);
+    } else if (controlP.editImg.classList.item(1) === "drawing") {
+        let context = controlP.editImg.getContext("2d");
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
+        context.save();
+        for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
+            context.beginPath();  
+            context.lineCap = "round";
+            context.lineJoin = "round";       
+            context.lineWidth = controlP.elementToControl.paths[i][0].line;
+            context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
+            context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
+            context.moveTo(controlP.elementToControl.paths[i][0].x, controlP.elementToControl.paths[i][0].y); 
+            
+            for (let j = 1; j < controlP.elementToControl.paths[i].length; j++)
+                context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
+            
+            context.stroke();
+        }
+        context.restore();
+    } else if (controlP.editImg.classList.item(1) === "shape") {
+        let context = controlP.editImg.getContext("2d");
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
+        context.save();
+        controlP.elementToControl.drawShape();
+        context.restore();
     }
 }

@@ -235,8 +235,8 @@ function createUserShapeLayer(event, editImgClass, thisPage, controlP, writeLaye
     canvasContainer.setAttribute('data-page', thisPage);
     canvasContainer.setAttribute('data-index', controlP.index);
     canvasContainer.classList.add("editimg");
-    canvasContainer.classList.add("visible");
     canvasContainer.classList.add(editImgClass);
+    canvasContainer.classList.add("visible");
     controlP.editImg = canvasContainer;
     let editimgGroupDiv;
     if (writeLayer.querySelectorAll("div.editimg_group").length == 0) {

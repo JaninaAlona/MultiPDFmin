@@ -350,24 +350,7 @@ async function redraw(controlP) {
     if (controlP.editImg.classList.item(1) === "text" || controlP.editImg.classList.item(1) === "image") {
         await updateUserLayer(controlP, controlP.elementToControl.pdfBytes);
     } else if (controlP.editImg.classList.item(1) === "drawing") {
-        let context = controlP.editImg.getContext("2d");
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
-        context.save();
-        for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
-            context.beginPath();  
-            context.lineCap = "round";
-            context.lineJoin = "round";       
-            context.lineWidth = controlP.elementToControl.paths[i][0].line;
-            context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
-            context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
-            context.moveTo(controlP.elementToControl.paths[i][0].x, controlP.elementToControl.paths[i][0].y); 
-            
-            for (let j = 1; j < controlP.elementToControl.paths[i].length; j++)
-                context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
-            
-            context.stroke();
-        }
-        context.restore();
+        zoomDrawing(controlP, pdfState.zoom, pdfState.zoom);
         rotateDrawing(controlP, controlP.elementToControl.rotation);
     } else if (controlP.editImg.classList.item(1) === "shape") {
         let context = controlP.editImg.getContext("2d");

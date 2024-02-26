@@ -14,8 +14,6 @@ let layerApplyMode = false;
 let boxApplyMode = true;
 let copyCounter = 1;
 let relocateLayersMode = false;
-let layerBox;
-let relocateLayersTarget;
 let controlBoxTouched = false;
 
 
@@ -502,6 +500,7 @@ function relocateLayers(selectedLayer) {
     let controlP;
     let boxType = "";
     let boxIndex = -1;
+    let layerBox;
     let rotateOnce = true;
     let priorX;
     let priorY;
@@ -519,8 +518,6 @@ function relocateLayers(selectedLayer) {
         let currentBoxIndex = parseInt(boxes[i].getAttribute("data-index"), 10);
         if ((currentBoxType === layerType) && (currentBoxIndex === layerIndex)) {
             layerBox = boxes[i];
-            console.log("Layerbox");
-            console.log(layerBox);
             layerBox.onmousedown = startRelocating;
         } 
     }
@@ -528,15 +525,10 @@ function relocateLayers(selectedLayer) {
     function startRelocating(e) {
         if (relocateLayersMode) {
             mouseIsDown = true;
-            relocateLayersTarget = e.currentTarget;
-            console.log("clickedBox");
-            console.log(relocateLayersTarget);
+            let relocateLayersTarget = e.currentTarget;
             boxType = relocateLayersTarget.classList.item(0);
             boxIndex = parseInt(relocateLayersTarget.getAttribute("data-index"), 10);
             if ((boxIndex === layerIndex) || (boxType === layerType)) {
-                console.log("BoxInIf");
-                console.log(relocateLayersTarget);
-                console.log("start");
                 if (boxType === "text") {
                     controlP = userTextList[boxIndex];
                 } else if (boxType === "drawing") {
@@ -565,16 +557,6 @@ function relocateLayers(selectedLayer) {
     function relocating(e) {
         e.preventDefault();
         if (relocateLayersMode && mouseIsDown) {  
-            console.log("move");
-            if (boxType === "text") {
-                controlP = userTextList[boxIndex];
-            } else if (boxType === "drawing") {
-                controlP = drawLayerStack[boxIndex];
-            } else if (boxType === "shape") {
-                controlP = geometryPointsList[boxIndex];
-            } else if (boxType === "image") {
-                controlP = userImageList[boxIndex];
-            }
             if (boxType === "text" || boxType === "drawing"|| boxType === "image") {
                 controlP.controlBox.style.left = (e.clientX + x) + "px";
                 controlP.controlBox.style.top = (e.clientY + y) + "px"; 
@@ -771,7 +753,6 @@ function relocateLayers(selectedLayer) {
 function leaveRelocateLayersEvent() {
     if (relocateLayersMode) {
         const boxes = document.getElementsByClassName("box");
-        console.log(boxes);
         for (let i = 0; i < boxes.length; i++) {
             boxes[i].onmousedown = null;
         }

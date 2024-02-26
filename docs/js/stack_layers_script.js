@@ -246,7 +246,7 @@ function moveLayer(target) {
         i.ondragover = e => {
             e.preventDefault();
         };
-        i.ondrop = async e => {
+        i.ondrop = e => {
             e.preventDefault();
             if (i != current) {
                 let currentpos = 0, droppedpos = 0;
@@ -312,10 +312,18 @@ function moveLayer(target) {
                     destControlP.parentNode.insertBefore(controlPToMove, destControlP);
                 }
                 if (srcPage !== destPage) {
+                    const srcCanvas = canvasToMove;
+                    const srcImgData = srcCanvas.toDataURL("image/png", 1.0);
                     canvasToMove.width = destCanvas.width;
                     canvasToMove.height = destCanvas.height;
                     canvasToMove.style.width = destCanvas.width + "px";
                     canvasToMove.style.height = destCanvas.height + "px";
+                    const destCtx = canvasToMove.getContext('2d');
+                    const destImg = new Image;
+                    destImg.onload = function(){
+                        destCtx.drawImage(destImg, 0, 0);
+                    };
+                    destImg.src = srcImgData;
                     canvasToMove.setAttribute("data-page", destPage);
                     controlPToMove.setAttribute("data-page", destPage);
                     controlPToMove.page = destPage;
@@ -327,38 +335,6 @@ function moveLayer(target) {
                     layerEye.setAttribute("data-page", destPage);
                     layername = current.children[1];
                     layername.setAttribute("data-page", destPage);
-                    // if (canvasType === "shape") {
-                    //     canvasToMove = geometryPointsList[canvasIndex].editImg;
-                    //     controlPToMove = geometryPointsList[canvasIndex].controlBox;
-                    //     elementToMove = geometryPointsList[canvasIndex].elementToControl;
-                    // } else if (canvasType === "text") {
-                    //     canvasToMove = userTextList[canvasIndex].editImg;
-                    //     controlPToMove = userTextList[canvasIndex].controlBox;
-                    //     elementToMove = userTextList[canvasIndex].elementToControl;
-                    // } else if (canvasType === "drawing") {
-                    //     zoomDrawing(elementControlP, pdfState.zoom, pdfState.zoom);
-                    //     scalingDrawing(elementControlP);
-                    //     rotateDrawing(elementControlP, elementToMove.rotation);
-                    // } else if (canvasType === "image") {
-                    //     const pdfLayer = await PDFDocument.create();
-                    //     let imgBytes;
-                    //     if (elementToMove.type === 'png') {
-                    //         imgBytes = await pdfLayer.embedPng(elementToMove.base64String);
-                    //     } else if (elementToMove.type === 'jpg') {
-                    //         imgBytes = await pdfLayer.embedJpg(elementToMove.base64String);
-                    //     }
-                    //     const pageLayer = pdfLayer.addPage([destCanvas.width, destCanvas.height]);
-                    //     elementToMove.pdfDoc = pdfLayer;
-                    //     elementToMove.image = imgBytes;
-                    //     elementToMove.y = 100;
-                    //     // elementToMove.y = elementToMove.y + (destCanvas.height - canvasToMove.height);
-                    //     console.log(elementToMove.y);
-                    //     // elementToMove.y = elementControlP.y;
-                    //     elementToMove.setImageElem();
-                    //     const pdfLayerBytes = await pdfLayer.save();
-                    //     elementToMove.pdfBytes = pdfLayerBytes;
-                    //     await updateUserLayer(elementControlP, pdfLayerBytes);
-                    // }
                 }
                 layername = current.children[1];
                 markSingleLayer(layername);

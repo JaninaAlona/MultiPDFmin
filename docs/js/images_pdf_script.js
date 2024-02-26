@@ -235,7 +235,6 @@ function createUserLayer(editImgClass, thisPage, controlP, writeLayer, pdfLayerB
     canvasContainer.classList.add("visible");
     canvasContainer.classList.add(editImgClass);
     const ctx = canvasContainer.getContext('2d');
-
     const loadingTask = pdfjsLib.getDocument(pdfLayerBytes);
     loadingTask.promise.then(pdf => {
         pdf.getPage(1).then(function(page) {

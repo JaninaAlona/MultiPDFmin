@@ -216,8 +216,8 @@ function createUserDrawLayer(e, editImgClass, thisPage, writeLayer) {
     canvasContainer.setAttribute('data-page', thisPage);
     canvasContainer.setAttribute('data-index', drawControllerPointCounter);
     canvasContainer.classList.add("editimg");
-    canvasContainer.classList.add("visible");
     canvasContainer.classList.add(editImgClass);
+    canvasContainer.classList.add("visible");
     controlP.editImg = canvasContainer;
     let rect = writeLayer.getBoundingClientRect();
     let mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };

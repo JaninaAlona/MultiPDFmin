@@ -364,6 +364,7 @@ async function dublicateElement(thisPage, index, type) {
         drawingLayer.paths = deepCopy(drawingLayerToDublicate.paths);
         drawingLayer.currentPathIndex = drawingLayerToDublicate.currentPathIndex;
         drawingLayer.rotation = drawingLayerToDublicate.rotation;
+        const canvasToDublicate = elementToDublicate.editImg;
         const canvasContainer = document.createElement("canvas");
         canvasContainer.style.display = "flex";
         canvasContainer.style.position = "absolute";
@@ -374,6 +375,7 @@ async function dublicateElement(thisPage, index, type) {
         canvasContainer.setAttribute('data-index', drawControllerPointCounter);
         canvasContainer.classList.add("editimg");
         canvasContainer.classList.add("drawing");
+        canvasContainer.classList.add(canvasToDublicate.classList.item(2));
         controlP.editImg = canvasContainer;
         let origX = elementToDublicate.x;
         let origY = elementToDublicate.y;
@@ -506,7 +508,7 @@ function relocateLayers(selectedLayer) {
     let layerType = selectedLayer.getAttribute("data-type");
     const boxes = document.getElementsByClassName("box");
     for (let i = 0; i < boxes.length; i++) {
-        let currentBoxType = boxes[i].classList[0];
+        let currentBoxType = boxes[i].classList.item(0);
         let currentBoxIndex = parseInt(boxes[i].getAttribute("data-index"), 10);
         if (currentBoxType === layerType && currentBoxIndex === layerIndex) {
             layerBox = boxes[i];
@@ -518,7 +520,7 @@ function relocateLayers(selectedLayer) {
         if (relocateLayersMode) {
             mouseIsDown = true;
             let box = e.currentTarget;
-            boxType = box.classList[0];
+            boxType = box.classList.item(0);
             boxIndex = parseInt(box.getAttribute("data-index"), 10);
             if (boxIndex === layerIndex && boxType === layerType) {
                 if (boxType === "text") {
@@ -781,7 +783,7 @@ function unlockLayer(layer) {
 
 function checkForLockStatus(box) {
     let disable = false;
-    let boxType = box.classList[0];
+    let boxType = box.classList.item(0);
     let boxIndex = parseInt(box.getAttribute("data-index"), 10);
     const layercons = document.getElementsByClassName("layercontainer");
     for (let i = 0; i < layercons.length; i++) {

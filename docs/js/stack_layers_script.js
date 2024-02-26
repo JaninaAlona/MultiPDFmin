@@ -262,6 +262,7 @@ function moveLayer(target) {
                 let canvasToMove;
                 let controlPToMove;
                 let elementToMove;
+                let drawingControlP;
                 const canvasIndex = parseInt(current.getAttribute('data-index'), 10);
                 const canvasType = current.getAttribute('data-type');
                 if (canvasType === "shape") {
@@ -273,6 +274,7 @@ function moveLayer(target) {
                     controlPToMove = userTextList[canvasIndex].controlBox;
                     elementToMove = userTextList[canvasIndex].elementToControl;
                 } else if (canvasType === "drawing") {
+                    drawingControlP = drawLayerStack[canvasIndex];
                     canvasToMove = drawLayerStack[canvasIndex].editImg;
                     controlPToMove = drawLayerStack[canvasIndex].controlBox;
                     elementToMove = drawLayerStack[canvasIndex].elementToControl;
@@ -309,6 +311,17 @@ function moveLayer(target) {
                     destControlP.parentNode.insertBefore(controlPToMove, destControlP);
                 }
                 if (srcPage !== destPage) {
+                    const writeLayers = document.getElementsByClassName("write_layer");
+                    let destWriteLayer;
+                    for (let i = 0; i < writeLayers.length; i++) {
+                        if (destPage === parseInt(writeLayers[i].getAttribute("data-write"), 10)) {
+                            destWriteLayer = writeLayers[i];
+                        }
+                    }
+                    canvasToMove.width = destWriteLayer.width;
+                    canvasToMove.height = destWriteLayer.height;
+                    canvasToMove.style.width = destWriteLayer.width + "px";
+                    canvasToMove.style.height = destWriteLayer.height + "px";
                     canvasToMove.setAttribute("data-page", destPage);
                     controlPToMove.setAttribute("data-page", destPage);
                     controlPToMove.page = destPage;
@@ -320,6 +333,11 @@ function moveLayer(target) {
                     layerEye.setAttribute("data-page", destPage);
                     layername = current.children[1];
                     layername.setAttribute("data-page", destPage);
+                }
+                if (canvasType === "drawing") {
+                    zoomDrawing(drawingControlP, pdfState.zoom, pdfState.zoom);
+                    scalingDrawing(drawingControlP);
+                    rotateDrawing(drawingControlP, elementToMove.rotation);
                 }
                 layername = current.children[1];
                 markSingleLayer(layername);

@@ -368,6 +368,7 @@ async function redraw(controlP) {
             context.stroke();
         }
         context.restore();
+        rotateDrawing(controlP, controlP.elementToControl.rotation);
     } else if (controlP.editImg.classList.item(1) === "shape") {
         let context = controlP.editImg.getContext("2d");
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);  

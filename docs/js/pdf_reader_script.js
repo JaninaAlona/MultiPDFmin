@@ -928,8 +928,8 @@ function resetAllModes() {
     resetUserModesDrawer();
     resetUserModesGeometry();
     resetUserModesImages();
+    leaveRelocateLayersEvent();
     draggingMode = false;
-    relocateLayersMode = false;
     isDrawing = false;
     isErasing = false;
     mouseIsDown = false;

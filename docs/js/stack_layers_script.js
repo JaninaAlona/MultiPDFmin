@@ -141,7 +141,6 @@ function createStackLayer(thisPage, editImgClass, editImgIndex) {
 
 
 function hideLayer(layerEye) {
-    leaveRelocateLayersEvent();
     resetAllModes();
     const checkedIndex = parseInt(layerEye.getAttribute("data-index"), 10);
     const checkedType = layerEye.getAttribute("data-type");

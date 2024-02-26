@@ -778,7 +778,6 @@ function lockLayer(layer) {
         layer.style.borderWidth = "5px";
         layer.style.borderColor = "rgba(255, 255, 255, 0.8)";
         layer.style.backgroundColor = "rgba(218, 189, 182, 0.8)";
-        leaveRelocateLayersEvent();
     }
 }
 
@@ -796,7 +795,6 @@ function unlockLayer(layer) {
         layer.classList.add("unlocked");
         layer.style.backgroundColor = "rgba(218, 189, 182, 0.8)";
         layer.style.borderStyle = "none";
-        leaveRelocateLayersEvent();
     }
 }
 

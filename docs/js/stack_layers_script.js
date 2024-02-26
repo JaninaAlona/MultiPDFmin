@@ -246,7 +246,7 @@ function moveLayer(target) {
         i.ondragover = e => {
             e.preventDefault();
         };
-        i.ondrop = e => {
+        i.ondrop = async e => {
             e.preventDefault();
             if (i != current) {
                 let currentpos = 0, droppedpos = 0;
@@ -266,10 +266,12 @@ function moveLayer(target) {
                 const canvasIndex = parseInt(current.getAttribute('data-index'), 10);
                 const canvasType = current.getAttribute('data-type');
                 if (canvasType === "shape") {
+                    elementControlP = geometryPointsList[canvasIndex];
                     canvasToMove = geometryPointsList[canvasIndex].editImg;
                     controlPToMove = geometryPointsList[canvasIndex].controlBox;
                     elementToMove = geometryPointsList[canvasIndex].elementToControl;
                 } else if (canvasType === "text") {
+                    elementControlP = userTextList[canvasIndex];
                     canvasToMove = userTextList[canvasIndex].editImg;
                     controlPToMove = userTextList[canvasIndex].controlBox;
                     elementToMove = userTextList[canvasIndex].elementToControl;
@@ -312,22 +314,50 @@ function moveLayer(target) {
                     destControlP.parentNode.insertBefore(controlPToMove, destControlP);
                 }
                 if (srcPage !== destPage) {
-                    const srcCanvas = canvasToMove;
-                    const srcImgData = srcCanvas.toDataURL("image/png", 1.0);
+                    // const srcCanvas = canvasToMove;
+                    // const srcImgData = srcCanvas.toDataURL("image/png", 1.0);
                     canvasToMove.width = destCanvas.width;
                     canvasToMove.height = destCanvas.height;
                     canvasToMove.style.width = destCanvas.width + "px";
                     canvasToMove.style.height = destCanvas.height + "px";
-                    const destCtx = canvasToMove.getContext('2d');
-                    const destImg = new Image;
-                    destImg.onload = function(){
-                        destCtx.drawImage(destImg, 0, 0);
-                    };
-                    destImg.src = srcImgData;
+                    // const destCtx = canvasToMove.getContext('2d');
+                    // const destImg = new Image;
+                    // destImg.onload = function(){
+                    //     destCtx.drawImage(destImg, 0, 0);
+                    // };
+                    // destImg.src = srcImgData;
                     canvasToMove.setAttribute("data-page", destPage);
                     controlPToMove.setAttribute("data-page", destPage);
-                    controlPToMove.page = destPage;
+                    elementControlP.page = destPage;
                     elementToMove.page = destPage;
+                    if (canvasType === "image" || canvasType === "text") {
+                        await updateUserLayer(elementControlP, elementToMove.pdfBytes);
+                    } else if (canvasType === "drawing") {
+                        let context = canvasToMove.getContext("2d");
+                        context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
+                        context.save();
+                        for (let i = 0; i < elementToMove.paths.length; i++) {
+                            context.beginPath();  
+                            context.lineCap = "round";
+                            context.lineJoin = "round";       
+                            context.lineWidth = elementToMove.paths[i][0].line;
+                            context.strokeStyle = elementToMove.paths[i][0].color;   
+                            context.globalCompositeOperation = elementToMove.paths[i][0].compositeOp;
+                            context.moveTo(elementToMove.paths[i][0].x, elementToMove.paths[i][0].y); 
+                            
+                            for (let j = 1; j < elementToMove.paths[i].length; j++)
+                                context.lineTo(elementToMove.paths[i][j].x, elementToMove.paths[i][j].y);
+                            
+                            context.stroke();
+                        }
+                        context.restore();
+                    } else if (canvasType === "shape") {
+                        let context = canvasToMove.getContext("2d");
+                        context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
+                        context.save();
+                        elementToMove.drawShape();
+                        context.restore();
+                    }
                     current.setAttribute("data-page", destPage);
                     let eyeLabel = current.children[0];
                     eyeLabel.setAttribute("data-page", destPage);

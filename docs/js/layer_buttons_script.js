@@ -14,6 +14,9 @@ let layerApplyMode = false;
 let boxApplyMode = true;
 let copyCounter = 1;
 let relocateLayersMode = false;
+let layerBox;
+let relocateLayersTarget;
+let controlBoxTouched = false;
 
 
 const btns = document.getElementById("btns");
@@ -497,9 +500,8 @@ function relocateLayers(selectedLayer) {
     let endX;
     let endY;
     let controlP;
-    let layerBox;
-    let boxType;
-    let boxIndex;
+    let boxType = "";
+    let boxIndex = -1;
     let rotateOnce = true;
     let priorX;
     let priorY;
@@ -509,26 +511,32 @@ function relocateLayers(selectedLayer) {
     let x = 0;
     let y = 0;
     mouseIsDown = false;
-    let controlBoxTouched = false;
     let layerIndex = parseInt(selectedLayer.getAttribute("data-index"), 10);
     let layerType = selectedLayer.getAttribute("data-type");
     const boxes = document.getElementsByClassName("box");
     for (let i = 0; i < boxes.length; i++) {
         let currentBoxType = boxes[i].classList.item(0);
         let currentBoxIndex = parseInt(boxes[i].getAttribute("data-index"), 10);
-        if (currentBoxType === layerType && currentBoxIndex === layerIndex) {
+        if ((currentBoxType === layerType) && (currentBoxIndex === layerIndex)) {
             layerBox = boxes[i];
+            console.log("Layerbox");
+            console.log(layerBox);
+            layerBox.onmousedown = startRelocating;
         } 
     }
-    layerBox.onmousedown = startRelocating;
-
+   
     function startRelocating(e) {
         if (relocateLayersMode) {
             mouseIsDown = true;
-            let box = e.currentTarget;
-            boxType = box.classList.item(0);
-            boxIndex = parseInt(box.getAttribute("data-index"), 10);
-            if (boxIndex === layerIndex && boxType === layerType) {
+            relocateLayersTarget = e.currentTarget;
+            console.log("clickedBox");
+            console.log(relocateLayersTarget);
+            boxType = relocateLayersTarget.classList.item(0);
+            boxIndex = parseInt(relocateLayersTarget.getAttribute("data-index"), 10);
+            if ((boxIndex === layerIndex) || (boxType === layerType)) {
+                console.log("BoxInIf");
+                console.log(relocateLayersTarget);
+                console.log("start");
                 if (boxType === "text") {
                     controlP = userTextList[boxIndex];
                 } else if (boxType === "drawing") {
@@ -557,6 +565,16 @@ function relocateLayers(selectedLayer) {
     function relocating(e) {
         e.preventDefault();
         if (relocateLayersMode && mouseIsDown) {  
+            console.log("move");
+            if (boxType === "text") {
+                controlP = userTextList[boxIndex];
+            } else if (boxType === "drawing") {
+                controlP = drawLayerStack[boxIndex];
+            } else if (boxType === "shape") {
+                controlP = geometryPointsList[boxIndex];
+            } else if (boxType === "image") {
+                controlP = userImageList[boxIndex];
+            }
             if (boxType === "text" || boxType === "drawing"|| boxType === "image") {
                 controlP.controlBox.style.left = (e.clientX + x) + "px";
                 controlP.controlBox.style.top = (e.clientY + y) + "px"; 
@@ -573,7 +591,7 @@ function relocateLayers(selectedLayer) {
                 controlP.controlBox.style.top = (e.clientY + y) + "px"; 
                 controlP.x = e.clientX + x;
                 controlP.y = e.clientY + y;
-            }  
+            }
         }
     }
 
@@ -750,6 +768,18 @@ function relocateLayers(selectedLayer) {
     }
 }
 
+function leaveRelocateLayersEvent() {
+    if (relocateLayersMode) {
+        const boxes = document.getElementsByClassName("box");
+        console.log(boxes);
+        for (let i = 0; i < boxes.length; i++) {
+            boxes[i].onmousedown = null;
+        }
+        relocateLayersMode = false;
+        controlBoxTouched = false;
+    }
+}
+
 
 document.getElementById("lock").addEventListener("click", function() {
     resetAllModes();
@@ -767,6 +797,7 @@ function lockLayer(layer) {
         layer.style.borderWidth = "5px";
         layer.style.borderColor = "rgba(255, 255, 255, 0.8)";
         layer.style.backgroundColor = "rgba(218, 189, 182, 0.8)";
+        leaveRelocateLayersEvent();
     }
 }
 
@@ -784,6 +815,7 @@ function unlockLayer(layer) {
         layer.classList.add("unlocked");
         layer.style.backgroundColor = "rgba(218, 189, 182, 0.8)";
         layer.style.borderStyle = "none";
+        leaveRelocateLayersEvent();
     }
 }
 

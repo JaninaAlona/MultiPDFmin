@@ -141,6 +141,7 @@ function createStackLayer(thisPage, editImgClass, editImgIndex) {
 
 
 function hideLayer(layerEye) {
+    leaveRelocateLayersEvent();
     resetAllModes();
     const checkedIndex = parseInt(layerEye.getAttribute("data-index"), 10);
     const checkedType = layerEye.getAttribute("data-type");
@@ -190,6 +191,7 @@ function markLayer(layer) {
             layerCon.style.borderColor = "rgba(255, 255, 255, 0.8)";
         }
     }
+    leaveRelocateLayersEvent();
 }
 
 function markSingleLayer(layer) {
@@ -249,6 +251,7 @@ function moveLayer(target) {
         i.ondrop = async e => {
             e.preventDefault();
             if (i != current) {
+                leaveRelocateLayersEvent();
                 let currentpos = 0, droppedpos = 0;
                 for (let it=0; it<items.length; it++) {
                     if (current == items[it]) { 

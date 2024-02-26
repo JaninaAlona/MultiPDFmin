@@ -287,6 +287,7 @@ async function dublicateElement(thisPage, index, type) {
         controlP.x = origX;
         controlP.y = origY;
         userImageList.push(controlP);
+        const canvasToDublicate = elementToDublicate.editImg;
         const canvasContainer = document.createElement("canvas");
         canvasContainer.style.display = "flex";
         canvasContainer.style.position = "absolute";
@@ -298,6 +299,7 @@ async function dublicateElement(thisPage, index, type) {
         imageControllerPointCounter++;
         canvasContainer.classList.add("editimg");
         canvasContainer.classList.add("image");
+        canvasContainer.classList.add(canvasToDublicate.classList.item(2));
         controlP.editImg = canvasContainer;
         await updateUserLayer(controlP, pdfLayerBytes);
         elementToDublicate.controlBox.parentNode.insertBefore(controlP.controlBox, elementToDublicate.controlBox.nextSibling);
@@ -340,6 +342,7 @@ async function dublicateElement(thisPage, index, type) {
         controlP.x = origX;
         controlP.y = origY;
         userTextList.push(controlP);
+        const canvasToDublicate = elementToDublicate.editImg;
         const canvasContainer = document.createElement("canvas");
         canvasContainer.style.display = "flex";
         canvasContainer.style.position = "absolute";
@@ -351,6 +354,7 @@ async function dublicateElement(thisPage, index, type) {
         textControllerPointCounter++;
         canvasContainer.classList.add("editimg");
         canvasContainer.classList.add("text");
+        canvasContainer.classList.add(canvasToDublicate.classList.item(2));
         controlP.editImg = canvasContainer;
         await updateUserLayer(controlP, pdfLayerBytes);
         elementToDublicate.controlBox.parentNode.insertBefore(controlP.controlBox, elementToDublicate.controlBox.nextSibling);
@@ -420,6 +424,7 @@ async function dublicateElement(thisPage, index, type) {
         shapeControllerP.index = shapeControllerPointCounter;
         shapeControllerP.rotation = elementToDublicate.rotation;
         geometryPointsList.push(shapeControllerP);
+        const canvasToDublicate = elementToDublicate.editImg;
         const canvasContainer = document.createElement("canvas");
         canvasContainer.style.display = "flex";
         canvasContainer.style.position = "absolute";
@@ -431,6 +436,7 @@ async function dublicateElement(thisPage, index, type) {
         shapeControllerPointCounter++;
         canvasContainer.classList.add("editimg");
         canvasContainer.classList.add("shape");
+        canvasContainer.classList.add(canvasToDublicate.classList.item(2));
         shapeControllerP.editImg = canvasContainer;
         const ctx = canvasContainer.getContext("2d");
         currentShape.context = ctx;

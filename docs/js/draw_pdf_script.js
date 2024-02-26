@@ -213,6 +213,8 @@ function createUserDrawLayer(e, editImgClass, thisPage, writeLayer) {
     canvasContainer.style.top = 0;
     canvasContainer.width = pdfCanvases[thisPage-1].width;
     canvasContainer.height = pdfCanvases[thisPage-1].height;
+    canvasContainer.style.width = pdfCanvases[thisPage-1].width + "px";
+    canvasContainer.style.height = pdfCanvases[thisPage-1].height + "px";
     canvasContainer.setAttribute('data-page', thisPage);
     canvasContainer.setAttribute('data-index', drawControllerPointCounter);
     canvasContainer.classList.add("editimg");

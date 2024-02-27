@@ -503,7 +503,7 @@ async function renderPage(num, renderSingle) {
             viewport: viewport
         });
         if (!renderSingle) {
-            renderTask.promise.then(function() {
+            renderTask.promise.then(async function() {
                 pdfState.renderedPage = pageCounter;
                 restrictInputValues('current_page', 1, pdfState.renderedPage, true, false);
                 const pageProgresses = document.getElementsByClassName("page_progress");
@@ -571,7 +571,7 @@ async function zoomIn(e) {
             pdfState.zoom = toFactor(percent);
             placeEditorElements();
             pageCounter = 1;
-            renderPage(pageCounter, false);
+            await renderPage(pageCounter, false);
         }
     }
 }
@@ -673,8 +673,11 @@ function placeEditorElements() {
 }
 
 async function zoomText(controlP) {
-    controlP.editImg.width = pdfState.originalWidths[controlP.page-1] * pdfState.zoom;
-    controlP.editImg.height = pdfState.originalHeights[controlP.page-1] * pdfState.zoom;
+    const pageIndex = controlP.page-1;
+    controlP.editImg.width = pdfState.originalWidths[pageIndex] * pdfState.zoom;
+    controlP.editImg.height = pdfState.originalHeights[pageIndex] * pdfState.zoom;
+    controlP.editImg.style.width = (pdfState.originalWidths[pageIndex] * pdfState.zoom) + "px";
+    controlP.editImg.style.height = (pdfState.originalHeights[pageIndex] * pdfState.zoom) + "px";
     const currentText = controlP.elementToControl;
     await updateUserLayer(controlP, currentText.pdfBytes); 
 }
@@ -702,8 +705,11 @@ function zoomDrawing(controlP, zoomWidth, zoomHeight) {
 }
 
 function scaleCanvas(controlP, zoomWidth, zoomHeight) {
-    controlP.editImg.width = pdfState.originalWidths[controlP.page-1] * pdfState.zoom;
-    controlP.editImg.height = pdfState.originalHeights[controlP.page-1] * pdfState.zoom;
+    const pageIndex = controlP.page-1;
+    controlP.editImg.width = pdfState.originalWidths[pageIndex] * pdfState.zoom;
+    controlP.editImg.height = pdfState.originalHeights[pageIndex] * pdfState.zoom;
+    controlP.editImg.style.width = (pdfState.originalWidths[pageIndex] * pdfState.zoom) + "px";
+    controlP.editImg.style.height = (pdfState.originalHeights[pageIndex] * pdfState.zoom) + "px";
     let context = controlP.editImg.getContext("2d");
     let width = context.canvas.width;
     let height = context.canvas.height;
@@ -718,8 +724,11 @@ function scaleCanvas(controlP, zoomWidth, zoomHeight) {
 };
 
 async function zoomImages(controlP) {
-    controlP.editImg.width = pdfState.originalWidths[controlP.page-1] * pdfState.zoom;
-    controlP.editImg.height = pdfState.originalHeights[controlP.page-1] * pdfState.zoom;
+    const pageIndex = controlP.page-1;
+    controlP.editImg.width = pdfState.originalWidths[pageIndex] * pdfState.zoom;
+    controlP.editImg.height = pdfState.originalHeights[pageIndex] * pdfState.zoom;
+    controlP.editImg.style.width = (pdfState.originalWidths[pageIndex] * pdfState.zoom) + "px";
+    controlP.editImg.style.height = (pdfState.originalHeights[pageIndex] * pdfState.zoom) + "px";
     const currentImage = controlP.elementToControl;
     await updateUserLayer(controlP, currentImage.pdfBytes);  
 }
@@ -735,8 +744,11 @@ function zoomGeometry(controlP) {
 }
 
 function scaleEditImgShapeCanvas(editImg) {
-    editImg.width = pdfState.originalWidths[parseInt(editImg.getAttribute("data-page"), 10)-1] * pdfState.zoom;
-    editImg.height = pdfState.originalHeights[parseInt(editImg.getAttribute("data-page"), 10)-1] * pdfState.zoom;
+    const pageIndex = parseInt(editImg.getAttribute("data-page"), 10) - 1;
+    editImg.width = pdfState.originalWidths[pageIndex] * pdfState.zoom;
+    editImg.height = pdfState.originalHeights[pageIndex] * pdfState.zoom;
+    editImg.style.width = (pdfState.originalWidths[pageIndex] * pdfState.zoom) + "px";
+    editImg.style.height = (pdfState.originalHeights[pageIndex] * pdfState.zoom) + "px";
     let ctx = editImg.getContext("2d");
     let width = ctx.canvas.width;
     let height = ctx.canvas.height;

@@ -355,10 +355,6 @@ async function redraw(controlP) {
         zoomDrawing(controlP, pdfState.zoom, pdfState.zoom);
         rotateDrawing(controlP, controlP.elementToControl.rotation);
     } else if (controlP.editImg.classList.item(1) === "shape") {
-        let context = controlP.editImg.getContext("2d");
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
-        context.save();
-        controlP.elementToControl.drawShape();
-        context.restore();
+        zoomGeometry(controlP);
     }
 }

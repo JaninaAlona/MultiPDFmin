@@ -13,7 +13,6 @@
 let layerApplyMode = false;
 let boxApplyMode = true;
 let copyCounter = 1;
-let relocateLayersMode = false;
 let controlBoxTouched = false;
 
 
@@ -747,17 +746,6 @@ function relocateLayers(selectedLayer) {
             window.onmouseup = null;
             layerBox.onmousemove = null;
         }
-    }
-}
-
-function leaveRelocateLayersEvent() {
-    if (relocateLayersMode) {
-        const boxes = document.getElementsByClassName("box");
-        for (let i = 0; i < boxes.length; i++) {
-            boxes[i].onmousedown = null;
-        }
-        relocateLayersMode = false;
-        controlBoxTouched = false;
     }
 }
 

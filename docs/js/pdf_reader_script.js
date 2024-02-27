@@ -53,6 +53,7 @@ let drawPdfBtn;
 let geometryBtn;
 let imagesBtn;
 let encrypted;
+let relocateLayersMode = false;
 
 
 let inputFileButtons = document.getElementsByClassName('inputfile');
@@ -1418,5 +1419,17 @@ function updateCursorY() {
                 cursorYs[i].innerText = `${parseInt((e.clientY - rect.top), 10)}`;
             }
         }, false);
+    }
+}
+
+
+function leaveRelocateLayersEvent() {
+    if (relocateLayersMode) {
+        const boxes = document.getElementsByClassName("box");
+        for (let i = 0; i < boxes.length; i++) {
+            boxes[i].onmousedown = null;
+        }
+        relocateLayersMode = false;
+        controlBoxTouched = false;
     }
 }

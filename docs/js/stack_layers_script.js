@@ -316,6 +316,11 @@ function moveLayer(target) {
                     destControlP.parentNode.insertBefore(controlPToMove, destControlP);
                 }
                 if (srcPage !== destPage) {
+                    canvasToMove.setAttribute("data-page", destPage);
+                    controlPToMove.setAttribute("data-page", destPage);
+                    elementControlP.page = destPage;
+                    elementToMove.page = destPage;
+                    current.setAttribute("data-page", destPage);
                     if (canvasToMove.width !== destCanvas.width || canvasToMove.height !== destCanvas.height) {
                         canvasToMove.width = destCanvas.width;
                         canvasToMove.height = destCanvas.height;
@@ -323,11 +328,6 @@ function moveLayer(target) {
                         canvasToMove.style.height = destCanvas.height + "px";
                         await redraw(elementControlP);
                     }
-                    canvasToMove.setAttribute("data-page", destPage);
-                    controlPToMove.setAttribute("data-page", destPage);
-                    elementControlP.page = destPage;
-                    elementToMove.page = destPage;
-                    current.setAttribute("data-page", destPage);
                     let eyeLabel = current.children[0];
                     eyeLabel.setAttribute("data-page", destPage);
                     let layerEye = current.children[0].children[0];

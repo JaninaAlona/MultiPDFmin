@@ -19,12 +19,26 @@
   z-index: 5;
 }
 
-.scrollwin {
+.merge_widget {
+  position: relative;
+  top: 20px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+}
+
+.scrollwin_con {
   position: relative;
   top: 58px;
-  bottom: 0;
-  width: 100%;
-  overflow-y: auto;
+  height: 100%;
+  overflow: hidden;
+}
+
+.scrollwin {
+  overflow: scroll;
+	height: 100vh;
+	overscroll-behavior: contain;
 }
 
 .error_widget_con {
@@ -100,12 +114,18 @@
 
 #split_pop_up {
   width: 500px;
-  height: 330px
+  height: 330px;
 }
 
 #merge_pop_up {
   width: 500px;
-  height: 850px
+  height: 850px;
+  background-color: #dabdb6;
+  border-radius: 2px;
+}
+
+.merge_content {
+  margin: 20px;
 }
 
 #save_split {

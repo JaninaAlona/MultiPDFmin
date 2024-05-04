@@ -42,40 +42,42 @@
             <a href="edit_pdf.html" class="btn btn-success button_layout images">Image</a>
         </div>
     </header>
-    <div id="merge_app">
-        <div class="pdf_widget merge_widget">
-            <div id="merge_pop_up" class="pop_up">
-                <div class="scrollwrap-margin">
-                    <div class="next_to_open">
-                        <input @input="selectFile" type="file" id="inputmergefile" class="filestyle" data-btnClass="btn-success" data-input="false" accept=".pdf">
-                        <button @click="removeFile" id="remove" class="btn btn-success" disabled type="button">Remove</button>
+    <div class="scrollwrapper">
+        <div id="merge_app">
+            <div class="pdf_widget merge_widget">
+                <div id="merge_pop_up" class="pop_up">
+                    <div class="scrollwrap-margin">
+                        <div class="next_to_open">
+                            <input @input="selectFile" type="file" id="inputmergefile" class="filestyle" data-btnClass="btn-success" data-input="false" accept=".pdf">
+                            <button @click="removeFile" id="remove" class="btn btn-success" disabled type="button">Remove</button>
+                        </div>
+                        <div class="scrollwrapper">
+                            <ul id="sortlist"></ul>
+                        </div>
                     </div>
-                    <div class="scrollwrapper">
-                        <ul id="sortlist"></ul>
+                    <div class="merge_btns">
+                        <div class="pop_elem_size space_btw_radio">
+                            <div class="margin_bottom">Max: 100 files</div>
+                            <div class="margin_bottom">Max: 5000 output pages</div>
+                            <button @click="saveMergedPDF" id="save_merge" class="btn btn-success space_btw_radio" disabled type="button">Save</button>
+                            <div class="filename_hover">
+                                <label for="merge_filename">Provide PDF Filename:</label>
+                                <input @input="setFilename" id="merge_filename" type="text">
+                            </div> 
+                        </div>
                     </div>
                 </div>
-                <div class="merge_btns">
-                    <div class="pop_elem_size space_btw_radio">
-                        <div class="margin_bottom">Max: 100 files</div>
-                        <div class="margin_bottom">Max: 5000 output pages</div>
-                        <button @click="saveMergedPDF" id="save_merge" class="btn btn-success space_btw_radio" disabled type="button">Save</button>
-                        <div class="filename_hover">
-                            <label for="merge_filename">Provide PDF Filename:</label>
-                            <input @input="setFilename" id="merge_filename" type="text">
-                        </div> 
-                    </div>
+            </div>
+            <div class="error_widget_con">
+                <div class="error_widget encrypted_error">
+                    PDF document is encrypted. Encryption is not supported.
                 </div>
-            </div>
-        </div>
-        <div class="error_widget_con">
-            <div class="error_widget encrypted_error">
-                PDF document is encrypted. Encryption is not supported.
-            </div>
-            <div class="error_widget no_pdf_error">
-                Selected file is not a .pdf file.
-            </div>
-            <div class="error_widget pages_error">
-                PDF exceeds 5000 pages.
+                <div class="error_widget no_pdf_error">
+                    Selected file is not a .pdf file.
+                </div>
+                <div class="error_widget pages_error">
+                    PDF exceeds 5000 pages.
+                </div>
             </div>
         </div>
     </div>

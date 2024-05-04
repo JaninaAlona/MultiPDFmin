@@ -20,7 +20,11 @@
 }
 
 .scrollwin {
-  overflow: scroll;
+  position: relative;
+  top: 58px;
+  bottom: 0;
+  width: 100%;
+  overflow-y: auto;
 }
 
 .error_widget_con {

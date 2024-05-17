@@ -738,17 +738,3 @@ function setTrianglePoint(controlP) {
         }
     }
 }
-
-
-document.getElementById('cleargeometry').addEventListener("click", function() {
-    resetAllModes();
-    for (let i = geometryPointsList.length-1; i >= 0; i--) {
-        let disable = checkForLockStatus(geometryPointsList[i].controlBox);
-        if (!disable) {
-            let deleteIndex = parseInt(geometryPointsList[i].controlBox.getAttribute('data-index'), 10);
-            let deletePage = parseInt(geometryPointsList[i].controlBox.getAttribute("data-page"), 10);
-            deleteShape(geometryPointsList[i].controlBox, deletePage, deleteIndex);
-            deleteLayerByElement(deletePage, deleteIndex, "shape");
-        }
-    }
-}, false);

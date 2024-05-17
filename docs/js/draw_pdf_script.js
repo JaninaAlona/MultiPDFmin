@@ -711,17 +711,3 @@ function rotateDrawing(controlP, rotationAngle) {
     }
     context.resetTransform();
 }
-
-
-document.getElementById('cleardrawing').addEventListener("click", function() {
-    resetAllModes();
-    for (let i = drawLayerStack.length-1; i >= 0; i--) {
-        let disable = checkForLockStatus(drawLayerStack[i].controlBox);
-        if (!disable) {
-            let deleteIndex = parseInt(drawLayerStack[i].controlBox.getAttribute('data-index'), 10);
-            let deletePage = parseInt(drawLayerStack[i].controlBox.getAttribute("data-page"), 10);
-            deleteDrawing(drawLayerStack[i].controlBox, deletePage, deleteIndex);
-            deleteLayerByElement(deletePage, deleteIndex, "drawing");
-        }
-    }
-}, false);

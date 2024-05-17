@@ -612,17 +612,3 @@ async function applyImgRotation(controlP) {
         await updateUserLayer(controlP, pdfLayerBytes); 
     }
 }
-
-
-document.getElementById("clearimg").addEventListener('click', function() {
-    resetAllModes();
-    for (let i = userImageList.length-1; i >= 0; i--) {
-        let disable = checkForLockStatus(userImageList[i].controlBox);
-        if (!disable) {
-            let deleteIndex = parseInt(userImageList[i].controlBox.getAttribute('data-index'), 10);
-            let deletePage = parseInt(userImageList[i].controlBox.getAttribute("data-page"), 10);
-            deleteImage(userImageList[i].controlBox, deletePage, deleteIndex);
-            deleteLayerByElement(deletePage, deleteIndex, "image");
-        }
-    }
-}, false);

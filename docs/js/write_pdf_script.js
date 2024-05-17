@@ -681,17 +681,3 @@ async function applyLineHeight(controlP) {
         await updateUserLayer(controlP, pdfLayerBytes);
     }
 }
-
-
-document.getElementById("cleartext").addEventListener('click', function() {
-    resetAllModes();
-    for (let i = userTextList.length-1; i >= 0; i--) {
-        let disable = checkForLockStatus(userTextList[i].controlBox);
-        if (!disable) {
-            let deleteIndex = parseInt(userTextList[i].controlBox.getAttribute('data-index'), 10);
-            let deletePage = parseInt(userTextList[i].controlBox.getAttribute("data-page"), 10);
-            deleteText(userTextList[i].controlBox, deletePage, deleteIndex);
-            deleteLayerByElement(deletePage, deleteIndex, "text");
-        }
-    }
-}, false);

@@ -3,7 +3,7 @@
  * github: https://github.com/JaninaAlona/MultiPDFmin
  * Website: https://janinaalona.github.io/MultiPDFmin/
  * @author Janina Schroeder
- * @version 1.0.0
+ * @version 2.0.0
  * @description Layer operations: creation, copy, delete, move, lock, order, selection, hiding
  * Licensed under GNU GENERAL PUBLIC LICENSE Version 3 (https://github.com/JaninaAlona/MultiPDFmin/blob/main/LICENSE)
  */
@@ -239,15 +239,7 @@ function deleteLayer() {
             deleteIndex = parseInt(layerconsToDelete[i].getAttribute("data-index"), 10);
             deleteType = layerconsToDelete[i].getAttribute("data-type");
             deleteLayerByElement(deletePage, deleteIndex, deleteType);
-            if (deleteType === "shape") {
-                deleteShape(geometryPointsList[deleteIndex].controlBox, deletePage, deleteIndex);
-            } else if (deleteType === "text") {
-                deleteText(userTextList[deleteIndex].controlBox, deletePage, deleteIndex);
-            } else if (deleteType === "drawing") {
-                deleteDrawing(drawLayerStack[deleteIndex].controlBox, deletePage, deleteIndex);
-            } else if (deleteType === "image") {
-                deleteImage(userImageList[deleteIndex].controlBox, deletePage, deleteIndex);
-            }
+            deleteElement(deletePage, deleteIndex, deleteType);
         }
     }
 }

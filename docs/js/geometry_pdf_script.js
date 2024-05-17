@@ -3,7 +3,7 @@
  * github: https://github.com/JaninaAlona/MultiPDFmin
  * Website: https://janinaalona.github.io/MultiPDFmin/
  * @author Janina Schroeder
- * @version 1.0.0
+ * @version 2.0.0
  * @description Shaper functions
  * Licensed under GNU GENERAL PUBLIC LICENSE Version 3 (https://github.com/JaninaAlona/MultiPDFmin/blob/main/LICENSE)
  */
@@ -281,55 +281,6 @@ document.getElementById('addCircle').addEventListener("click", function() {
     userModesGeometry[2] = true;
     addShape("circle");    
 }, false);
-
-
-document.getElementById('deleteshape').addEventListener("click", function() {
-    resetAllModes();
-    if (boxApplyMode) {
-        userModesGeometry[3] = true;
-        let shapeBoxes = document.querySelectorAll("div.shape");
-        for(let i = 0; i < shapeBoxes.length; i++) {
-            shapeBoxes[i].onclick = function(e) {
-                const deleteBox = e.currentTarget;
-                let disable = checkForLockStatus(deleteBox);
-                if (disable) {
-                    userModesGeometry[3] = false;
-                }
-                if (userModesGeometry[3]) {
-                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'), 10);
-                    let deletePage = parseInt(deleteBox.getAttribute("data-page"), 10);
-                    deleteShape(deleteBox, deletePage, deleteIndex);
-                    deleteLayerByElement(deletePage, deleteIndex, "shape");
-                }
-            }
-        }
-    }
-    if (layerApplyMode) {
-        deleteLayer();
-    }
-}, false);
-
-function deleteShape(controlP, page, boxIndex) {
-    const shapeToDelete = geometryPointsList[boxIndex];
-    geometryPointsList.splice(boxIndex, 1);
-    const writeLayer = document.getElementsByClassName("write_layer")[page-1];
-    const groupImages = writeLayer.getElementsByClassName("editimg_group")[0];
-    shapeToDelete.editImg.parentNode.removeChild(shapeToDelete.editImg);
-    controlP.parentNode.removeChild(controlP);
-    shapeControllerPointCounter--;
-    for (let i = boxIndex; i < geometryPointsList.length; i++) {
-        geometryPointsList[i].index = i;
-        geometryPointsList[i].controlBox.dataset.index = i.toString();
-        geometryPointsList[i].editImg.dataset.index = i.toString();
-    }
-
-    if (groupImages.children.length === 0) {
-        groupImages.parentNode.removeChild(groupImages);
-        const groupControlP = writeLayer.getElementsByClassName("control_group")[0];
-        groupControlP.parentNode.removeChild(groupControlP);
-        layerNameCounterShape = 1;
-    }
-}
 
 
 document.getElementById('moveshape').addEventListener("click", function() {

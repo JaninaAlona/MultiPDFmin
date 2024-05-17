@@ -3,7 +3,7 @@
  * github: https://github.com/JaninaAlona/MultiPDFmin
  * Website: https://janinaalona.github.io/MultiPDFmin/
  * @author Janina Schroeder
- * @version 1.0.0
+ * @version 2.0.0
  * @description Drawer functions
  * Licensed under GNU GENERAL PUBLIC LICENSE Version 3 (https://github.com/JaninaAlona/MultiPDFmin/blob/main/LICENSE)
  */
@@ -394,54 +394,6 @@ document.getElementById('newlayer').addEventListener("click", function() {
     resetAllModes();
     addLayer = true;
 }, false);
-
-
-document.getElementById('delete_draw').addEventListener("click", function() {
-    resetAllModes();
-    if (boxApplyMode) {
-        userModesDrawer[2] = true;
-        let drawBoxes = document.querySelectorAll("div.drawing");
-        for(let i = 0; i < drawBoxes.length; i++) {
-            drawBoxes[i].onclick = function(e) {
-                const deleteBox = e.currentTarget;
-                let disable = checkForLockStatus(deleteBox);
-                if (disable) {
-                    userModesDrawer[2] = false;
-                }
-                if (userModesDrawer[2]) {
-                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'), 10);
-                    let deletePage = parseInt(deleteBox.getAttribute("data-page"), 10);
-                    deleteDrawing(deleteBox, deletePage, deleteIndex);
-                    deleteLayerByElement(deletePage, deleteIndex, "drawing");
-                }
-            }
-        }
-    }
-    if (layerApplyMode) {
-        deleteLayer();
-    }
-}, false);
-
-function deleteDrawing(controlP, page, boxIndex) {
-    const drawingToDelete = drawLayerStack[boxIndex];
-    drawLayerStack.splice(boxIndex, 1);
-    const writeLayer = document.getElementsByClassName("write_layer")[page-1];
-    const groupImages = writeLayer.getElementsByClassName("editimg_group")[0];
-    drawingToDelete.editImg.parentNode.removeChild(drawingToDelete.editImg);
-    controlP.parentNode.removeChild(controlP);
-    drawControllerPointCounter--;
-    for (let i = boxIndex; i < drawLayerStack.length; i++) {
-        drawLayerStack[i].index = i;
-        drawLayerStack[i].controlBox.dataset.index = i.toString();
-        drawLayerStack[i].editImg.dataset.index = i.toString();
-    }
-    if (groupImages.children.length === 0) {
-        groupImages.parentNode.removeChild(groupImages);
-        const groupControlP = writeLayer.getElementsByClassName("control_group")[0];
-        groupControlP.parentNode.removeChild(groupControlP);
-        layerNameCounterDrawing = 1;
-    }
-}
 
 
 document.getElementById('translate_draw').addEventListener("click", function() {

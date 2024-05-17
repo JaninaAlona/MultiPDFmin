@@ -3,7 +3,7 @@
  * github: https://github.com/JaninaAlona/MultiPDFmin
  * Website: https://janinaalona.github.io/MultiPDFmin/
  * @author Janina Schroeder
- * @version 1.0.0
+ * @version 2.0.0
  * @description Imager functions
  * Licensed under GNU GENERAL PUBLIC LICENSE Version 3 (https://github.com/JaninaAlona/MultiPDFmin/blob/main/LICENSE)
  */
@@ -263,55 +263,6 @@ function createUserLayer(editImgClass, thisPage, controlP, writeLayer, pdfLayerB
         });
     });
     return canvasContainer;
-}
-
-
-document.getElementById('deleteimg').addEventListener("click", function() {
-    resetAllModes();
-    if (boxApplyMode) {
-        userModesImages[1] = true;
-        let imgboxes = document.querySelectorAll("div.image");
-        for (let i = 0; i < imgboxes.length; i++) {
-            imgboxes[i].onclick = function(e) {
-                const deleteBox = e.currentTarget;
-                let disable = checkForLockStatus(deleteBox);
-                if (disable) {
-                    userModesImages[1] = false;
-                }
-                if (userModesImages[1]) {
-                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'), 10);
-                    let deletePage = parseInt(deleteBox.getAttribute("data-page"), 10);
-                    deleteImage(deleteBox, deletePage, deleteIndex);
-                    deleteLayerByElement(deletePage, deleteIndex, "image");
-                }
-            }
-        }
-    }
-    if (layerApplyMode) {
-        deleteLayer();
-    }
-}, false);
-
-function deleteImage(controlP, page, boxIndex) {
-    const imageToDelete = userImageList[boxIndex];
-    userImageList.splice(boxIndex, 1);
-    const writeLayer = document.getElementsByClassName("write_layer")[page-1];
-    const groupImages = writeLayer.getElementsByClassName("editimg_group")[0];
-    imageToDelete.editImg.parentNode.removeChild(imageToDelete.editImg);
-    controlP.parentNode.removeChild(controlP);
-    imageControllerPointCounter--;
-    for (let i = boxIndex; i < userImageList.length; i++) {
-        userImageList[i].index = i;
-        userImageList[i].controlBox.dataset.index = i.toString();
-        userImageList[i].editImg.dataset.index = i.toString();
-    }
-
-    if (groupImages.children.length === 0) {
-        groupImages.parentNode.removeChild(groupImages);
-        const groupControlP = writeLayer.getElementsByClassName("control_group")[0];
-        groupControlP.parentNode.removeChild(groupControlP);
-        layerNameCounterImage = 1;
-    }
 }
 
 

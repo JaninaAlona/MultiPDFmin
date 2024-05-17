@@ -3,7 +3,7 @@
  * github: https://github.com/JaninaAlona/MultiPDFmin
  * Website: https://janinaalona.github.io/MultiPDFmin/
  * @author Janina Schroeder
- * @version 1.0.0
+ * @version 2.0.0
  * @description Writer Functions
  * Licensed under GNU GENERAL PUBLIC LICENSE Version 3 (https://github.com/JaninaAlona/MultiPDFmin/blob/main/LICENSE)
  */
@@ -144,54 +144,6 @@ async function addText(event, writeLayer) {
         const canvasContainer = createUserLayer("text", writePage, controlP, writeLayer, pdfLayerBytes);
         controlP.editImg = canvasContainer;
         userTextList.push(controlP);
-    }
-}
-
-
-document.getElementById('deletetext').addEventListener("click", function() {
-    resetAllModes();
-    if (boxApplyMode) {
-        userModes[1] = true;
-        let textboxes = document.querySelectorAll("div.text");
-        for (let i = 0; i < textboxes.length; i++) {
-            textboxes[i].onclick = function(e) {
-                const deleteBox = e.currentTarget;
-                let disable = checkForLockStatus(deleteBox);
-                if (disable) {
-                    userModes[1] = false;
-                }
-                if (userModes[1]) {
-                    let deleteIndex = parseInt(deleteBox.getAttribute('data-index'), 10);
-                    let deletePage = parseInt(deleteBox.getAttribute("data-page"), 10);
-                    deleteText(deleteBox, deletePage, deleteIndex);
-                    deleteLayerByElement(deletePage, deleteIndex, "text");
-                }
-            }
-        }
-    } 
-    if (layerApplyMode) {
-        deleteLayer();
-    }
-}, false);
-
-function deleteText(controlP, page, boxIndex) {
-    const textToDelete = userTextList[boxIndex];
-    userTextList.splice(boxIndex, 1);
-    const writeLayer = document.getElementsByClassName("write_layer")[page-1];
-    const groupImages = writeLayer.getElementsByClassName("editimg_group")[0];
-    textToDelete.editImg.parentNode.removeChild(textToDelete.editImg);
-    controlP.parentNode.removeChild(controlP);
-    textControllerPointCounter--;
-    for (let i = boxIndex; i < userTextList.length; i++) {
-        userTextList[i].index = i;
-        userTextList[i].controlBox.dataset.index = i.toString();
-        userTextList[i].editImg.dataset.index = i.toString();
-    }
-    if (groupImages.children.length === 0) {
-        groupImages.parentNode.removeChild(groupImages);
-        const groupControlP = writeLayer.getElementsByClassName("control_group")[0];
-        groupControlP.parentNode.removeChild(groupControlP);
-        layerNameCounterText = 1;
     }
 }
 

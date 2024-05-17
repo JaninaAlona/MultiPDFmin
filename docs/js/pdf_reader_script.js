@@ -3,7 +3,7 @@
  * github: https://github.com/JaninaAlona/MultiPDFmin
  * Website: https://janinaalona.github.io/MultiPDFmin/
  * @author Janina Schroeder
- * @version 1.0.0
+ * @version 2.0.0
  * @description Reader functions, Editor initialization, Editor navigation
  * Licensed under GNU GENERAL PUBLIC LICENSE Version 3 (https://github.com/JaninaAlona/MultiPDFmin/blob/main/LICENSE)
  */
@@ -31,6 +31,7 @@ let isDrawing = false;
 let isErasing = false;
 let draggingMode = false;
 let mouseIsDown = false;
+let editorModes = [];
 let userModes = [];
 let userModesDrawer = [];
 let userModesGeometry = [];
@@ -229,6 +230,7 @@ function resetRendering() {
     userImageList = [];
     drawLayerStack = [];
     geometryPointsList = [];
+    editorModes = [];
     userModes = [];
     userModesDrawer = [];
     userModesGeometry = [];
@@ -904,6 +906,14 @@ async function setPageRotation(currentPage, newRotation) {
 }
 
 
+function resetEditorModes() {
+    if (editorModes.length > 0) {
+        for (let i = 0; i < editorModes.length; i++) {
+            editorModes[i] = false;
+        } 
+    }
+}
+
 function resetUserModes() {
     if (userModes.length > 0) {
         for (let i = 0; i < userModes.length; i++) {
@@ -937,6 +947,7 @@ function resetUserModesImages() {
 }
 
 function resetAllModes() {
+    resetEditorModes();
     resetUserModes();
     resetUserModesDrawer();
     resetUserModesGeometry();
@@ -1168,6 +1179,7 @@ function initEditor() {
         layerApplyMode = false;
         document.getElementById('show_btns').style.display = "none";
         initLayerVariables();
+        initEditorModes();
         initTextEditorControls();
         restrictInputValues('lineheight_input', 1, 300, true, false);
         restrictInputValues('textsize_input', 3, 500, true, false);
@@ -1225,6 +1237,12 @@ function initLayerVariables() {
     pagelist.value = "";
     let unpagelist = document.getElementsByClassName("un_pagelist")[0];
     unpagelist.value = "";
+}
+
+function initEditorModes() {
+    editorModes = [];
+    let deleteMode = false;
+    editorModes.push(deleteMode);
 }
 
 function initTextEditorControls() {

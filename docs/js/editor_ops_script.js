@@ -160,33 +160,36 @@ function moveElement(controlP) {
                 startY = controlP.y; 
             }
             window.onmouseup = stopMovingElement;
-            controlP.controlBox.onmousemove = movingElement;
+            controlP.layer.onmousemove = movingElement;
             controlBoxTouched = true;
             e.preventDefault();
         }
     }
 
     function movingElement(e) {
-        if (editorModes[1] && mouseIsDown) {
-            if (controlP.type === "shape") {
-                if (rotateOnce) {
-                    rotateOnce = false;
-                    shapeBox.originX = 0;
-                    shapeBox.originY = 0;
-                    shapeBox.rotateControlPoint();
+        requestAnimationFrame(function() {
+            if (editorModes[1] && mouseIsDown) {
+                if (controlP.type === "shape") {
+                    if (rotateOnce) {
+                        rotateOnce = false;
+                        controlP.originX = 0;
+                        controlP.originY = 0;
+                        controlP.rotateControlPoint();
+                    }
+                    controlP.controlBox.style.left = (e.clientX + x) + "px";
+                    controlP.controlBox.style.top = (e.clientY + y) + "px"; 
+                    controlP.x = e.clientX + x;
+                    controlP.y = e.clientY + y;
+                }
+                
+                if (controlP.type === "text" || controlP.type === "drawing" || controlP.type === "image") {
+                    controlP.controlBox.style.left = (e.clientX + x) + "px";
+                    controlP.controlBox.style.top = (e.clientY + y) + "px"; 
+                    controlP.x = (e.clientX + x) / pdfState.zoom;
+                    controlP.y = (e.clientY + y) / pdfState.zoom;
                 }
             }
-            controlP.controlBox.style.left = (e.clientX + x) + "px";
-            controlP.controlBox.style.top = (e.clientY + y) + "px"; 
-            if (controlP.type === "text" || controlP.type === "drawing" || controlP.type === "image") {
-                controlP.x = (e.clientX + x) / pdfState.zoom;
-                controlP.y = (e.clientY + y) / pdfState.zoom;
-            }
-            if (controlP.type === "shape") {
-                controlP.x = e.clientX + x;
-                controlP.y = e.clientY + y;
-            }
-        }
+        });
     }
 
     async function stopMovingElement() {
@@ -269,7 +272,8 @@ function moveElement(controlP) {
             }
             controlBoxTouched = false;
             window.onmouseup = null;
-            controlP.controlBox.onmousemove = null;
+            controlP.controlBox.onmouseup = null;
+            controlP.layer.onmousemove = null;
         }
     }
 }

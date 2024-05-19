@@ -675,26 +675,28 @@ function relocateLayers(selectedLayer) {
     }
 
     function relocating(e) {
-        e.preventDefault();
-        if (relocateLayersMode && mouseIsDown) {  
-            if (boxType === "text" || boxType === "drawing"|| boxType === "image") {
-                controlP.controlBox.style.left = (e.clientX + x) + "px";
-                controlP.controlBox.style.top = (e.clientY + y) + "px"; 
-                controlP.x = (e.clientX + x)/pdfState.zoom;
-                controlP.y = (e.clientY + y)/pdfState.zoom;
-            } else if (boxType === "shape") {
-                if (rotateOnce) {
-                    rotateOnce = false;
-                    controlP.originX = 0;
-                    controlP.originY = 0;
-                    controlP.rotateControlPoint();
+        requestAnimationFrame(function() {
+            e.preventDefault();
+            if (relocateLayersMode && mouseIsDown) {  
+                if (boxType === "text" || boxType === "drawing"|| boxType === "image") {
+                    controlP.controlBox.style.left = (e.clientX + x) + "px";
+                    controlP.controlBox.style.top = (e.clientY + y) + "px"; 
+                    controlP.x = (e.clientX + x)/pdfState.zoom;
+                    controlP.y = (e.clientY + y)/pdfState.zoom;
+                } else if (boxType === "shape") {
+                    if (rotateOnce) {
+                        rotateOnce = false;
+                        controlP.originX = 0;
+                        controlP.originY = 0;
+                        controlP.rotateControlPoint();
+                    }
+                    controlP.controlBox.style.left = (e.clientX + x) + "px";
+                    controlP.controlBox.style.top = (e.clientY + y) + "px"; 
+                    controlP.x = e.clientX + x;
+                    controlP.y = e.clientY + y;
                 }
-                controlP.controlBox.style.left = (e.clientX + x) + "px";
-                controlP.controlBox.style.top = (e.clientY + y) + "px"; 
-                controlP.x = e.clientX + x;
-                controlP.y = e.clientY + y;
             }
-        }
+        });
     }
 
     async function stopRelocating(e) {
@@ -1104,6 +1106,14 @@ function moveLayer(target) {
                     canvasToMove.setAttribute("data-page", destPage);
                     controlPToMove.setAttribute("data-page", destPage);
                     elementControlP.page = destPage;
+                    let destWriteLayer;
+                    const writeLayers = document.getElementsByClassName("write_layer");
+                    for (let i = 0; i < writeLayers.length; i++) {
+                        if (writeLayers[i].getAttribute("data-write") === destPage) {
+                            destWriteLayer = writeLayers[i];
+                        }
+                    }
+                    elementControlP.layer = destWriteLayer;
                     elementToMove.page = destPage;
                     current.setAttribute("data-page", destPage);
                     if (canvasToMove.width !== destCanvas.width || canvasToMove.height !== destCanvas.height) {

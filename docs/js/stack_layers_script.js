@@ -539,6 +539,7 @@ async function dublicateElement(thisPage, index, type) {
         currentShape.useStroke = shapeToDublicate.useStroke;
         currentShape.rotation = shapeToDublicate.rotation;
         currentShape.page = shapeToDublicate.page;
+        shapeControllerP.type = "shape";
         shapeControllerP.layer = elementToDublicate.layer;
         shapeControllerP.page = elementToDublicate.page;
         shapeControllerP.index = shapeControllerPointCounter;

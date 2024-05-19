@@ -101,6 +101,7 @@ let shapeControllerPoint = {
     controlBox: null,
     editImg: null,
     elementToControl: null,
+    type: '',
     layer: null,
     page: 1, 
     x: 0,
@@ -202,6 +203,7 @@ function addingShape(event, writeLayer, shapeType) {
         currentShape.rotation = 0;
         currentShape.page = page;   
         shapeControllerP.elementToControl = currentShape;
+        shapeControllerP.type = "shape";
         shapeControllerP.layer = writeLayer;
         shapeControllerP.page = page;
         shapeControllerP.index = shapeControllerPointCounter;

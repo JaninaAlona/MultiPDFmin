@@ -266,86 +266,86 @@ function createUserLayer(editImgClass, thisPage, controlP, writeLayer, pdfLayerB
 }
 
 
-document.getElementById('moveimg').addEventListener("click", function() {
-    resetAllModes();
-    if (boxApplyMode) {
-        userModesImages[2] = true;
-        for (let i = 0; i < userImageList.length; i++) {
-            moveImage(userImageList[i]);
-        }
-    }
-    if (layerApplyMode) {
-        const selectedLayers = document.getElementsByClassName("layer_selected");
-        for(let i = 0; i < selectedLayers.length; i++) {
-            if (selectedLayers[i].classList.contains("unlocked")) {
-                relocateLayers(selectedLayers[i]);
-            }
-        }  
-    }
-}, false);
+// document.getElementById('moveimg').addEventListener("click", function() {
+//     resetAllModes();
+//     if (boxApplyMode) {
+//         userModesImages[2] = true;
+//         for (let i = 0; i < userImageList.length; i++) {
+//             moveImage(userImageList[i]);
+//         }
+//     }
+//     if (layerApplyMode) {
+//         const selectedLayers = document.getElementsByClassName("layer_selected");
+//         for(let i = 0; i < selectedLayers.length; i++) {
+//             if (selectedLayers[i].classList.contains("unlocked")) {
+//                 relocateLayers(selectedLayers[i]);
+//             }
+//         }  
+//     }
+// }, false);
 
-function moveImage(controlP) {
-    let x = 0;
-    let y = 0;
-    mouseIsDown = false;
-    let controlBoxTouched = false;
-    controlP.controlBox.onmousedown = startMovingImage;
+// function moveImage(controlP) {
+//     let x = 0;
+//     let y = 0;
+//     mouseIsDown = false;
+//     let controlBoxTouched = false;
+//     controlP.controlBox.onmousedown = startMovingImage;
 
-    function startMovingImage(e) {
-        let disable = checkForLockStatus(controlP.controlBox);
-        if (disable) {
-            userModesImages[2] = false;
-        }
-        if (userModesImages[2]) {
-            mouseIsDown = true;
-            markSingleLayerOnEdit(controlP);
-            x = controlP.controlBox.offsetLeft - e.clientX;
-            y = controlP.controlBox.offsetTop - e.clientY;
-            window.onmouseup = stopMovingImage;
-            controlP.controlBox.onmousemove = movingImage;
-            controlBoxTouched = true;
-            e.preventDefault();
-        }
-    }
+//     function startMovingImage(e) {
+//         let disable = checkForLockStatus(controlP.controlBox);
+//         if (disable) {
+//             userModesImages[2] = false;
+//         }
+//         if (userModesImages[2]) {
+//             mouseIsDown = true;
+//             markSingleLayerOnEdit(controlP);
+//             x = controlP.controlBox.offsetLeft - e.clientX;
+//             y = controlP.controlBox.offsetTop - e.clientY;
+//             window.onmouseup = stopMovingImage;
+//             controlP.controlBox.onmousemove = movingImage;
+//             controlBoxTouched = true;
+//             e.preventDefault();
+//         }
+//     }
 
-    function movingImage(e) {
-        if (userModesImages[2] && mouseIsDown) {
-            controlP.controlBox.style.left = (e.clientX + x) + "px";
-            controlP.controlBox.style.top = (e.clientY + y) + "px"; 
-            controlP.x = (e.clientX + x)/pdfState.zoom;
-            controlP.y = (e.clientY + y)/pdfState.zoom;
-        }
-    }
+//     function movingImage(e) {
+//         if (userModesImages[2] && mouseIsDown) {
+//             controlP.controlBox.style.left = (e.clientX + x) + "px";
+//             controlP.controlBox.style.top = (e.clientY + y) + "px"; 
+//             controlP.x = (e.clientX + x)/pdfState.zoom;
+//             controlP.y = (e.clientY + y)/pdfState.zoom;
+//         }
+//     }
 
-    async function stopMovingImage() {
-        if (userModesImages[2]) {
-            mouseIsDown = false;
-            if (controlBoxTouched) {
-                const pdfLayer = await PDFDocument.create();
-                const currentImage = controlP.elementToControl;
-                let imgBytes;
-                if (currentImage.type === 'png') {
-                    imgBytes = await pdfLayer.embedPng(currentImage.base64String);
-                } else if (currentImage.type === 'jpg') {
-                    imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
-                }
-                let pdfCanvases = document.getElementsByClassName("render_context");
-                const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
-                currentImage.pdfDoc = pdfLayer;
-                currentImage.image = imgBytes;
-                currentImage.x = controlP.x;
-                currentImage.y = controlP.layer.height - controlP.y;
-                currentImage.setImageElem();
-                const pdfLayerBytes = await pdfLayer.save();
-                currentImage.pdfBytes = pdfLayerBytes;
-                await updateUserLayer(controlP, pdfLayerBytes);
-            }
-            controlBoxTouched = false;
-            window.onmouseup = null;
-            controlP.controlBox.onmousemove = null;
-        }
-    }
-}
+//     async function stopMovingImage() {
+//         if (userModesImages[2]) {
+//             mouseIsDown = false;
+//             if (controlBoxTouched) {
+//                 const pdfLayer = await PDFDocument.create();
+//                 const currentImage = controlP.elementToControl;
+//                 let imgBytes;
+//                 if (currentImage.type === 'png') {
+//                     imgBytes = await pdfLayer.embedPng(currentImage.base64String);
+//                 } else if (currentImage.type === 'jpg') {
+//                     imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
+//                 }
+//                 let pdfCanvases = document.getElementsByClassName("render_context");
+//                 const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+//                 currentImage.pdfDoc = pdfLayer;
+//                 currentImage.image = imgBytes;
+//                 currentImage.x = controlP.x;
+//                 currentImage.y = controlP.layer.height - controlP.y;
+//                 currentImage.setImageElem();
+//                 const pdfLayerBytes = await pdfLayer.save();
+//                 currentImage.pdfBytes = pdfLayerBytes;
+//                 await updateUserLayer(controlP, pdfLayerBytes);
+//             }
+//             controlBoxTouched = false;
+//             window.onmouseup = null;
+//             controlP.controlBox.onmousemove = null;
+//         }
+//     }
+// }
 
 async function updateUserLayer(controlP, pdfLayerBytes) {
     const pdfCanvases = document.getElementsByClassName("render_context");

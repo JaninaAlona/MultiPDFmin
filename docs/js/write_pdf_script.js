@@ -148,81 +148,81 @@ async function addText(event, writeLayer) {
 }
 
 
-document.getElementById('movetext').addEventListener("click", function() {
-    resetAllModes();
-    if (boxApplyMode) {
-        userModes[2] = true;
-        for(let i = 0; i < userTextList.length; i++) {
-            moveText(userTextList[i]);
-        }
-    }
-    if (layerApplyMode) {
-        const selectedLayers = document.getElementsByClassName("layer_selected");
-        for(let i = 0; i < selectedLayers.length; i++) {
-            if (selectedLayers[i].classList.contains("unlocked")) {
-                relocateLayers(selectedLayers[i]);
-            }
-        }  
-    }
-}, false);
+// document.getElementById('movetext').addEventListener("click", function() {
+//     resetAllModes();
+//     if (boxApplyMode) {
+//         userModes[2] = true;
+//         for(let i = 0; i < userTextList.length; i++) {
+//             moveText(userTextList[i]);
+//         }
+//     }
+//     if (layerApplyMode) {
+//         const selectedLayers = document.getElementsByClassName("layer_selected");
+//         for(let i = 0; i < selectedLayers.length; i++) {
+//             if (selectedLayers[i].classList.contains("unlocked")) {
+//                 relocateLayers(selectedLayers[i]);
+//             }
+//         }  
+//     }
+// }, false);
 
-function moveText(textBox) {
-    let x = 0;
-    let y = 0;
-    mouseIsDown = false;
-    let controlBoxTouched = false;
-    textBox.controlBox.onmousedown = startMovingText;    
+// function moveText(textBox) {
+//     let x = 0;
+//     let y = 0;
+//     mouseIsDown = false;
+//     let controlBoxTouched = false;
+//     textBox.controlBox.onmousedown = startMovingText;    
 
-    function startMovingText(e) {
-        let disable = checkForLockStatus(textBox.controlBox);
-        if (disable) {
-            userModes[2] = false;
-        }
-        if (userModes[2]) {
-            mouseIsDown = true;
-            markSingleLayerOnEdit(textBox);
-            x = textBox.controlBox.offsetLeft - e.clientX;
-            y = textBox.controlBox.offsetTop - e.clientY;
-            window.onmouseup = stopMovingText;
-            textBox.controlBox.onmousemove = movingText;
-            controlBoxTouched = true;
-            e.preventDefault();
-        }
-    }
+//     function startMovingText(e) {
+//         let disable = checkForLockStatus(textBox.controlBox);
+//         if (disable) {
+//             userModes[2] = false;
+//         }
+//         if (userModes[2]) {
+//             mouseIsDown = true;
+//             markSingleLayerOnEdit(textBox);
+//             x = textBox.controlBox.offsetLeft - e.clientX;
+//             y = textBox.controlBox.offsetTop - e.clientY;
+//             window.onmouseup = stopMovingText;
+//             textBox.controlBox.onmousemove = movingText;
+//             controlBoxTouched = true;
+//             e.preventDefault();
+//         }
+//     }
 
-    function movingText(e) {
-        if (userModes[2] && mouseIsDown) {
-            textBox.controlBox.style.left = (e.clientX + x) + "px";
-            textBox.controlBox.style.top = (e.clientY + y) + "px"; 
-            textBox.x = (e.clientX + x)/pdfState.zoom;
-            textBox.y = (e.clientY + y)/pdfState.zoom;
-        }
-    }
+//     function movingText(e) {
+//         if (userModes[2] && mouseIsDown) {
+//             textBox.controlBox.style.left = (e.clientX + x) + "px";
+//             textBox.controlBox.style.top = (e.clientY + y) + "px"; 
+//             textBox.x = (e.clientX + x)/pdfState.zoom;
+//             textBox.y = (e.clientY + y)/pdfState.zoom;
+//         }
+//     }
 
-    async function stopMovingText() {
-        if (userModes[2]) {
-            mouseIsDown = false;
-            if (controlBoxTouched) {
-                const pdfLayer = await PDFDocument.create();
-                pdfLayer.registerFontkit(fontkit);
-                const currentText = textBox.elementToControl;
-                currentText.font = await pdfLayer.embedFont(currentText.fontKey);
-                let pdfCanvases = document.getElementsByClassName("render_context");
-                const pageLayer = pdfLayer.addPage([pdfCanvases[textBox.page-1].width, pdfCanvases[textBox.page-1].height]);
-                currentText.pdfDoc = pdfLayer;
-                currentText.x = textBox.x;
-                currentText.y = textBox.layer.height - textBox.y;
-                currentText.setTextElem();
-                const pdfLayerBytes = await pdfLayer.save();
-                currentText.pdfBytes = pdfLayerBytes;
-                await updateUserLayer(textBox, pdfLayerBytes);
-            }
-            controlBoxTouched = false;
-            window.onmouseup = null;
-            textBox.controlBox.onmousemove = null;
-        }
-    }
-}
+//     async function stopMovingText() {
+//         if (userModes[2]) {
+//             mouseIsDown = false;
+//             if (controlBoxTouched) {
+//                 const pdfLayer = await PDFDocument.create();
+//                 pdfLayer.registerFontkit(fontkit);
+//                 const currentText = textBox.elementToControl;
+//                 currentText.font = await pdfLayer.embedFont(currentText.fontKey);
+//                 let pdfCanvases = document.getElementsByClassName("render_context");
+//                 const pageLayer = pdfLayer.addPage([pdfCanvases[textBox.page-1].width, pdfCanvases[textBox.page-1].height]);
+//                 currentText.pdfDoc = pdfLayer;
+//                 currentText.x = textBox.x;
+//                 currentText.y = textBox.layer.height - textBox.y;
+//                 currentText.setTextElem();
+//                 const pdfLayerBytes = await pdfLayer.save();
+//                 currentText.pdfBytes = pdfLayerBytes;
+//                 await updateUserLayer(textBox, pdfLayerBytes);
+//             }
+//             controlBoxTouched = false;
+//             window.onmouseup = null;
+//             textBox.controlBox.onmousemove = null;
+//         }
+//     }
+// }
 
 
 document.getElementById('applytext').addEventListener("click", async function() {

@@ -1243,6 +1243,8 @@ function initEditorModes() {
     editorModes = [];
     let deleteMode = false;
     editorModes.push(deleteMode);
+    let moveMode = false;
+    editorModes.push(moveMode);
 }
 
 function initTextEditorControls() {

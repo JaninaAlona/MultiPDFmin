@@ -169,6 +169,15 @@ const shapeRotationSelector = document.querySelector('#rotateshapesel');
 const shapeRotationInput = document.querySelector('#shaperotation_input');
 
 
+function updateUserShapeLayer(controlP) {
+    const ctx = controlP.editImg.getContext('2d');
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    const currentShape = controlP.elementToControl;
+    currentShape.context = ctx;
+    currentShape.drawShape();
+}
+
+
 document.getElementById('addRect').addEventListener("click", function() {
     resetAllModes();
     userModesGeometry[0] = true;
@@ -283,94 +292,6 @@ document.getElementById('addCircle').addEventListener("click", function() {
     userModesGeometry[2] = true;
     addShape("circle");    
 }, false);
-
-
-document.getElementById('moveshape').addEventListener("click", function() {
-    resetAllModes();
-    if (boxApplyMode) {
-        userModesGeometry[4] = true;
-        for(let i = 0; i < geometryPointsList.length; i++) {
-            moveShape(geometryPointsList[i]);
-        }
-    }
-    if (layerApplyMode) {
-        const selectedLayers = document.getElementsByClassName("layer_selected");
-        for(let i = 0; i < selectedLayers.length; i++) {
-            if (selectedLayers[i].classList.contains("unlocked")) {
-                relocateLayers(selectedLayers[i]);
-            }
-        }   
-    } 
-}, false);
-
-function moveShape(shapeBox) {
-    let rotateOnce = true;
-    let x = 0;
-    let y = 0;
-    mouseIsDown = false;
-    let controlBoxTouched = false;
-    shapeBox.controlBox.onmousedown = startMovingShape;
-
-    function startMovingShape(e) {
-        let disable = checkForLockStatus(e.currentTarget);
-        if (disable) {
-            userModesGeometry[4] = false;
-        }
-        if (userModesGeometry[4]) {
-            mouseIsDown = true;
-            markSingleLayerOnEdit(shapeBox);
-            x = shapeBox.controlBox.offsetLeft - e.clientX;
-            y = shapeBox.controlBox.offsetTop - e.clientY;
-            window.onmouseup = stopMovingShape;
-            shapeBox.controlBox.onmousemove = movingShape;
-            controlBoxTouched = true;
-            e.preventDefault();
-        }
-    }
-
-    function movingShape(e) {
-        if (userModesGeometry[4] && mouseIsDown) {
-            if (rotateOnce) {
-                rotateOnce = false;
-                shapeBox.originX = 0;
-                shapeBox.originY = 0;
-                shapeBox.rotateControlPoint();
-            }       
-            shapeBox.controlBox.style.left = (e.clientX + x) + "px";
-            shapeBox.controlBox.style.top = (e.clientY + y) + "px"; 
-            shapeBox.x = e.clientX + x;
-            shapeBox.y = e.clientY + y;
-        }
-    }
-
-    function stopMovingShape() {
-        if (userModesGeometry[4]) {
-            mouseIsDown = false;
-            if (controlBoxTouched) {
-                const currentShape = shapeBox.elementToControl;
-                if (currentShape.type === "rectangle" || currentShape.type === "triangle") {
-                    currentShape.x = (shapeBox.x - (currentShape.width * pdfState.zoom)/2 + 20) / pdfState.zoom;
-                    currentShape.y = (shapeBox.y - (currentShape.height * pdfState.zoom)/2 + 20) / pdfState.zoom;
-                } else if (currentShape.type === "circle") {
-                    currentShape.x = (shapeBox.x + 20)/pdfState.zoom;
-                    currentShape.y = (shapeBox.y + 20)/pdfState.zoom;
-                }
-                updateUserShapeLayer(shapeBox);
-            }
-            controlBoxTouched = false;
-            window.onmouseup = null;
-            shapeBox.controlBox.onmousemove = null;
-        }
-    }
-}
-
-function updateUserShapeLayer(controlP) {
-    const ctx = controlP.editImg.getContext('2d');
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    const currentShape = controlP.elementToControl;
-    currentShape.context = ctx;
-    currentShape.drawShape();
-}
 
 
 document.getElementById("scaleShape").addEventListener("click", function() {

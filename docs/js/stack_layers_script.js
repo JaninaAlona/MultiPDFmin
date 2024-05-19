@@ -730,7 +730,7 @@ function relocateLayers(selectedLayer) {
                             const currentText = selControlP.elementToControl;
                             currentText.font = await pdfLayer.embedFont(currentText.fontKey);
                             let pdfCanvases = document.getElementsByClassName("render_context");
-                            const pageLayer = pdfLayer.addPage([pdfCanvases[selControlP.page-1].width, pdfCanvases[selControlP.page-1].height]);
+                            pdfLayer.addPage([pdfCanvases[selControlP.page-1].width, pdfCanvases[selControlP.page-1].height]);
                             currentText.pdfDoc = pdfLayer;
                             currentText.x = selControlP.x / pdfState.zoom;
                             currentText.y = selControlP.layer.height - selControlP.y / pdfState.zoom;
@@ -841,7 +841,7 @@ function relocateLayers(selectedLayer) {
                                 imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
                             }
                             let pdfCanvases = document.getElementsByClassName("render_context");
-                            const pageLayer = pdfLayer.addPage([pdfCanvases[selControlP.page-1].width, pdfCanvases[selControlP.page-1].height]);
+                            pdfLayer.addPage([pdfCanvases[selControlP.page-1].width, pdfCanvases[selControlP.page-1].height]);
                             currentImage.pdfDoc = pdfLayer;
                             currentImage.image = imgBytes;
                             currentImage.x = selControlP.x / pdfState.zoom;

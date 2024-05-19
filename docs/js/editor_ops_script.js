@@ -104,8 +104,8 @@ function deleteElement(page, deleteIndex, type) {
 }
 
 
-for (let j = 0; j < deleteOps.length; j++) {
-    deleteOps[j].addEventListener("click", function() {
+for (let j = 0; j < moveOps.length; j++) {
+    moveOps[j].addEventListener("click", function() {
         resetAllModes();
         if (boxApplyMode) {
             editorModes[1] = true;
@@ -244,7 +244,7 @@ function moveElement(controlP) {
                         currentShape.x = (controlP.x + 20)/pdfState.zoom;
                         currentShape.y = (controlP.y + 20)/pdfState.zoom;
                     }
-                    updateUserShapeLayer(shapeBox);
+                    updateUserShapeLayer(controlP);
                 }
                 if (controlP.type === "image") {
                     const pdfLayer = await PDFDocument.create();

@@ -4,3 +4,5 @@
 
 - Added CHANGELOG.md file
 
+- Removed unused variable const pageLayer in all files
+

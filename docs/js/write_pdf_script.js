@@ -111,7 +111,7 @@ async function addText(event, writeLayer) {
         const controlP = Object.create(controlPoint);
         const pdfLayer = await PDFDocument.create();
         const font = await pdfLayer.embedFont(StandardFonts.TimesRoman);
-        const pageLayer = pdfLayer.addPage([writeLayer.width, writeLayer.height]);
+        pdfLayer.addPage([writeLayer.width, writeLayer.height]);
         let rect = writeLayer.getBoundingClientRect();
         let mousePos = { x: event.clientX - rect.left, y: event.clientY - rect.top };
         let writePage = parseInt(writeLayer.getAttribute("data-write"), 10);
@@ -183,7 +183,7 @@ async function applyText(controlP) {
     const currentText = controlP.elementToControl;
     currentText.font = await pdfLayer.embedFont(currentText.fontKey);
     let pdfCanvases = document.getElementsByClassName("render_context");
-    const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+    pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
     currentText.pdfDoc = pdfLayer;
     currentText.text = textarea.value.replace(/\n\r?/g, '\n');
     currentText.setTextElem();
@@ -228,7 +228,7 @@ async function applyFont(controlP) {
     currentText.fontKey = fontSelector.value;
     currentText.font = await pdfLayer.embedFont(fontSelector.value);
     let pdfCanvases = document.getElementsByClassName("render_context");
-    const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+    pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
     currentText.pdfDoc = pdfLayer;
     currentText.setTextElem();
     const pdfLayerBytes = await pdfLayer.save();
@@ -349,7 +349,7 @@ async function applyCustomFont(controlP) {
         currentText.fontKey = fontBytes[checkedIndex];
         currentText.font = await pdfLayer.embedFont(fontBytes[checkedIndex]);
         let pdfCanvases = document.getElementsByClassName("render_context");
-        const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+        pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentText.pdfDoc = pdfLayer;
         currentText.setTextElem();
         const pdfLayerBytes = await pdfLayer.save();
@@ -414,7 +414,7 @@ async function applyFontSize(controlP) {
         let oldLineHeight = currentText.lineHeight;
         currentText.font = await pdfLayer.embedFont(currentText.fontKey);
         let pdfCanvases = document.getElementsByClassName("render_context");
-        const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+        pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentText.pdfDoc = pdfLayer;
         currentText.size = successValue;
         currentText.lineHeight = oldLineHeight * changeSizeFactor;
@@ -466,7 +466,7 @@ async function applyFontColor(controlP) {
     const currentText = controlP.elementToControl;
     currentText.font = await pdfLayer.embedFont(currentText.fontKey);
     let pdfCanvases = document.getElementsByClassName("render_context");
-    const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+    pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
     currentText.pdfDoc = pdfLayer;
     currentText.color = userFontColor;
     currentText.opacity = userFontOpacity;
@@ -532,7 +532,7 @@ async function applyTextRotation(controlP) {
         const currentText = controlP.elementToControl;
         currentText.font = await pdfLayer.embedFont(currentText.fontKey);
         let pdfCanvases = document.getElementsByClassName("render_context");
-        const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+        pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentText.pdfDoc = pdfLayer;
         currentText.rotation = degrees(successValue);
         currentText.setTextElem();
@@ -595,7 +595,7 @@ async function applyLineHeight(controlP) {
         const currentText = controlP.elementToControl;
         currentText.font = await pdfLayer.embedFont(currentText.fontKey);
         let pdfCanvases = document.getElementsByClassName("render_context");
-        const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+        pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentText.pdfDoc = pdfLayer;
         currentText.lineHeight = successValue;
         currentText.setTextElem();

@@ -173,7 +173,7 @@ async function addImage(e, writeLayer) {
                 currentUserImage.type = 'jpg';
                 imgBytes = await pdfLayer.embedJpg(imagesBase64Strings[checkedIndex]);
             }
-            const pageLayer = pdfLayer.addPage([writeLayer.width, writeLayer.height]);
+            pdfLayer.addPage([writeLayer.width, writeLayer.height]);
             currentUserImage.pdfDoc = pdfLayer;
             currentUserImage.image = imgBytes;
             currentUserImage.base64String = imagesBase64Strings[checkedIndex];
@@ -338,7 +338,7 @@ async function scaleImage(controlP) {
             imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
         }
         let pdfCanvases = document.getElementsByClassName("render_context");
-        const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+        pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentImage.pdfDoc = pdfLayer;
         currentImage.image = imgBytes;
         currentImage.width = successValueW * pdfState.zoom;
@@ -394,7 +394,7 @@ async function scaleImageByFactor(controlP) {
             imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
         }
         let pdfCanvases = document.getElementsByClassName("render_context");
-        const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+        pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentImage.pdfDoc = pdfLayer;
         currentImage.image = imgBytes;
         currentImage.width = currentImage.width * successValue;
@@ -450,7 +450,7 @@ async function applyImgOpacity(controlP) {
             imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
         }
         let pdfCanvases = document.getElementsByClassName("render_context");
-        const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+        pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentImage.pdfDoc = pdfLayer;
         currentImage.image = imgBytes;
         currentImage.opacity = successValue;
@@ -521,7 +521,7 @@ async function applyImgRotation(controlP) {
             imgBytes = await pdfLayer.embedJpg(currentImage.base64String);
         }
         let pdfCanvases = document.getElementsByClassName("render_context");
-        const pageLayer = pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
+        pdfLayer.addPage([pdfCanvases[controlP.page-1].width, pdfCanvases[controlP.page-1].height]);
         currentImage.pdfDoc = pdfLayer;
         currentImage.image = imgBytes;
         currentImage.rotation = degrees(successValue); 

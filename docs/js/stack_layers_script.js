@@ -381,7 +381,7 @@ async function dublicateElement(thisPage, index, type) {
             currentUserImage.base64String = imageToDublicate.base64String;
             imgBytes = await pdfLayer.embedJpg(currentUserImage.base64String);
         }
-        const pageLayer = pdfLayer.addPage([pdfCanvases[thisPage-1].width, pdfCanvases[thisPage-1].height]);
+        pdfLayer.addPage([pdfCanvases[thisPage-1].width, pdfCanvases[thisPage-1].height]);
         currentUserImage.pdfDoc = pdfLayer;
         currentUserImage.image = imgBytes;
         currentUserImage.x = elementToDublicate.x;
@@ -433,7 +433,7 @@ async function dublicateElement(thisPage, index, type) {
         const pdfLayer = await PDFDocument.create();
         pdfLayer.registerFontkit(fontkit);
         const font = await pdfLayer.embedFont(textToDublicate.fontKey);
-        const pageLayer = pdfLayer.addPage([pdfCanvases[thisPage-1].width, pdfCanvases[thisPage-1].height]);
+        pdfLayer.addPage([pdfCanvases[thisPage-1].width, pdfCanvases[thisPage-1].height]);
         currentUserText.pdfDoc = pdfLayer;
         currentUserText.text = textToDublicate.text;
         currentUserText.x = elementToDublicate.x;

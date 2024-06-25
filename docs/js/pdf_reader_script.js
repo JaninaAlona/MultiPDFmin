@@ -623,6 +623,9 @@ function placeEditorElements() {
             controllerPoint.controlBox.style.left = leftVal + "px";
             controllerPoint.controlBox.style.top = topVal + "px";
             zoomText(controllerPoint);
+            if (controllerPoint.elementToControl.mask !== null) {
+                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask.paths, pdfState.zoom, pdfState.zoom);
+            } 
         }
     }
     if (userImageList.length > 0) {
@@ -633,6 +636,9 @@ function placeEditorElements() {
             controllerPoint.controlBox.style.left = leftVal + "px";
             controllerPoint.controlBox.style.top = topVal + "px";
             zoomImages(controllerPoint);
+            if (controllerPoint.elementToControl.mask !== null) {
+                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask.paths, pdfState.zoom, pdfState.zoom);
+            } 
         }
     }
     if (drawLayerStack.length > 0) {
@@ -644,6 +650,9 @@ function placeEditorElements() {
             controllerPoint.controlBox.style.top = topVal + "px";
             zoomDrawing(controllerPoint, controllerPoint.elementToControl.paths, pdfState.zoom, pdfState.zoom);
             rotateDrawing(controllerPoint, controllerPoint.elementToControl.rotation);
+            if (controllerPoint.elementToControl.mask !== null) {
+                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask.paths, pdfState.zoom, pdfState.zoom);
+            } 
         }
     }
     if (geometryPointsList.length > 0) {
@@ -670,6 +679,9 @@ function placeEditorElements() {
             controllerPoint.controlBox.style.left = leftVal + "px";
             controllerPoint.controlBox.style.top = topVal + "px";
             zoomGeometry(controllerPoint);
+            if (controllerPoint.elementToControl.mask !== null) {
+                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask.paths, pdfState.zoom, pdfState.zoom);
+            } 
         }
     }
 }

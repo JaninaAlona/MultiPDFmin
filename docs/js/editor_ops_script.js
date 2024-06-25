@@ -89,7 +89,7 @@ function erase(writeLayer) {
             if (!disable) {
                 if (controlP.elementToControl.mask !== null) {
                     maskingLayer = controlP.elementToControl.mask;
-                    // zoomDrawing(controlP, maskingLayer.paths, pdfState.zoom, pdfState.zoom);
+                    zoomDrawing(controlP, maskingLayer.paths, pdfState.zoom, pdfState.zoom);
                 } else {
                     maskingLayer = Object.create(maskLayer);
                     maskingLayer.paths = [];

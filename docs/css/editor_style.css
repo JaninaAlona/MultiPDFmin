@@ -29,6 +29,7 @@
     position: absolute;
     top: 116px;
     z-index: 30;
+    overflow-x: auto;
 }
 
 #show_btns {

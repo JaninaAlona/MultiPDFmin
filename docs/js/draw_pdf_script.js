@@ -13,7 +13,8 @@ let drawLayer = {
     paths: [],
     currentPathIndex: 0, 
     rotation: 0,
-    wasRotated: false
+    wasRotated: false,
+    mask: null
 }
 
 const colorPickerPencil = new Alwan('#colorpicker_pencil', {
@@ -50,7 +51,7 @@ const pencils = document.getElementsByClassName("pencil");
 for (let d = 0; d < pencils.length; d++) {
     pencils[d].addEventListener("click", function() {
         resetAllModes();
-        userModesDrawer[0] = true;
+        opBarModes[1] = true;
         for(let i = 0; i < writeLayerStack.length; i++) {
             draw(writeLayerStack[i]);
         }  
@@ -62,7 +63,7 @@ function draw(writeLayer) {
     writeLayer.onmousedown = startDrawing;
 
     function startDrawing(event) {
-        if (userModesDrawer[0] && event.currentTarget === writeLayer) {
+        if (opBarModes[1] && event.currentTarget === writeLayer) {
             isDrawing = true;
             writeLayer.style.cursor = "crosshair";
             let page = parseInt(writeLayer.getAttribute("data-write"), 10);
@@ -143,7 +144,7 @@ function draw(writeLayer) {
             }
             if (!disable) {
                 let context = controlP.editImg.getContext("2d");
-                zoomDrawing(controlP, pdfState.zoom, pdfState.zoom);
+                zoomDrawing(controlP, controlP.elementToControl.paths, pdfState.zoom, pdfState.zoom);
                 let rect = controlP.editImg.getBoundingClientRect();     
                 context.beginPath(); 
                 context.lineCap = "round";
@@ -170,7 +171,7 @@ function draw(writeLayer) {
     }
 
     function drawing(event) {
-        if (userModesDrawer[0]) {
+        if (opBarModes[1]) {
             if (!isDrawing) return; 
             let context = controlP.editImg.getContext("2d");
             let rect = controlP.editImg.getBoundingClientRect(); 
@@ -187,7 +188,7 @@ function draw(writeLayer) {
     }
 
     function stopDrawing(event) {
-        if (userModesDrawer[0]) {
+        if (opBarModes[1]) {
             isDrawing = false;
             controlP.elementToControl.currentPathIndex += 1;
             if (event.currentTarget === writeLayer) {
@@ -215,6 +216,7 @@ function createUserDrawLayer(e, editImgClass, thisPage, writeLayer) {
     drawingLayer.paths = [];
     drawingLayer.currentPathIndex = 0;
     drawingLayer.rotation = 0;
+    drawingLayer.mask = null;
     controlP.elementToControl = drawingLayer;
     const canvasContainer = document.createElement("canvas");
     canvasContainer.style.display = "flex";

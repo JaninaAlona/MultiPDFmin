@@ -13,6 +13,7 @@
 const { PDFDocument, rgb, degrees, StandardFonts } = PDFLib
 
 let userText = {
+    page: 1,
     pdfDoc: null,
     pdfBytes: null,
     text: '',
@@ -23,9 +24,9 @@ let userText = {
     font: null,
     lineHeight: 34,
     color: rgb(0, 0, 0),
-    page: 1,
     opacity: 1.0,
     rotation: degrees(0),
+    mask: null,
     setTextElem() {
         this.pdfDoc.getPages()[0].drawText(this.text, {
             x: this.x,
@@ -99,7 +100,7 @@ const addTexts = document.getElementsByClassName("addText");
 for (let t = 0; t < addTexts.length; t++) {
     addTexts[t].addEventListener("click", async function() {
         resetAllModes();
-        userModes[0] = true;
+        opBarModes[0] = true;
         for(let i = 0; i < writeLayerStack.length; i++) {
             writeLayerStack[i].onclick = async function(e) {
                 await addText(e, writeLayerStack[i]);
@@ -109,7 +110,7 @@ for (let t = 0; t < addTexts.length; t++) {
 }
 
 async function addText(event, writeLayer) {
-    if (userModes[0]) {
+    if (opBarModes[0]) {
         const currentUserText = Object.create(userText);
         const controlP = Object.create(controlPoint);
         const pdfLayer = await PDFDocument.create();
@@ -130,6 +131,7 @@ async function addText(event, writeLayer) {
         currentUserText.page = writePage;
         currentUserText.opacity = 1.0;
         currentUserText.rotation = degrees(0);
+        currentUserText.mask = null;
         currentUserText.setTextElem();
         const pdfLayerBytes = await pdfLayer.save();
         currentUserText.pdfBytes = pdfLayerBytes;

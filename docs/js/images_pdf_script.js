@@ -11,6 +11,7 @@
 
 
 let userImage = {
+    page: 1,
     pdfDoc: null,
     pdfBytes: null,
     image: null,
@@ -20,9 +21,9 @@ let userImage = {
     y: 1,
     width: 1,
     height: 1,
-    page: 1,
     opacity: 1.0,
     rotation: degrees(0),
+    mask: null,
     setImageElem() {
         this.pdfDoc.getPages()[0].drawImage(this.image, {
            x: this.x,
@@ -135,9 +136,9 @@ document.getElementById("clearlist_img").addEventListener("click", function(e) {
 
 
 for (let f = 0; f < addImages.length; f++) {
-    addImages[f].addEventListener("click", function(e) {
+    addImages[f].addEventListener("click", function() {
         resetAllModes();
-        userModesImages[0] = true;
+        opBarModes[5] = true;
         for(let i = 0; i < writeLayerStack.length; i++) {
             writeLayerStack[i].onclick = async function(e) {
                 await addImage(e, writeLayerStack[i]);
@@ -147,7 +148,7 @@ for (let f = 0; f < addImages.length; f++) {
 }
 
 async function addImage(e, writeLayer) {
-    if (userModesImages[0]) {
+    if (opBarModes[5]) {
         const currentUserImage = Object.create(userImage);
         const controlP = Object.create(controlPoint);
         const pdfLayer = await PDFDocument.create();
@@ -191,6 +192,7 @@ async function addImage(e, writeLayer) {
             currentUserImage.page = writePage;
             currentUserImage.opacity = 1.0;
             currentUserImage.rotation = degrees(0);
+            currentUserImage.mask = null;
             currentUserImage.setImageElem();
             const pdfLayerBytes = await pdfLayer.save();
             currentUserImage.pdfBytes = pdfLayerBytes;

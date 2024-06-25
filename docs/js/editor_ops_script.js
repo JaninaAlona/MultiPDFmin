@@ -17,7 +17,7 @@ const moveOps = document.getElementsByClassName("move_op");
 for (let j = 0; j < erasers.length; j++) {
     erasers[j].addEventListener("click", function() { 
         resetAllModes();
-        userModesDrawer[1] = true;
+        opBarModes[6] = true;
         for(let i = 0; i < writeLayerStack.length; i++) {
             erase(writeLayerStack[i]);
         }
@@ -29,21 +29,20 @@ function erase(writeLayer) {
     writeLayer.onmousedown = startErasing;
 
     function startErasing(event) {
-        if (userModesDrawer[1] && event.currentTarget === writeLayer) {
+        if (opBarModes[6] && event.currentTarget === writeLayer) {
             isErasing = true;
             writeLayer.style.cursor = "cell";
-                
             let isSelected = false;
             let selectedLayer;
             const layerCons = document.getElementsByClassName("layercontainer");
             for (let i = 0; i < layerCons.length; i++) {
                 if (parseInt(layerCons[i].getAttribute("data-page"), 10) === parseInt(writeLayer.getAttribute("data-write"), 10)) {
-                    if (layerCons[i].classList.contains("layer_selected") && layerCons[i].getAttribute("data-type") === "drawing") {
+                    if (layerCons[i].classList.contains("layer_selected")) {
                         isSelected = true;
                         selectedLayer = layerCons[i];
                         let remainingLayer;
                         for (let j = i+1; j < layerCons.length; j++) {
-                            if (layerCons[j].classList.contains("layer_selected") && layerCons[j].getAttribute("data-type") === "drawing") {
+                            if (layerCons[j].classList.contains("layer_selected")) {
                                 remainingLayer = layerCons[j];
                                 remainingLayer.classList.remove("layer_selected");
                                 remainingLayer.classList.add("layer_unselected");
@@ -60,39 +59,21 @@ function erase(writeLayer) {
                 }
             }
             if (isSelected) {
-                let layerIndex = parseInt(selectedLayer.getAttribute("data-index"), 10);
-                controlP = drawLayerStack[layerIndex];
-            } else {
-                const editImgGroup = writeLayer.querySelectorAll("div.editimg_group")[0];
-                let lastDrawCanvas = editImgGroup.getElementsByClassName("drawing")[editImgGroup.getElementsByClassName("drawing").length - 1];
-                const lastIndex = parseInt(lastDrawCanvas.getAttribute("data-index"), 10);
-                controlP = drawLayerStack[lastIndex];   
-                for (let i = 0; i < layerCons.length; i++) {
-                    if (layerCons[i].classList.contains("layer_selected")) {
-                        layerCons[i].classList.remove("layer_selected");
-                        layerCons[i].classList.add("layer_unselected");
-                        layerCons[i].style.borderStyle = "none";
-                        if (layerCons[i].classList.contains("unlocked")) {
-                            layerCons[i].style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-                        } else if (layerCons[i].classList.contains("locked")) {
-                            layerCons[i].style.backgroundColor = "rgba(255, 255, 255, 0.8)";
-                        }
-                    } 
+                const layerIndex = parseInt(selectedLayer.getAttribute("data-index"), 10);
+                const layerType = selectedLayer.getAttribute("data-type");
+                if (layerType === "text") {
+                    controlP = userTextList[layerIndex];
+                } 
+                if (layerType === "drawing") {
+                    controlP = drawLayerStack[layerIndex];
                 }
-                for (let i = 0; i < layerCons.length; i++) {
-                    if (layerCons[i].getAttribute("data-type") === "drawing" && parseInt(layerCons[i].getAttribute("data-index"), 10) === lastIndex) {
-                        layerCons[i].classList.remove("layer_unselected");
-                        layerCons[i].classList.add("layer_selected");
-                        layerCons[i].style.backgroundColor = "rgba(218, 189, 182, 0.8)";
-                        layerCons[i].style.borderStyle = "none";
-                        if (layerCons[i].classList.contains("locked")) {
-                            layerCons[i].style.borderStyle = "solid";
-                            layerCons[i].style.borderWidth = "5px";
-                            layerCons[i].style.borderColor = "rgba(255, 255, 255, 0.8)";
-                        }
-                    }
+                if (layerType === "shape") {
+                    controlP = geometryPointsList[layerIndex];
                 }
-            } 
+                if (layerType === "image") {
+                    controlP = userImageList[layerIndex];
+                }
+            }
             let disable = checkForLockStatus(controlP.controlBox);
             if (disable) {
                 writeLayer.style.cursor = "default";
@@ -126,7 +107,7 @@ function erase(writeLayer) {
     }
 
     function erasing(event) {
-        if (userModesDrawer[1]) {
+        if (opBarModes[6]) {
             if (!isErasing) return; 
             let context = controlP.editImg.getContext("2d");
             let rect = controlP.editImg.getBoundingClientRect(); 
@@ -143,7 +124,7 @@ function erase(writeLayer) {
     }
 
     function stopErasing(event) {
-        if (userModesDrawer[1]) {
+        if (opBarModes[6]) {
             isErasing = false;
             controlP.elementToControl.currentPathIndex += 1;
             if (event.currentTarget === writeLayer) {
@@ -161,16 +142,16 @@ for (let j = 0; j < deleteOps.length; j++) {
     deleteOps[j].addEventListener("click", function() {
         resetAllModes();
         if (boxApplyMode) {
-            editorModes[0] = true;
+            opBarModes[7] = true;
             let controlBoxes = document.querySelectorAll("div.box");
             for (let i = 0; i < controlBoxes.length; i++) {
                 controlBoxes[i].onclick = function(e) {
                     const deleteBox = e.currentTarget;
                     let disable = checkForLockStatus(deleteBox);
                     if (disable) {
-                        editorModes[0] = false;
+                        opBarModes[7] = false;
                     }
-                    if (editorModes[0]) {
+                    if (opBarModes[7]) {
                         const deletePage = parseInt(deleteBox.getAttribute("data-page"), 10);
                         const deleteIndex = parseInt(deleteBox.getAttribute('data-index'), 10);
                         const deleteType = deleteBox.classList.item(0);
@@ -253,7 +234,7 @@ for (let j = 0; j < moveOps.length; j++) {
     moveOps[j].addEventListener("click", function() {
         resetAllModes();
         if (boxApplyMode) {
-            editorModes[1] = true;
+            opBarModes[7] = true;
             for(let i = 0; i < userTextList.length; i++) {
                 moveElement(userTextList[i]);
             }
@@ -293,9 +274,9 @@ function moveElement(controlP) {
     function startMovingElement(e) {
         let disable = checkForLockStatus(controlP.controlBox);
         if (disable) {
-            editorModes[1] = false;
+            opBarModes[7] = false;
         }
-        if (editorModes[1]) {
+        if (opBarModes[7]) {
             mouseIsDown = true;
             markSingleLayerOnEdit(controlP);
             x = controlP.controlBox.offsetLeft - e.clientX;
@@ -313,7 +294,7 @@ function moveElement(controlP) {
 
     function movingElement(e) {
         requestAnimationFrame(function() {
-            if (editorModes[1] && mouseIsDown) {
+            if (opBarModes[7] && mouseIsDown) {
                 if (controlP.type === "shape") {
                     if (rotateOnce) {
                         rotateOnce = false;
@@ -338,7 +319,7 @@ function moveElement(controlP) {
     }
 
     async function stopMovingElement() {
-        if (editorModes[1]) {
+        if (opBarModes[7]) {
             mouseIsDown = false;
             if (controlBoxTouched) {
                 if (controlP.type === "text") {

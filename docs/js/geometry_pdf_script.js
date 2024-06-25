@@ -11,6 +11,7 @@
 
 
 let shape = {
+    page: 1,
     context: null,
     type: "",
     x: 0,
@@ -25,7 +26,7 @@ let shape = {
     useFill: false,
     useStroke: false,
     rotation: 0,
-    page: 1,
+    mask: null,
     drawShape() {
         if(this.type === "rectangle") {
             let rectCenterX = this.x + this.width / 2;
@@ -184,7 +185,7 @@ function updateUserShapeLayer(controlP) {
 for (let s = 0; s < addRects.length; s++) {
     addRects[s].addEventListener("click", function() {
         resetAllModes();
-        userModesGeometry[0] = true;
+        opBarModes[2] = true;
         addShape("rectangle");      
     }, false);
 }
@@ -192,7 +193,7 @@ for (let s = 0; s < addRects.length; s++) {
 for (let s = 0; s < addTriangles.length; s++) {
     addTriangles[s].addEventListener("click", function() {
         resetAllModes();
-        userModesGeometry[1] = true;
+        opBarModes[3] = true;
         addShape("triangle");    
     }, false);
 }
@@ -200,7 +201,7 @@ for (let s = 0; s < addTriangles.length; s++) {
 for (let s = 0; s < addEllipses.length; s++) {
     addEllipses[s].addEventListener("click", function() {
         resetAllModes();
-        userModesGeometry[2] = true;
+        opBarModes[4] = true;
         addShape("circle");    
     }, false);
 }
@@ -214,7 +215,7 @@ function addShape(shapeType) {
 }
 
 function addingShape(event, writeLayer, shapeType) {
-    if (userModesGeometry[0] || userModesGeometry[1] || userModesGeometry[2]) {
+    if (opBarModes[2] || opBarModes[3] || opBarModes[4]) {
         const currentShape = Object.create(shape);
         const shapeControllerP = Object.create(shapeControllerPoint);
         let page = parseInt(writeLayer.getAttribute("data-write"), 10);
@@ -232,6 +233,7 @@ function addingShape(event, writeLayer, shapeType) {
         currentShape.useStroke = true;
         currentShape.rotation = 0;
         currentShape.page = page;   
+        currentShape.mask = null;
         shapeControllerP.elementToControl = currentShape;
         shapeControllerP.type = "shape";
         shapeControllerP.layer = writeLayer;

@@ -31,7 +31,7 @@ let isDrawing = false;
 let isErasing = false;
 let draggingMode = false;
 let mouseIsDown = false;
-let editorModes = [];
+let opBarModes = [];
 let userModes = [];
 let userModesDrawer = [];
 let userModesGeometry = [];
@@ -231,7 +231,7 @@ function resetRendering() {
     userImageList = [];
     drawLayerStack = [];
     geometryPointsList = [];
-    editorModes = [];
+    opBarModes = [];
     userModes = [];
     userModesDrawer = [];
     userModesGeometry = [];
@@ -642,7 +642,7 @@ function placeEditorElements() {
             let topVal = controllerPoint.y * pdfState.zoom;
             controllerPoint.controlBox.style.left = leftVal + "px";
             controllerPoint.controlBox.style.top = topVal + "px";
-            zoomDrawing(controllerPoint, pdfState.zoom, pdfState.zoom);
+            zoomDrawing(controllerPoint, controllerPoint.elementToControl.paths, pdfState.zoom, pdfState.zoom);
             rotateDrawing(controllerPoint, controllerPoint.elementToControl.rotation);
         }
     }
@@ -684,27 +684,49 @@ async function zoomText(controlP) {
     await updateUserLayer(controlP, currentText.pdfBytes); 
 }
 
-function zoomDrawing(controlP, zoomWidth, zoomHeight) {
+function zoomDrawing(controlP, pathElement2D, zoomWidth, zoomHeight) {
     let context = controlP.editImg.getContext("2d");
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
     context.save();
     scaleCanvas(controlP, zoomWidth, zoomHeight);
-    for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
+    for (let i = 0; i < pathElement2D.length; i++) {
         context.beginPath();  
         context.lineCap = "round";
         context.lineJoin = "round";       
-        context.lineWidth = controlP.elementToControl.paths[i][0].line;
-        context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
-        context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
-        context.moveTo(controlP.elementToControl.paths[i][0].x, controlP.elementToControl.paths[i][0].y); 
+        context.lineWidth = pathElement2D.paths[i][0].line;
+        context.strokeStyle = pathElement2D.paths[i][0].color;   
+        context.globalCompositeOperation = pathElement2D[i][0].compositeOp;
+        context.moveTo(pathElement2D[i][0].x, pathElement2D[i][0].y); 
         
-        for (let j = 1; j < controlP.elementToControl.paths[i].length; j++)
-            context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
+        for (let j = 1; j < pathElement2D[i].length; j++)
+            context.lineTo(pathElement2D[i][j].x, pathElement2D[i][j].y);
         
         context.stroke();
     }
     context.restore();
 }
+
+// function zoomDrawing(controlP, zoomWidth, zoomHeight) {
+//     let context = controlP.editImg.getContext("2d");
+//     context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
+//     context.save();
+//     scaleCanvas(controlP, zoomWidth, zoomHeight);
+//     for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
+//         context.beginPath();  
+//         context.lineCap = "round";
+//         context.lineJoin = "round";       
+//         context.lineWidth = controlP.elementToControl.paths[i][0].line;
+//         context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
+//         context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
+//         context.moveTo(controlP.elementToControl.paths[i][0].x, controlP.elementToControl.paths[i][0].y); 
+        
+//         for (let j = 1; j < controlP.elementToControl.paths[i].length; j++)
+//             context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
+        
+//         context.stroke();
+//     }
+//     context.restore();
+// }
 
 function scaleCanvas(controlP, zoomWidth, zoomHeight) {
     const pageIndex = controlP.page-1;
@@ -718,9 +740,9 @@ function scaleCanvas(controlP, zoomWidth, zoomHeight) {
     context.translate(width, height);
     context.scale(zoomWidth, zoomHeight);
     context.translate(-width/zoomWidth, -height/zoomHeight); 
-    if (userModesDrawer[0]) {
+    if (opBarModes[1]) {
         context.globalCompositeOperation = 'source-over';
-    } else if (userModesDrawer[1]) {
+    } else if (opBarModes[6]) {
         context.globalCompositeOperation = 'destination-out';
     } 
 };
@@ -906,10 +928,10 @@ async function setPageRotation(currentPage, newRotation) {
 }
 
 
-function resetEditorModes() {
-    if (editorModes.length > 0) {
-        for (let i = 0; i < editorModes.length; i++) {
-            editorModes[i] = false;
+function resetOpBarModes() {
+    if (opBarModes.length > 0) {
+        for (let i = 0; i < opBarModes.length; i++) {
+            opBarModes[i] = false;
         } 
     }
 }
@@ -947,7 +969,7 @@ function resetUserModesImages() {
 }
 
 function resetAllModes() {
-    resetEditorModes();
+    resetOpBarModes();
     resetUserModes();
     resetUserModesDrawer();
     resetUserModesGeometry();
@@ -1179,7 +1201,7 @@ function initEditor() {
         layerApplyMode = false;
         document.getElementById('show_btns').style.display = "none";
         initLayerVariables();
-        initEditorModes();
+        initOpBarModes();
         initTextEditorControls();
         restrictInputValues('lineheight_input', 1, 300, true, false);
         restrictInputValues('textsize_input', 3, 500, true, false);
@@ -1239,12 +1261,26 @@ function initLayerVariables() {
     unpagelist.value = "";
 }
 
-function initEditorModes() {
-    editorModes = [];
+function initOpBarModes() {
+    opBarModes = [];
+    let addTextMode = false;
+    opBarModes.push(addTextMode);
+    let pencilMode = false;
+    opBarModes.push(pencilMode);
+    let addRectMode = false;
+    opBarModes.push(addRectMode);
+    let addTriMode = false;
+    opBarModes.push(addTriMode);
+    let addEllipseMode = false;
+    opBarModes.push(addEllipseMode);
+    let addImageMode = false;
+    opBarModes.push(addImageMode);
+    let eraserMode = false;
+    opBarModes.push(eraserMode);
     let deleteMode = false;
-    editorModes.push(deleteMode);
+    opBarModes.push(deleteMode);
     let moveMode = false;
-    editorModes.push(moveMode);
+    opBarModes.push(moveMode);
 }
 
 function initTextEditorControls() {
@@ -1264,12 +1300,6 @@ function initTextEditorControls() {
 
 function initUserModesWriter() {
     userModes = [];
-    let addTextMode = false;
-    userModes.push(addTextMode);
-    let deleteTextMode = false;
-    userModes.push(deleteTextMode);
-    let moveTextMode = false;
-    userModes.push(moveTextMode);
     let editTextMode = false;
     userModes.push(editTextMode);
     let applyFontMode = false;
@@ -1321,14 +1351,6 @@ function initSidemenuControlsDrawer() {
 
 function initUserModesDrawer() {
     userModesDrawer = [];
-    let drawingMode = false;
-    userModesDrawer.push(drawingMode);
-    let eraserMode = false;
-    userModesDrawer.push(eraserMode);
-    let deleteDrawingMode = false;
-    userModesDrawer.push(deleteDrawingMode);
-    let moveDrawingMode = false;
-    userModesDrawer.push(moveDrawingMode);
     let scaleDrawingMode = false;
     userModesDrawer.push(scaleDrawingMode);
     let rotateDrawingMode = false;
@@ -1362,16 +1384,6 @@ function initSidemenuControlsGeometry() {
 
 function initUserModesGeometry() {
     userModesGeometry = [];
-    let addRectMode = false;
-    userModesGeometry.push(addRectMode);
-    let addTriangleMode = false;
-    userModesGeometry.push(addTriangleMode);
-    let addCircleMode = false;
-    userModesGeometry.push(addCircleMode);
-    let deleteShapeMode = false;
-    userModesGeometry.push(deleteShapeMode);
-    let moveShapeMode = false;
-    userModesGeometry.push(moveShapeMode);
     let scaleShapeMode = false;
     userModesGeometry.push(scaleShapeMode);
     let strokeColorMode = false;
@@ -1411,12 +1423,6 @@ function initSidemenuControlsImages() {
 
 function initUserModesImages() {
     userModesImages = [];
-    let addImageMode = false;
-    userModesImages.push(addImageMode);
-    let deleteImageMode = false;
-    userModesImages.push(deleteImageMode);
-    let moveImageMode = false;
-    userModesImages.push(moveImageMode);
     let scaleImageMode = false;
     userModesImages.push(scaleImageMode);
     let scaleImageByFactorMode = false;

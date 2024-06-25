@@ -632,8 +632,8 @@
             </div>
         </div>
     </div>
-    <!--Writer-->
-    <div id="writer_controls">
+    <!--Operations Bar-->
+    <div class="operations_bar">
         <div class="render_widget_con col_center">
             <div class="alert_widget render_widget row_center">
                 <span class="page_progress inner_margin">0</span>
@@ -648,108 +648,24 @@
         <div class="dir_row_left">
             <button class="layers btn btn-success button_layout" type="button">Layers</button>
             <button class="showsidemenu btn btn-success button_layout" type="button">Tools</button>
-            <button id="addtext" class="btn btn-success button_layout" type="button">Text</button>
-            <button id="deletetext" class="btn btn-success button_layout delete_op" type="button">Delete</button>
-            <button id="movetext" class="btn btn-success button_layout move_op" type="button">Move</button>
-            <button class="dragpdf btn btn-success button_layout" type="button">Drag</button>
+            <button class="btn btn-success button_layout addText" type="button">Text</button>
+            <button class="btn btn-success button_layout newLayer" type="button">New Layer</button>
+            <button class="btn btn-success button_layout pencil" type="button">Pencil</button>
+            <button class="btn btn-success button_layout addRect" type="button">Rectangle</button>
+            <button class="btn btn-success button_layout addTriangle" type="button">Triangle</button>
+            <button class="btn btn-success button_layout addEllipse" type="button">Ellipse</button>
+            <button class="btn btn-success button_layout addImage" type="button">Image</button>
+            <button class="btn btn-success button_layout eraser" type="button">Eraser</button>
+            <button class="btn btn-success button_layout delete_op" type="button">Delete</button>
+            <button class="btn btn-success button_layout move_op" type="button">Move</button>
+            <button class="btn btn-success button_layout dragpdf" type="button">Drag</button>
         </div>
         <div class="pos_filename">
             <button class="btn btn-success button_layout save_pdf_editor"><p class="white_text">Save</p></button>
             <div class="filename_hover save_hover_editor">
-                <label for="custom_filename_writer">Provide PDF Filename:</label>
-                <input id="custom_filename_writer" class="custom_filename" type="text">
+                <span>Provide PDF Filename:</span>
+                <input class="custom_filename custom_filename_editor" type="text">
             </div>
-        </div>
-    </div>
-    <!--Drawer-->
-    <div id="drawer_controls">
-        <div class="render_widget_con col_center">
-            <div class="alert_widget render_widget row_center">
-                <span class="page_progress inner_margin">0</span>
-                pages rendered
-            </div>
-        </div>
-        <div class="save_widget_con col_center">
-            <div class="alert_widget save_widget row_center">
-                saving in progress
-            </div>
-        </div>
-        <div class="dir_row_left">
-            <button class="layers btn btn-success button_layout" type="button">Layers</button>
-            <button class="showsidemenu btn btn-success button_layout" type="button">Tools</button>
-            <button id="newlayer" class="btn btn-success button_layout" type="button">New Layer</button>
-            <button id="pencil" class="btn btn-success button_layout" type="button">Pencil</button>
-            <button id="eraser" class="btn btn-success button_layout" type="button">Eraser</button>
-            <button id="delete_draw" class="btn btn-success button_layout delete_op" type="button">Delete</button>
-            <button id="translate_draw" class="btn btn-success button_layout move_op" type="button">Move</button>
-            <button class="dragpdf btn btn-success button_layout" type="button">Drag</button>
-        </div>
-        <div class="pos_filename">
-            <a class="btn btn-success button_layout save_pdf_editor"><p class="white_text">Save</p></a>
-            <div class="filename_hover save_hover_editor">
-                <label for="custom_filename_drawer">Provide PDF Filename:</label>
-                <input id="custom_filename_drawer" class="custom_filename" type="text">
-            </div>  
-        </div>
-    </div>
-    <!--Geometry-->
-    <div id="geometry_controls">
-        <div class="render_widget_con col_center">
-            <div class="alert_widget render_widget row_center">
-                <span class="page_progress inner_margin">0</span>
-                pages rendered
-            </div>
-        </div>
-        <div class="save_widget_con col_center">
-            <div class="alert_widget save_widget row_center">
-                saving in progress
-            </div>
-        </div>
-        <div class="dir_row_left">
-            <button class="layers btn btn-success button_layout" type="button">Layers</button>
-            <button class="showsidemenu btn btn-success button_layout" type="button">Tools</button>
-            <button id="addRect" class="btn btn-success button_layout" type="button">Rectangle</button>
-            <button id="addTriangle" class="btn btn-success button_layout" type="button">Triangle</button>
-            <button id="addCircle" class="btn btn-success button_layout" type="button">Ellipse</button>
-            <button id="deleteshape" class="btn btn-success button_layout delete_op" type="button">Delete</button>
-            <button id="moveshape" class="btn btn-success button_layout move_op" type="button">Move</button>
-            <button class="dragpdf btn btn-success button_layout" type="button">Drag</button>
-        </div>
-        <div class="pos_filename">
-            <a class="btn btn-success button_layout save_pdf_editor"><p class="white_text">Save</p></a>
-            <div class="filename_hover save_hover_editor">
-                <label for="custom_filename_geo">Provide PDF Filename:</label>
-                <input id="custom_filename_geo" class="custom_filename" type="text">
-            </div>
-        </div>
-    </div>
-    <!--Images-->
-    <div id="images_controls">
-        <div class="render_widget_con col_center">
-            <div class="alert_widget render_widget row_center">
-                <span class="page_progress inner_margin">0</span>
-                pages rendered
-            </div>
-        </div>
-        <div class="save_widget_con col_center">
-            <div class="alert_widget save_widget row_center">
-                saving in progress
-            </div>
-        </div>
-        <div class="dir_row_left">
-            <button class="layers btn btn-success button_layout" type="button">Layers</button>
-            <button class="showsidemenu btn btn-success button_layout" type="button">Tools</button>
-            <button id="addimg" class="btn btn-success button_layout" type="button">Image</button>
-            <button id="deleteimg" class="btn btn-success button_layout delete_op" type="button">Delete</button>
-            <button id="moveimg" class="btn btn-success button_layout move_op" type="button">Move</button>
-            <button class="dragpdf btn btn-success button_layout" type="button">Drag</button>
-        </div>
-        <div class="pos_filename">
-            <a class="btn btn-success button_layout save_pdf_editor"><p class="white_text">Save</p></a>
-            <div class="filename_hover save_hover_editor">
-                <label for="custom_filename_img">Provide PDF Filename:</label>
-                <input id="custom_filename_img" class="custom_filename" type="text">
-            </div> 
         </div>
     </div>
     <script src="libs/bootstrap-filestyle.min.js"></script>

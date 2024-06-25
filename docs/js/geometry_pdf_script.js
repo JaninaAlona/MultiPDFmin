@@ -167,6 +167,9 @@ const strokeCheckbox = document.getElementById("stroke");
 const fillCheckbox = document.getElementById("fill");
 const shapeRotationSelector = document.querySelector('#rotateshapesel');
 const shapeRotationInput = document.querySelector('#shaperotation_input');
+const addRects = document.getElementsByClassName("addRect");
+const addTriangles = document.getElementsByClassName("addTriangle");
+const addEllipses = document.getElementsByClassName("addEllipse");
 
 
 function updateUserShapeLayer(controlP) {
@@ -178,11 +181,29 @@ function updateUserShapeLayer(controlP) {
 }
 
 
-document.getElementById('addRect').addEventListener("click", function() {
-    resetAllModes();
-    userModesGeometry[0] = true;
-    addShape("rectangle");      
-}, false);
+for (let s = 0; s < addRects.length; s++) {
+    addRects[s].addEventListener("click", function() {
+        resetAllModes();
+        userModesGeometry[0] = true;
+        addShape("rectangle");      
+    }, false);
+}
+
+for (let s = 0; s < addTriangles.length; s++) {
+    addTriangles[s].addEventListener("click", function() {
+        resetAllModes();
+        userModesGeometry[1] = true;
+        addShape("triangle");    
+    }, false);
+}
+
+for (let s = 0; s < addEllipses.length; s++) {
+    addEllipses[s].addEventListener("click", function() {
+        resetAllModes();
+        userModesGeometry[2] = true;
+        addShape("circle");    
+    }, false);
+}
 
 function addShape(shapeType) {
     for(let i = 0; i < writeLayerStack.length; i++) {
@@ -279,19 +300,6 @@ function createUserShapeLayer(event, editImgClass, thisPage, controlP, writeLaye
     writeLayer.querySelectorAll("div.control_group")[0].appendChild(controlP.controlBox);
     createStackLayer(thisPage, editImgClass, controlP.index);
 }
-
-document.getElementById('addTriangle').addEventListener("click", function() {
-    resetAllModes();
-    userModesGeometry[1] = true;
-    addShape("triangle");    
-}, false);
-
-
-document.getElementById('addCircle').addEventListener("click", function() {
-    resetAllModes();
-    userModesGeometry[2] = true;
-    addShape("circle");    
-}, false);
 
 
 document.getElementById("scaleShape").addEventListener("click", function() {

@@ -93,17 +93,20 @@ let textRotationSelector = document.querySelector('#rotatetextsel');
 let textRotationInput = document.querySelector('#textrotation_input');
 let lineheightSelector = document.querySelector('#lineheightsel');
 let lineheightInput = document.querySelector("#lineheight_input");
+const addTexts = document.getElementsByClassName("addText");
 
 
-document.getElementById('addtext').addEventListener("click", async function() {
-    resetAllModes();
-    userModes[0] = true;
-    for(let i = 0; i < writeLayerStack.length; i++) {
-        writeLayerStack[i].onclick = async function(e) {
-            await addText(e, writeLayerStack[i]);
+for (let t = 0; t < addTexts.length; t++) {
+    addTexts[t].addEventListener("click", async function() {
+        resetAllModes();
+        userModes[0] = true;
+        for(let i = 0; i < writeLayerStack.length; i++) {
+            writeLayerStack[i].onclick = async function(e) {
+                await addText(e, writeLayerStack[i]);
+            }
         }
-    }
-}, false);
+    }, false);
+}
 
 async function addText(event, writeLayer) {
     if (userModes[0]) {

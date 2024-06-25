@@ -55,9 +55,10 @@ let geometryBtn;
 let imagesBtn;
 let encrypted;
 let relocateLayersMode = false;
+const saveButtonsEditor = document.getElementsByClassName('save_pdf_editor');
+const inputFileButtons = document.getElementsByClassName('inputfile');
 
 
-let inputFileButtons = document.getElementsByClassName('inputfile');
 for (let i = 0; i < inputFileButtons.length; i++) {
     inputFileButtons[i].addEventListener("change", function(e) {
         resetAllModes();
@@ -252,7 +253,6 @@ function resetRendering() {
 }
 
 
-const saveButtonsEditor = document.getElementsByClassName('save_pdf_editor');
 for (let h = 0; h < saveButtonsEditor.length; h++) {
     saveButtonsEditor[h].addEventListener("click", async function() {
         const startSave = performance.now();
@@ -981,13 +981,13 @@ function displayTextTools() {
     for (let i = 0; i < sidemenuImgs.length; i++) {
         sidemenuImgs[i].style.display = "none";
     }
-    document.getElementById('writer_controls').style.display = "flex";
+    const operations_bars = document.getElementsByClassName("operations_bar");
+    for (let i = 0; i < operations_bars.length; i++) {
+        operations_bars[i].style.display = "flex";
+    }
     document.getElementById('editor_controls').style.display = "flex";
-    document.getElementById('drawer_controls').style.display = "none";
     document.getElementById('pencil_controls').style.display = "none";
-    document.getElementById('geometry_controls').style.display = "none";
     document.getElementById('shape_controls').style.display = "none";
-    document.getElementById('images_controls').style.display = "none";
     document.getElementById('img_controls').style.display = "none";  
 }
 
@@ -1008,13 +1008,13 @@ function displayDrawTools() {
     for (let i = 0; i < sidemenuImgs.length; i++) {
         sidemenuImgs[i].style.display = "none";
     }
-    document.getElementById('drawer_controls').style.display = "flex";
+    const operations_bars = document.getElementsByClassName("operations_bar");
+    for (let i = 0; i < operations_bars.length; i++) {
+        operations_bars[i].style.display = "flex";
+    }
     document.getElementById('pencil_controls').style.display = "flex";
-    document.getElementById('writer_controls').style.display = "none";
     document.getElementById('editor_controls').style.display = "none";
-    document.getElementById('geometry_controls').style.display = "none";
     document.getElementById('shape_controls').style.display = "none";
-    document.getElementById('images_controls').style.display = "none";
     document.getElementById('img_controls').style.display = "none";
 }
 
@@ -1035,13 +1035,13 @@ function displayShapeTools() {
     for (let i = 0; i < sidemenuImgs.length; i++) {
         sidemenuImgs[i].style.display = "none";
     }
-    document.getElementById('writer_controls').style.display = "none";
+    const operations_bars = document.getElementsByClassName("operations_bar");
+    for (let i = 0; i < operations_bars.length; i++) {
+        operations_bars[i].style.display = "flex";
+    }
     document.getElementById('editor_controls').style.display = "none";
-    document.getElementById('drawer_controls').style.display = "none";
     document.getElementById('pencil_controls').style.display = "none";
-    document.getElementById('geometry_controls').style.display = "flex";
     document.getElementById('shape_controls').style.display = "flex";
-    document.getElementById('images_controls').style.display = "none";
     document.getElementById('img_controls').style.display = "none";
 }
 
@@ -1062,13 +1062,13 @@ function displayImgTools() {
     for (let i = 0; i < sidemenuImgs.length; i++) {
         sidemenuImgs[i].style.display = "flex";
     }
-    document.getElementById('writer_controls').style.display = "none";
+    const operations_bars = document.getElementsByClassName("operations_bar");
+    for (let i = 0; i < operations_bars.length; i++) {
+        operations_bars[i].style.display = "flex";
+    }
     document.getElementById('editor_controls').style.display = "none";
-    document.getElementById('drawer_controls').style.display = "none";
     document.getElementById('pencil_controls').style.display = "none";
-    document.getElementById('geometry_controls').style.display = "none";
     document.getElementById('shape_controls').style.display = "none";
-    document.getElementById('images_controls').style.display = "flex";
     document.getElementById('img_controls').style.display = "flex";
 }
 

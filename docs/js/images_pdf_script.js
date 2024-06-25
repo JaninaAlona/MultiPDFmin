@@ -41,6 +41,7 @@ const scaleInputFieldImgWidth = document.getElementById("scale_width_img");
 const scaleInputFieldImgHeight = document.getElementById("scale_height_img");
 const imgRotationSelector = document.getElementById("rotateimgsel");
 const imgRotationInput = document.getElementById("imgrotation_input");
+const addImages = document.getElementsByClassName("addImage");
 
 
 document.getElementById("inputimg").addEventListener("change", function(e) {
@@ -133,15 +134,17 @@ document.getElementById("clearlist_img").addEventListener("click", function(e) {
 }, false);
 
 
-document.getElementById('addimg').addEventListener("click", function(e) {
-    resetAllModes();
-    userModesImages[0] = true;
-    for(let i = 0; i < writeLayerStack.length; i++) {
-        writeLayerStack[i].onclick = async function(e) {
-            await addImage(e, writeLayerStack[i]);
+for (let f = 0; f < addImages.length; f++) {
+    addImages[f].addEventListener("click", function(e) {
+        resetAllModes();
+        userModesImages[0] = true;
+        for(let i = 0; i < writeLayerStack.length; i++) {
+            writeLayerStack[i].onclick = async function(e) {
+                await addImage(e, writeLayerStack[i]);
+            }
         }
-    }
-}, false);
+    }, false);
+}
 
 async function addImage(e, writeLayer) {
     if (userModesImages[0]) {

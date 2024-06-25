@@ -21,7 +21,7 @@
     z-index: 10;
 }
 
-#writer_controls, #drawer_controls, #geometry_controls, #images_controls {
+.operations_bar {
     background: #8c8c8c;
     display: none;
     width: 100%;

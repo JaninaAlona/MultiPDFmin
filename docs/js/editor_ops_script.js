@@ -9,6 +9,13 @@
  */
 
 
+let maskLayer = {
+    paths: [],
+    currentPathIndex: 0, 
+    rotation: 0,
+    wasRotated: false
+}
+
 const erasers = document.getElementsByClassName("eraser");
 const deleteOps = document.getElementsByClassName("delete_op");
 const moveOps = document.getElementsByClassName("move_op");
@@ -26,6 +33,7 @@ for (let j = 0; j < erasers.length; j++) {
 
 function erase(writeLayer) {
     let controlP;
+    let maskingLayer;
     writeLayer.onmousedown = startErasing;
 
     function startErasing(event) {
@@ -79,8 +87,18 @@ function erase(writeLayer) {
                 writeLayer.style.cursor = "default";
             }
             if (!disable) {
+                if (controlP.elementToControl.mask !== null) {
+                    maskingLayer = controlP.elementToControl.mask;
+                    // zoomDrawing(controlP, maskingLayer.paths, pdfState.zoom, pdfState.zoom);
+                } else {
+                    maskingLayer = Object.create(maskLayer);
+                    maskingLayer.paths = [];
+                    maskingLayer.currentPathIndex = 0;
+                    maskingLayer.rotation = 0;
+                    maskingLayer.wasRotated = false;
+                    controlP.elementToControl.mask = maskingLayer;
+                }
                 let context = controlP.editImg.getContext("2d");
-                zoomDrawing(controlP, pdfState.zoom, pdfState.zoom);
                 let rect = controlP.editImg.getBoundingClientRect();     
                 context.beginPath(); 
                 context.lineCap = "round";
@@ -90,10 +108,10 @@ function erase(writeLayer) {
                 context.globalCompositeOperation = 'destination-out';    
                 context.moveTo((event.clientX - rect.left)/pdfState.zoom, (event.clientY - rect.top)/pdfState.zoom);
                 
-                if (typeof controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex] == 'undefined')
-                    controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex] = [];
+                if (typeof maskingLayer.paths[maskingLayer.currentPathIndex] == 'undefined')
+                    maskingLayer.paths[maskingLayer.currentPathIndex] = [];
                 
-                controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({
+                maskingLayer.paths[maskingLayer.currentPathIndex].push({
                     x: ((event.clientX - rect.left)/pdfState.zoom), 
                     y: ((event.clientY - rect.top)/pdfState.zoom), 
                     line: pencilSize, 
@@ -113,7 +131,7 @@ function erase(writeLayer) {
             let rect = controlP.editImg.getBoundingClientRect(); 
             context.lineTo((event.clientX - rect.left)/pdfState.zoom, (event.clientY - rect.top)/pdfState.zoom);
             context.stroke();
-            controlP.elementToControl.paths[controlP.elementToControl.currentPathIndex].push({
+            maskingLayer.paths[maskingLayer.currentPathIndex].push({
                 x: ((event.clientX - rect.left)/pdfState.zoom), 
                 y: ((event.clientY - rect.top)/pdfState.zoom), 
                 line: pencilSize, 
@@ -126,7 +144,7 @@ function erase(writeLayer) {
     function stopErasing(event) {
         if (opBarModes[6]) {
             isErasing = false;
-            controlP.elementToControl.currentPathIndex += 1;
+            maskingLayer.currentPathIndex += 1;
             if (event.currentTarget === writeLayer) {
                 writeLayer.onmouseup = null;
                 writeLayer.onmousemove = null;

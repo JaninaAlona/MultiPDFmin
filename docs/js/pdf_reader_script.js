@@ -693,8 +693,8 @@ function zoomDrawing(controlP, pathElement2D, zoomWidth, zoomHeight) {
         context.beginPath();  
         context.lineCap = "round";
         context.lineJoin = "round";       
-        context.lineWidth = pathElement2D.paths[i][0].line;
-        context.strokeStyle = pathElement2D.paths[i][0].color;   
+        context.lineWidth = pathElement2D[i][0].line;
+        context.strokeStyle = pathElement2D[i][0].color;   
         context.globalCompositeOperation = pathElement2D[i][0].compositeOp;
         context.moveTo(pathElement2D[i][0].x, pathElement2D[i][0].y); 
         

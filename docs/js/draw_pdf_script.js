@@ -216,6 +216,7 @@ function createUserDrawLayer(e, editImgClass, thisPage, writeLayer) {
     drawingLayer.paths = [];
     drawingLayer.currentPathIndex = 0;
     drawingLayer.rotation = 0;
+    drawingLayer.wasRotated = false;
     drawingLayer.mask = null;
     controlP.elementToControl = drawingLayer;
     const canvasContainer = document.createElement("canvas");

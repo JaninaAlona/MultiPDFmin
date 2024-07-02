@@ -9,13 +9,6 @@
  */
 
 
-let maskLayer = {
-    paths: [],
-    currentPathIndex: 0, 
-    rotation: 0,
-    wasRotated: false
-}
-
 const erasers = document.getElementsByClassName("eraser");
 const deleteOps = document.getElementsByClassName("delete_op");
 const moveOps = document.getElementsByClassName("move_op");
@@ -66,9 +59,10 @@ function erase(writeLayer) {
                     }
                 }
             }
+            let layerType;
             if (isSelected) {
                 const layerIndex = parseInt(selectedLayer.getAttribute("data-index"), 10);
-                const layerType = selectedLayer.getAttribute("data-type");
+                layerType = selectedLayer.getAttribute("data-type");
                 if (layerType === "text") {
                     controlP = userTextList[layerIndex];
                 } 
@@ -87,18 +81,23 @@ function erase(writeLayer) {
                 writeLayer.style.cursor = "default";
             }
             if (!disable) {
-                if (controlP.elementToControl.mask !== null) {
-                    maskingLayer = controlP.elementToControl.mask;
-                    zoomDrawing(controlP, maskingLayer.paths, pdfState.zoom, pdfState.zoom);
-                } else {
-                    maskingLayer = Object.create(maskLayer);
-                    maskingLayer.paths = [];
-                    maskingLayer.currentPathIndex = 0;
-                    maskingLayer.rotation = 0;
-                    maskingLayer.wasRotated = false;
-                    controlP.elementToControl.mask = maskingLayer;
-                }
                 let context = controlP.editImg.getContext("2d");
+                console.log(context);
+                if (layerType === "text" || layerType === "shape" || layerType === "image") {
+                    if (controlP.elementToControl.mask !== null) {
+                        maskingLayer = controlP.elementToControl.mask;
+                    } else {
+                        maskingLayer = Object.create(drawLayer);
+                        maskingLayer.paths = [];
+                        maskingLayer.currentPathIndex = 0;
+                        maskingLayer.rotation = 0;
+                        maskingLayer.wasRotated = false;
+                        controlP.elementToControl.mask = maskingLayer;
+                    }
+                } else if (layerType === "drawing") {
+                    maskingLayer = controlP.elementToControl;
+                }
+                zoomDrawing(controlP, maskingLayer, pdfState.zoom, pdfState.zoom);
                 let rect = controlP.editImg.getBoundingClientRect();     
                 context.beginPath(); 
                 context.lineCap = "round";
@@ -150,7 +149,6 @@ function erase(writeLayer) {
                 writeLayer.onmousemove = null;
                 writeLayer.style.cursor = "default";
             }
-
         }
     }
 }

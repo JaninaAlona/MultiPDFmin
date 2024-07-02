@@ -624,7 +624,7 @@ function placeEditorElements() {
             controllerPoint.controlBox.style.top = topVal + "px";
             zoomText(controllerPoint);
             if (controllerPoint.elementToControl.mask !== null) {
-                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask.paths, pdfState.zoom, pdfState.zoom);
+                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask, pdfState.zoom, pdfState.zoom);
             } 
         }
     }
@@ -637,7 +637,7 @@ function placeEditorElements() {
             controllerPoint.controlBox.style.top = topVal + "px";
             zoomImages(controllerPoint);
             if (controllerPoint.elementToControl.mask !== null) {
-                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask.paths, pdfState.zoom, pdfState.zoom);
+                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask, pdfState.zoom, pdfState.zoom);
             } 
         }
     }
@@ -648,11 +648,8 @@ function placeEditorElements() {
             let topVal = controllerPoint.y * pdfState.zoom;
             controllerPoint.controlBox.style.left = leftVal + "px";
             controllerPoint.controlBox.style.top = topVal + "px";
-            zoomDrawing(controllerPoint, controllerPoint.elementToControl.paths, pdfState.zoom, pdfState.zoom);
+            zoomDrawing(controllerPoint, controllerPoint.elementToControl, pdfState.zoom, pdfState.zoom);
             rotateDrawing(controllerPoint, controllerPoint.elementToControl.rotation);
-            if (controllerPoint.elementToControl.mask !== null) {
-                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask.paths, pdfState.zoom, pdfState.zoom);
-            } 
         }
     }
     if (geometryPointsList.length > 0) {
@@ -680,7 +677,7 @@ function placeEditorElements() {
             controllerPoint.controlBox.style.top = topVal + "px";
             zoomGeometry(controllerPoint);
             if (controllerPoint.elementToControl.mask !== null) {
-                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask.paths, pdfState.zoom, pdfState.zoom);
+                zoomDrawing(controllerPoint, controllerPoint.elementToControl.mask, pdfState.zoom, pdfState.zoom);
             } 
         }
     }
@@ -701,44 +698,23 @@ function zoomDrawing(controlP, pathElement2D, zoomWidth, zoomHeight) {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
     context.save();
     scaleCanvas(controlP, zoomWidth, zoomHeight);
-    for (let i = 0; i < pathElement2D.length; i++) {
+    for (let i = 0; i < pathElement2D.paths.length; i++) {
         context.beginPath();  
         context.lineCap = "round";
         context.lineJoin = "round";       
-        context.lineWidth = pathElement2D[i][0].line;
-        context.strokeStyle = pathElement2D[i][0].color;   
-        context.globalCompositeOperation = pathElement2D[i][0].compositeOp;
-        context.moveTo(pathElement2D[i][0].x, pathElement2D[i][0].y); 
+        context.lineWidth = pathElement2D.paths[i][0].line;
+        context.strokeStyle = pathElement2D.paths[i][0].color;   
+        context.globalCompositeOperation = pathElement2D.paths[i][0].compositeOp;
+        context.moveTo(pathElement2D.paths[i][0].x, pathElement2D.paths[i][0].y); 
         
-        for (let j = 1; j < pathElement2D[i].length; j++)
-            context.lineTo(pathElement2D[i][j].x, pathElement2D[i][j].y);
+        for (let j = 1; j < pathElement2D.paths[i].length; j++)
+            context.lineTo(pathElement2D.paths[i][j].x, pathElement2D.paths[i][j].y);
         
         context.stroke();
     }
     context.restore();
+    console.log(pathElement2D.paths);
 }
-
-// function zoomDrawing(controlP, zoomWidth, zoomHeight) {
-//     let context = controlP.editImg.getContext("2d");
-//     context.clearRect(0, 0, context.canvas.width, context.canvas.height);  
-//     context.save();
-//     scaleCanvas(controlP, zoomWidth, zoomHeight);
-//     for (let i = 0; i < controlP.elementToControl.paths.length; i++) {
-//         context.beginPath();  
-//         context.lineCap = "round";
-//         context.lineJoin = "round";       
-//         context.lineWidth = controlP.elementToControl.paths[i][0].line;
-//         context.strokeStyle = controlP.elementToControl.paths[i][0].color;   
-//         context.globalCompositeOperation = controlP.elementToControl.paths[i][0].compositeOp;
-//         context.moveTo(controlP.elementToControl.paths[i][0].x, controlP.elementToControl.paths[i][0].y); 
-        
-//         for (let j = 1; j < controlP.elementToControl.paths[i].length; j++)
-//             context.lineTo(controlP.elementToControl.paths[i][j].x, controlP.elementToControl.paths[i][j].y);
-        
-//         context.stroke();
-//     }
-//     context.restore();
-// }
 
 function scaleCanvas(controlP, zoomWidth, zoomHeight) {
     const pageIndex = controlP.page-1;
@@ -752,9 +728,10 @@ function scaleCanvas(controlP, zoomWidth, zoomHeight) {
     context.translate(width, height);
     context.scale(zoomWidth, zoomHeight);
     context.translate(-width/zoomWidth, -height/zoomHeight); 
-    if (opBarModes[1]) {
+    if (opBarModes[1] && controlP.type === "drawing") {
         context.globalCompositeOperation = 'source-over';
-    } else if (opBarModes[6]) {
+    }
+    if (opBarModes[6]) {
         context.globalCompositeOperation = 'destination-out';
     } 
 };

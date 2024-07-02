@@ -14,7 +14,6 @@ let drawLayer = {
     currentPathIndex: 0, 
     rotation: 0,
     wasRotated: false,
-    mask: null
 }
 
 const colorPickerPencil = new Alwan('#colorpicker_pencil', {
@@ -144,7 +143,7 @@ function draw(writeLayer) {
             }
             if (!disable) {
                 let context = controlP.editImg.getContext("2d");
-                zoomDrawing(controlP, controlP.elementToControl.paths, pdfState.zoom, pdfState.zoom);
+                zoomDrawing(controlP, controlP.elementToControl, pdfState.zoom, pdfState.zoom);
                 let rect = controlP.editImg.getBoundingClientRect();     
                 context.beginPath(); 
                 context.lineCap = "round";
@@ -217,7 +216,6 @@ function createUserDrawLayer(e, editImgClass, thisPage, writeLayer) {
     drawingLayer.currentPathIndex = 0;
     drawingLayer.rotation = 0;
     drawingLayer.wasRotated = false;
-    drawingLayer.mask = null;
     controlP.elementToControl = drawingLayer;
     const canvasContainer = document.createElement("canvas");
     canvasContainer.style.display = "flex";
